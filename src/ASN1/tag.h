@@ -17,4 +17,4 @@ constexpr unsigned char kSequence = 0x30;
 }  // namespace postchain
 }  // namespace chromia
 
-#endif // ASNTAG_H_
+#endif  // ASNTAG_H_

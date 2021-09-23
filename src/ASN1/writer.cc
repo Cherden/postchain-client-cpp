@@ -74,7 +74,8 @@ std::vector<unsigned char> Writer::GetLengthBytes(unsigned int length) {
     } else {
         auto length_bytes = PostchainUtil::LongToByteVector(length);
 
-        std::vector<unsigned char> return_bytes{(unsigned char)(0x80 + length_bytes.size())};
+        std::vector<unsigned char> return_bytes{
+            (unsigned char)(0x80 + length_bytes.size())};
         std::copy(length_bytes.begin(), length_bytes.end(),
                   std::back_inserter(return_bytes));
 

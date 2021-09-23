@@ -42,7 +42,8 @@ std::vector<unsigned char> PostchainUtil::LongToByteVector(
     return bytes;
 }
 
-long long PostchainUtil::ByteVectorToLong(std::vector<unsigned char> bytes, bool only_positive) {
+long long PostchainUtil::ByteVectorToLong(std::vector<unsigned char> bytes,
+                                          bool mind_sign) {
     if (bytes.size() > sizeof(long long)) {
         std::stringstream ss;
         ss << "too many bytes for long long, expected max " << sizeof(long long)
@@ -52,7 +53,7 @@ long long PostchainUtil::ByteVectorToLong(std::vector<unsigned char> bytes, bool
 
     // pad out
     unsigned char padding_byte =
-        bytes.front() >= (unsigned char)0x80 && !only_positive ? 0xff : 0x00;
+        bytes.front() >= (unsigned char)0x80 && !mind_sign ? 0xff : 0x00;
     for (int i = bytes.size(); i < sizeof(long long); i++) {
         bytes.insert(bytes.begin(), padding_byte);
     }

@@ -28,7 +28,8 @@ class Reader {
     unsigned char ReadByte(const unsigned char* expected = nullptr);
     std::vector<unsigned char> ReadBytes(std::size_t length);
     std::size_t ReadLength();
-    long long ReadIntegerInternal(unsigned int byte_amount, bool mind_sign = false);
+    long long ReadIntegerInternal(unsigned int byte_amount,
+                                  bool mind_sign = false);
 
     std::vector<unsigned char> bytes_;
 };

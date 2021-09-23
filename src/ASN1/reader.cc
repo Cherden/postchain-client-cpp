@@ -1,7 +1,6 @@
 #include "reader.h"
 
 #include <sstream>
-#include <limits>
 
 #include "../postchain_util.h"
 #include "tag.h"
@@ -90,18 +89,19 @@ std::size_t Reader::ReadLength() {
     }
 }
 
-long long Reader::ReadIntegerInternal(unsigned int byte_amount, bool only_positive) {
+long long Reader::ReadIntegerInternal(unsigned int byte_amount,
+                                      bool mind_sign) {
     if (bytes_.size() < byte_amount) {
         throw std::logic_error("too few bytes left to read.");
     } else if (byte_amount > sizeof(long long)) {
         throw std::logic_error("tried to read too many bytes.");
     }
-    
+
     std::vector<unsigned char> buffer{bytes_.begin(),
                                       bytes_.begin() + byte_amount};
     bytes_.erase(bytes_.begin(), bytes_.begin() + byte_amount);
 
-    return PostchainUtil::ByteVectorToLong(buffer, only_positive);
+    return PostchainUtil::ByteVectorToLong(buffer, mind_sign);
 }
 
 }  // namespace asn1

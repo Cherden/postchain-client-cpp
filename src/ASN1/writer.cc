@@ -32,6 +32,12 @@ void Writer::WriteInteger(long long number) {
     Write(tag::kInteger, bytes.begin(), bytes.end());
 }
 
+void Writer::WriteEncodedValue(const std::vector<unsigned char>& bytes) {
+    std::vector<unsigned char>& buffer = GetOpenSequence()->buffer_;
+
+    std::copy(bytes.begin(), bytes.end(), std::back_inserter(buffer));
+}
+
 void Writer::PushSequence() { sequences_.push_back(new Writer()); }
 
 void Writer::PopSequence() {

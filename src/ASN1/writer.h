@@ -1,5 +1,5 @@
-#ifndef ASNWRITER_H_
-#define ASNWRITER_H_
+#ifndef POSTCHAIN_CLIENT_ASN1_WRITER_H_
+#define POSTCHAIN_CLIENT_ASN1_WRITER_H_
 
 #include <string>
 #include <vector>
@@ -18,6 +18,7 @@ class Writer {
     void WriteOctetString(const std::vector<unsigned char>& octet_string);
     void WriteUTF8String(const std::string& character_string);
     void WriteInteger(long long number);
+    void WriteEncodedValue(const std::vector<unsigned char>& bytes);
 
     void PushSequence();
     void PopSequence();
@@ -40,4 +41,4 @@ class Writer {
 }  // namespace postchain
 }  // namespace chromia
 
-#endif  // ASNWRITER_H_
+#endif  // POSTCHAIN_CLIENT_ASN1_WRITER_H_

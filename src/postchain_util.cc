@@ -1,6 +1,8 @@
 #include "postchain_util.h"
 
 #include <algorithm>
+#include <iomanip>
+#include <ios>
 #include <sstream>
 
 namespace chromia {
@@ -75,6 +77,18 @@ std::vector<unsigned char> PostchainUtil::HexStringToByteVector(
     }
 
     return bytes;
+}
+
+std::string PostchainUtil::ByteVectorToHexString(
+    const std::vector<unsigned char>& bytes) {
+    std::stringstream ss;
+
+    ss << std::hex << std::uppercase << std::setfill('0');
+    for (auto byte : bytes) {
+        ss << std::setw(2) << (int)byte;
+    }
+
+    return ss.str();
 }
 
 bool PostchainUtil::IsLittleEndian() {

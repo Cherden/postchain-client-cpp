@@ -1,5 +1,5 @@
-#ifndef ASNTAG_H_
-#define ASNTAG_H_
+#ifndef POSTCHAIN_CLIENT_ASN1_TAG_H_
+#define POSTCHAIN_CLIENT_ASN1_TAG_H_
 
 namespace chromia {
 namespace postchain {
@@ -17,4 +17,4 @@ constexpr unsigned char kSequence = 0x30;
 }  // namespace postchain
 }  // namespace chromia
 
-#endif  // ASNTAG_H_
+#endif  // POSTCHAIN_CLIENT_ASN1_TAG_H_

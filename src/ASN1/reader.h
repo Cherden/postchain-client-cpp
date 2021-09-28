@@ -1,5 +1,5 @@
-#ifndef ASNREADER_H_
-#define ASNREADER_H_
+#ifndef POSTCHAIN_CLIENT_ASN1_READER_H_
+#define POSTCHAIN_CLIENT_ASN1_READER_H_
 
 #include <memory>
 #include <string>
@@ -38,4 +38,4 @@ class Reader {
 }  // namespace postchain
 }  // namespace chromia
 
-#endif  // ASNREADER_H_
+#endif  // POSTCHAIN_CLIENT_ASN1_READER_H_

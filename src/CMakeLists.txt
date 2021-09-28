@@ -3,6 +3,7 @@ add_library(
     SHARED
     ASN1/writer.cc
     ASN1/reader.cc
+    GTV/abstract_value.cc
     postchain_util.cc
 )
 

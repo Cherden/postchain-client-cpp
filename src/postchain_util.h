@@ -14,6 +14,8 @@ class PostchainUtil {
                                       bool mind_sign = false);
     static std::vector<unsigned char> HexStringToByteVector(
         const std::string& hex_string);
+    static std::string ByteVectorToHexString(
+        const std::vector<unsigned char>& bytes);
     static bool IsLittleEndian();
 };
 

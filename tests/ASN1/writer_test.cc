@@ -2,34 +2,28 @@
 
 #include <gtest/gtest.h>
 
-#include <boost/algorithm/hex.hpp>
 #include <limits>
 
 #include "../../src/postchain_util.h"
 
 using namespace chromia::postchain;
 
-std::string ToHexString(const std::vector<unsigned char>& bytes) {
-    std::string hex_string;
-    boost::algorithm::hex(bytes.begin(), bytes.end(),
-                          std::back_inserter(hex_string));
-    return hex_string;
-}
-
 TEST(ASN1Writer, NullTest) {
     asn1::Writer writer;
     writer.WriteNull();
 
     std::string expected_hex = "0500";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, OctetStringTest) {
     asn1::Writer writer;
-    writer.WriteOctetString({(unsigned char)0xaf, (unsigned char)0xfe});
+    writer.WriteOctetString({0xaf, 0xfe});
 
     std::string expected_hex = "0402AFFE";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, EmptyOctetStringTest) {
@@ -37,7 +31,8 @@ TEST(ASN1Writer, EmptyOctetStringTest) {
     writer.WriteOctetString({});
 
     std::string expected_hex = "0400";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, BRIDOctetStringTest) {
@@ -48,7 +43,8 @@ TEST(ASN1Writer, BRIDOctetStringTest) {
 
     std::string expected_hex =
         "0420E2BE5C617CE50AFD0882A753C6FDA9C4D925EEDAC50DB97E33F457826A856DE0";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, UTF8StringTest) {
@@ -56,7 +52,8 @@ TEST(ASN1Writer, UTF8StringTest) {
     writer.WriteUTF8String("Hello World!");
 
     std::string expected_hex = "0C0C48656C6C6F20576F726C6421";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, EmptyUTF8StringTest) {
@@ -64,7 +61,8 @@ TEST(ASN1Writer, EmptyUTF8StringTest) {
     writer.WriteUTF8String("");
 
     std::string expected_hex = "0C00";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, SpecialCharactersUTF8StringTest) {
@@ -90,7 +88,8 @@ TEST(ASN1Writer, SpecialCharactersUTF8StringTest) {
         "BCD09DD0BDD09ED0BED09FD0BFD0A1D181D0A2D182D0A3D183D0A4D184D0A5D185D0A6"
         "D186D0A7D187D0A8D188D0A9D189D0AAD18AD0ABD18BD0ACD18CD0ADD18DD0AED18ED0"
         "AFD18F";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, IntegerTest) {
@@ -98,7 +97,8 @@ TEST(ASN1Writer, IntegerTest) {
     writer.WriteInteger(42424242);
 
     std::string expected_hex = "0204028757B2";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, SepcialIntegerTest) {
@@ -106,7 +106,8 @@ TEST(ASN1Writer, SepcialIntegerTest) {
     writer.WriteInteger(256);
 
     std::string expected_hex = "02020100";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, NegativeSepcialIntegerTest) {
@@ -114,7 +115,8 @@ TEST(ASN1Writer, NegativeSepcialIntegerTest) {
     writer.WriteInteger(-256);
 
     std::string expected_hex = "0202FF00";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, EdgeIntegerTest) {
@@ -122,7 +124,8 @@ TEST(ASN1Writer, EdgeIntegerTest) {
     writer.WriteInteger(-1);
 
     std::string expected_hex = "0201FF";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, NegativeIntegerTest) {
@@ -130,7 +133,8 @@ TEST(ASN1Writer, NegativeIntegerTest) {
     writer.WriteInteger(-42424242);
 
     std::string expected_hex = "0204FD78A84E";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, LimitIntegerTest) {
@@ -139,7 +143,8 @@ TEST(ASN1Writer, LimitIntegerTest) {
     writer.WriteInteger(std::numeric_limits<long long>::max());
 
     std::string expected_hex = "0208800000000000000002087FFFFFFFFFFFFFFF";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
 
 TEST(ASN1Writer, SequenceTest) {
@@ -169,5 +174,6 @@ TEST(ASN1Writer, SequenceTest) {
         "304730220420E2BE5C617CE50AFD0882A753C6FDA9C4D925EEDAC50DB97E33F457826A"
         "856DE0302130130C08746573745F6F70310C046172673102012A300A0C08746573745F"
         "6F7032";
-    EXPECT_EQ(expected_hex, ToHexString(writer.Encode()));
+    EXPECT_EQ(expected_hex,
+              PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }

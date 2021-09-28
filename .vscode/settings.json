@@ -58,6 +58,7 @@
         "variant": "cpp",
         "climits": "cpp",
         "thread": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "*.tpp": "cpp"
     }
 }

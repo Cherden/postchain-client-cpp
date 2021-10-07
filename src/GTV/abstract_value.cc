@@ -1,6 +1,8 @@
 #include "abstract_value.h"
 
 #include "../postchain_util.h"
+#include "Merkle/Proof/merkle_proof.h"
+#include "Merkle/merkle_hash_calculator.h"
 #include "tag.h"
 
 namespace chromia {
@@ -32,6 +34,12 @@ std::vector<unsigned char> AbstractValue::Encode() {
               std::back_inserter(encoded_bytes));
 
     return encoded_bytes;
+}
+
+std::vector<unsigned char> AbstractValue::Hash(
+    std::shared_ptr<AbstractValue> value) {
+    return MerkleProof::MerkleHash(value,
+                                   std::make_shared<MerkleHashCalculator>());
 }
 
 }  // namespace gtv

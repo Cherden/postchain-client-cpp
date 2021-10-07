@@ -1,5 +1,5 @@
-#ifndef POSTCHAINUTIL_H_
-#define POSTCHAINUTIL_H_
+#ifndef POSTCHAIN_CLIENT_POSTCHAINUTIL_H_
+#define POSTCHAIN_CLIENT_POSTCHAINUTIL_H_
 
 #include <string>
 #include <vector>
@@ -16,6 +16,9 @@ class PostchainUtil {
         const std::string& hex_string);
     static std::string ByteVectorToHexString(
         const std::vector<unsigned char>& bytes);
+
+    static std::string Sha256(std::vector<unsigned char> buffer);
+
     static bool IsLittleEndian();
 };
 

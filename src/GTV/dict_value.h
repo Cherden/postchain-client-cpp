@@ -2,6 +2,7 @@
 #define POSTCHAIN_CLIENT_GTV_DICT_VALUE_H_
 #include <map>
 #include <memory>
+#include <string>
 
 #include "abstract_value.h"
 #include "tag.h"
@@ -15,6 +16,18 @@ class DictValue : public AbstractValue {
     explicit DictValue(
         std::map<std::string, std::shared_ptr<AbstractValue>> value)
         : value_(value) {}
+
+    size_t Size() const { return value_.size(); }
+    std::shared_ptr<AbstractValue> operator[](const std::string& key) const {
+        return value_.at(key);
+    }
+    std::vector<std::string> Keys() const {
+        std::vector<std::string> keys;
+        for (auto element : value_) {
+            keys.push_back(element.first);
+        }
+        return keys;
+    }
 
   protected:
     unsigned char AddContent(asn1::Writer& asn1_buffer) override {

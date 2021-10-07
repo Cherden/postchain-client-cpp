@@ -2,6 +2,7 @@
 
 #include <limits>
 
+#include "../../src/GTV/abstract_value.h"
 #include "../../src/GTV/abstract_value_facotry.h"
 #include "../../src/GTV/array_value.h"
 #include "../../src/GTV/dict_value.h"
@@ -258,4 +259,68 @@ TEST(GTV, BuildOctetStringTest) {
     gtv::OctetStringValue expected_value(bytes);
 
     EXPECT_EQ(expected_value.Encode(), value->Encode());
+}
+
+TEST(GTV, BuildArrayTest) {
+    auto value = gtv::AbstractValueFactory::EmptyArray();
+    gtv::ArrayValue expected_value;
+    auto inner_value = gtv::AbstractValueFactory::Build(true);
+
+    value->Add(inner_value);
+    expected_value.Add(inner_value);
+
+    EXPECT_EQ(expected_value.Encode(), value->Encode());
+}
+
+TEST(GTV, BuildArrayInitializeTest) {
+    std::vector<std::shared_ptr<gtv::AbstractValue>> inner_values{
+        gtv::AbstractValueFactory::Build(true),
+        gtv::AbstractValueFactory::Build("test"),
+        gtv::AbstractValueFactory::Build(1337),
+        gtv::AbstractValueFactory::Build(PostchainUtil::HexStringToByteVector(
+            "93E262166DB3AE72872A28DF9A8FBF9F411EB83040088C70C0953F6724F924A"
+            "0")),
+    };
+
+    auto value = gtv::AbstractValueFactory::Build(inner_values);
+    gtv::ArrayValue expected_value(inner_values);
+
+    EXPECT_EQ(expected_value.Encode(), value->Encode());
+}
+
+TEST(GTV, SimpleHashTest) {
+    auto value = gtv::AbstractValueFactory::Build(std::string("test"));
+
+    auto hash = gtv::AbstractValue::Hash(value);
+    std::string expected =
+        "BD0582E368DFB006FA34A75F372F761D3CFB6CD58BF5E4853ADDF767F55D8265";
+    EXPECT_EQ(expected, PostchainUtil::ByteVectorToHexString(hash));
+}
+
+TEST(GTV, ArrayHashTest) {
+    gtv::ArrayValue value;
+    value.Add(std::make_shared<gtv::UTF8StringValue>("test"));
+    value.Add(std::make_shared<gtv::NullValue>());
+
+    auto hash =
+        gtv::AbstractValue::Hash(std::make_shared<gtv::ArrayValue>(value));
+    std::string expected =
+        "ACA6EA1208967EBC2D140D1496DDE2D09E40ADBD843161DB9D237C5504E9E0EB";
+    EXPECT_EQ(expected, PostchainUtil::ByteVectorToHexString(hash));
+}
+
+TEST(GTV, FullArrayHashTest) {
+    std::vector<std::shared_ptr<gtv::AbstractValue>> inner_values{
+        gtv::AbstractValueFactory::Build("test"),
+        gtv::AbstractValueFactory::Build(nullptr),
+        gtv::AbstractValueFactory::Build(std::numeric_limits<long long>::max()),
+        gtv::AbstractValueFactory::Build(
+            std::vector<unsigned char>{0xde, 0xad, 0xbe, 0xef}),
+        gtv::AbstractValueFactory::EmptyArray()};
+    auto value = gtv::AbstractValueFactory::Build(inner_values);
+
+    auto hash = gtv::AbstractValue::Hash(value);
+    std::string expected =
+        "E74615C8E242EE865655B24A17B1454E0F14523520384903682CD31500907A2D";
+    EXPECT_EQ(expected, PostchainUtil::ByteVectorToHexString(hash));
 }

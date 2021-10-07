@@ -13,7 +13,7 @@ Reader::Reader(const std::vector<unsigned char> bytes) : bytes_(bytes) {}
 
 unsigned char Reader::ReadChoice() { return ReadByte(); }
 
-std::shared_ptr<Reader> Reader::ReadSequence() {
+Reader Reader::ReadSequence() {
     ReadByte(&tag::kSequence);
 
     auto length = ReadLength();
@@ -21,7 +21,7 @@ std::shared_ptr<Reader> Reader::ReadSequence() {
                                         bytes_.begin() + length);
     bytes_.erase(bytes_.begin(), bytes_.begin() + length);
 
-    return std::make_shared<Reader>(sequence);
+    return Reader(sequence);
 }
 
 void Reader::ReadNull() {

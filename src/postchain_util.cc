@@ -1,5 +1,7 @@
 #include "postchain_util.h"
 
+#include <openssl/evp.h>
+
 #include <algorithm>
 #include <iomanip>
 #include <ios>
@@ -89,6 +91,37 @@ std::string PostchainUtil::ByteVectorToHexString(
     }
 
     return ss.str();
+}
+
+std::string PostchainUtil::Sha256(std::vector<unsigned char> buffer) {
+    EVP_MD_CTX* context = EVP_MD_CTX_new();
+
+    unsigned char hash[EVP_MAX_MD_SIZE];
+    unsigned int hash_length = 0;
+
+    if (context == NULL) {
+        throw new std::logic_error(
+            "openssl evp context could not be allocated");
+    } else if (!EVP_DigestInit_ex(context, EVP_sha256(), NULL)) {
+        throw new std::logic_error(
+            "openssl evp digest could not be initialized");
+    } else if (!EVP_DigestUpdate(context, &buffer[0], buffer.size())) {
+        throw new std::logic_error("openssl evp digest could not be set");
+    } else if (!EVP_DigestFinal_ex(context, hash, &hash_length)) {
+        throw new std::logic_error(
+            "openssl evp sha256 hash could not be created");
+    }
+
+    std::stringstream ss;
+    for (unsigned int i = 0; i < hash_length; ++i) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    }
+
+    std::string hashed_buffer = ss.str();
+
+    EVP_MD_CTX_free(context);
+
+    return hashed_buffer;
 }
 
 bool PostchainUtil::IsLittleEndian() {

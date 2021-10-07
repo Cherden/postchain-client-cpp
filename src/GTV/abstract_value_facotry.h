@@ -18,6 +18,14 @@ namespace gtv {
 
 class AbstractValueFactory {
   public:
+    static std::shared_ptr<ArrayValue> EmptyArray() {
+        return std::make_shared<ArrayValue>();
+    }
+    static std::shared_ptr<ArrayValue> Build(
+        const std::vector<std::shared_ptr<AbstractValue>>& values) {
+        return std::make_shared<ArrayValue>(values);
+    }
+
     template <class T, std::enable_if_t<std::is_integral<T>::value, int> = 0>
     static std::shared_ptr<AbstractValue> Build(const T value) {
         return std::make_shared<IntegerValue>(value);

@@ -17,6 +17,8 @@ class ArrayValue : public AbstractValue {
         : value_(value) {}
 
     void Add(std::shared_ptr<AbstractValue> value) { value_.push_back(value); }
+    size_t Size() const { return value_.size(); }
+    std::shared_ptr<AbstractValue> operator[](int i) const { return value_[i]; }
 
   protected:
     unsigned char AddContent(asn1::Writer& asn1_buffer) override {

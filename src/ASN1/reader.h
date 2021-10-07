@@ -1,7 +1,6 @@
 #ifndef POSTCHAIN_CLIENT_ASN1_READER_H_
 #define POSTCHAIN_CLIENT_ASN1_READER_H_
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,12 +11,11 @@ namespace asn1 {
 class Reader {
   public:
     explicit Reader(const std::vector<unsigned char> bytes);
-    Reader(const Reader& old_obj) = delete;
     Reader& operator=(const Reader& other) = delete;
 
     unsigned char ReadChoice();
     void ReadNull();
-    std::shared_ptr<Reader> ReadSequence();
+    Reader ReadSequence();
     std::vector<unsigned char> ReadOctetString();
     std::string ReadUTF8String();
     long long ReadInteger();

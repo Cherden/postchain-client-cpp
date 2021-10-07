@@ -7,6 +7,9 @@ add_library(
     postchain_util.cc
 )
 
+find_package(OpenSSL REQUIRED)
+target_link_libraries(postchain_client OpenSSL::SSL)
+
 target_compile_definitions(postchain_client PUBLIC postchain_client)
 
 # set_target_properties(postchain_client PROPERTIES VERSION ${PROJECT_VERSION})

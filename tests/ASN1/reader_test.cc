@@ -136,15 +136,15 @@ TEST(ASN1Reader, SequenceTest) {
 
     asn1::Reader reader(writer.Encode());
     auto main_seq = reader.ReadSequence();
-    auto brid_seq = main_seq->ReadSequence();
-    EXPECT_EQ(brid, brid_seq->ReadOctetString());
+    auto brid_seq = main_seq.ReadSequence();
+    EXPECT_EQ(brid, brid_seq.ReadOctetString());
 
-    auto op_seq = main_seq->ReadSequence();
-    auto op1_seq = op_seq->ReadSequence();
-    EXPECT_EQ(op1_name, op1_seq->ReadUTF8String());
-    EXPECT_EQ(op1_arg1, op1_seq->ReadUTF8String());
-    EXPECT_EQ(op1_arg2, op1_seq->ReadInteger());
+    auto op_seq = main_seq.ReadSequence();
+    auto op1_seq = op_seq.ReadSequence();
+    EXPECT_EQ(op1_name, op1_seq.ReadUTF8String());
+    EXPECT_EQ(op1_arg1, op1_seq.ReadUTF8String());
+    EXPECT_EQ(op1_arg2, op1_seq.ReadInteger());
 
-    auto op2_seq = op_seq->ReadSequence();
-    EXPECT_EQ(op2_name, op2_seq->ReadUTF8String());
+    auto op2_seq = op_seq.ReadSequence();
+    EXPECT_EQ(op2_name, op2_seq.ReadUTF8String());
 }

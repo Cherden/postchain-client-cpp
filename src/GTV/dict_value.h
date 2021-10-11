@@ -39,7 +39,7 @@ class DictValue : public AbstractValue {
             asn1_buffer.PopSequence();
         }
         asn1_buffer.PopSequence();
-        return tag::kArray;
+        return tag::kDict;
     }
 
   private:

@@ -46,6 +46,7 @@ void Writer::PopSequence() {
 
     auto content = writer->Encode();
     Write(tag::kSequence, content.begin(), content.end());
+    delete writer;
 }
 
 template <typename Iter>

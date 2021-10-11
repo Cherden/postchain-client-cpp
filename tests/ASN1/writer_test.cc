@@ -21,7 +21,7 @@ TEST(ASN1Writer, OctetStringTest) {
     asn1::Writer writer;
     writer.WriteOctetString({0xaf, 0xfe});
 
-    std::string expected_hex = "0402AFFE";
+    std::string expected_hex = "0402affe";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -42,7 +42,7 @@ TEST(ASN1Writer, BRIDOctetStringTest) {
     writer.WriteOctetString({brid.begin(), brid.end()});
 
     std::string expected_hex =
-        "0420E2BE5C617CE50AFD0882A753C6FDA9C4D925EEDAC50DB97E33F457826A856DE0";
+        "0420e2be5c617ce50afd0882a753c6fda9c4d925eedac50db97e33f457826a856de0";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -51,7 +51,7 @@ TEST(ASN1Writer, UTF8StringTest) {
     asn1::Writer writer;
     writer.WriteUTF8String("Hello World!");
 
-    std::string expected_hex = "0C0C48656C6C6F20576F726C6421";
+    std::string expected_hex = "0c0c48656c6c6f20576f726c6421";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -60,7 +60,7 @@ TEST(ASN1Writer, EmptyUTF8StringTest) {
     asn1::Writer writer;
     writer.WriteUTF8String("");
 
-    std::string expected_hex = "0C00";
+    std::string expected_hex = "0c00";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -77,17 +77,17 @@ TEST(ASN1Writer, SpecialCharactersUTF8StringTest) {
         "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя");
 
     std::string expected_hex =
-        "0C17537765646973683A20C385C3A520C384C3A420C396C3B60C1D44616E6973682F4E"
-        "6F727761793A20C386C3A620C398C3B820C385C3A50C1D4765726D616E2F46696E6973"
-        "683A20C384C3A420C396C3B620C39CC3BC0C3D477265656B206C6F7765723A20CEB1CE"
-        "B2CEB3CEB4CFB5CEB6CEB7CEB8CEB9CEBACEBBCEBCCEBDCEBECEBFCF80CF81CF83CF84"
-        "CF85CF95CF87CF88CF890C3D477265656B2075707065723A20CE91CE92CE93CE94CE95"
-        "CE96CE97CE98CE99CE9ACE9BCE9CCE9DCE9ECE9FCEA0CEA1CEA3CEA4CEA5CEA6CEA7CE"
-        "A8CEA90C81895275737369616E3A20D090D0B0D091D0B1D092D0B2D093D0B3D094D0B4"
-        "D095D0B5D081D191D096D0B6D097D0B7D098D0B8D099D0B9D09AD0BAD09BD0BBD09CD0"
-        "BCD09DD0BDD09ED0BED09FD0BFD0A1D181D0A2D182D0A3D183D0A4D184D0A5D185D0A6"
-        "D186D0A7D187D0A8D188D0A9D189D0AAD18AD0ABD18BD0ACD18CD0ADD18DD0AED18ED0"
-        "AFD18F";
+        "0c17537765646973683a20c385c3a520c384c3a420c396c3b60c1d44616e6973682f4e"
+        "6f727761793a20c386c3a620c398c3b820c385c3a50c1d4765726d616e2f46696e6973"
+        "683a20c384c3a420c396c3b620c39cc3bc0c3d477265656b206c6f7765723a20ceb1ce"
+        "b2ceb3ceb4cfb5ceb6ceb7ceb8ceb9cebacebbcebccebdcebecebfcf80cf81cf83cf84"
+        "cf85cf95cf87cf88cf890c3d477265656b2075707065723a20ce91ce92ce93ce94ce95"
+        "ce96ce97ce98ce99ce9ace9bce9cce9dce9ece9fcea0cea1cea3cea4cea5cea6cea7ce"
+        "a8cea90c81895275737369616e3a20d090d0b0d091d0b1d092d0b2d093d0b3d094d0b4"
+        "d095d0b5d081d191d096d0b6d097d0b7d098d0b8d099d0b9d09ad0bad09bd0bbd09cd0"
+        "bcd09dd0bdd09ed0bed09fd0bfd0a1d181d0a2d182d0a3d183d0a4d184d0a5d185d0a6"
+        "d186d0a7d187d0a8d188d0a9d189d0aad18ad0abd18bd0acd18cd0add18dd0aed18ed0"
+        "afd18f";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -96,7 +96,7 @@ TEST(ASN1Writer, IntegerTest) {
     asn1::Writer writer;
     writer.WriteInteger(42424242);
 
-    std::string expected_hex = "0204028757B2";
+    std::string expected_hex = "0204028757b2";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -114,7 +114,7 @@ TEST(ASN1Writer, NegativeSepcialIntegerTest) {
     asn1::Writer writer;
     writer.WriteInteger(-256);
 
-    std::string expected_hex = "0202FF00";
+    std::string expected_hex = "0202ff00";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -123,7 +123,7 @@ TEST(ASN1Writer, EdgeIntegerTest) {
     asn1::Writer writer;
     writer.WriteInteger(-1);
 
-    std::string expected_hex = "0201FF";
+    std::string expected_hex = "0201ff";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -132,7 +132,7 @@ TEST(ASN1Writer, NegativeIntegerTest) {
     asn1::Writer writer;
     writer.WriteInteger(-42424242);
 
-    std::string expected_hex = "0204FD78A84E";
+    std::string expected_hex = "0204fd78a84e";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -142,7 +142,7 @@ TEST(ASN1Writer, LimitIntegerTest) {
     writer.WriteInteger(std::numeric_limits<long long>::min());
     writer.WriteInteger(std::numeric_limits<long long>::max());
 
-    std::string expected_hex = "0208800000000000000002087FFFFFFFFFFFFFFF";
+    std::string expected_hex = "0208800000000000000002087fffffffffffffff";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
@@ -171,9 +171,9 @@ TEST(ASN1Writer, SequenceTest) {
     writer.PopSequence();
 
     std::string expected_hex =
-        "304730220420E2BE5C617CE50AFD0882A753C6FDA9C4D925EEDAC50DB97E33F457826A"
-        "856DE0302130130C08746573745F6F70310C046172673102012A300A0C08746573745F"
-        "6F7032";
+        "304730220420e2be5c617ce50afd0882a753c6fda9c4d925eedac50db97e33f457826a"
+        "856de0302130130c08746573745f6f70310c046172673102012a300a0c08746573745f"
+        "6f7032";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }

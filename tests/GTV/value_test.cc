@@ -17,7 +17,7 @@ using namespace chromia::postchain;
 TEST(GTV, NullTest) {
     gtv::NullValue value;
 
-    std::string expected_hex = "A0020500";
+    std::string expected_hex = "a0020500";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -25,7 +25,7 @@ TEST(GTV, NullTest) {
 TEST(GTV, SimpleUTF8StingTest) {
     gtv::UTF8StringValue value("test");
 
-    std::string expected_hex = "A2060C0474657374";
+    std::string expected_hex = "a2060c0474657374";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -33,7 +33,7 @@ TEST(GTV, SimpleUTF8StingTest) {
 TEST(GTV, EmptyUTF8StingTest) {
     gtv::UTF8StringValue value("");
 
-    std::string expected_hex = "A2020C00";
+    std::string expected_hex = "a2020c00";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -42,7 +42,7 @@ TEST(GTV, LongUTF8StingTest) {
     gtv::UTF8StringValue value(std::string(2048, 'x'));
 
     std::string expected_hex =
-        "A28208040C820800787878787878787878787878787878787878787878787878787878"
+        "a28208040c820800787878787878787878787878787878787878787878787878787878"
         "7878787878787878787878787878787878787878787878787878787878787878787878"
         "7878787878787878787878787878787878787878787878787878787878787878787878"
         "7878787878787878787878787878787878787878787878787878787878787878787878"
@@ -108,7 +108,7 @@ TEST(GTV, LongUTF8StingTest) {
 TEST(GTV, SimpleIntegerTest) {
     gtv::IntegerValue value(1337);
 
-    std::string expected_hex = "A30402020539";
+    std::string expected_hex = "a30402020539";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -116,7 +116,7 @@ TEST(GTV, SimpleIntegerTest) {
 TEST(GTV, NegativeIntegerTest) {
     gtv::IntegerValue value(-1337);
 
-    std::string expected_hex = "A3040202FAC7";
+    std::string expected_hex = "a3040202fac7";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -124,7 +124,7 @@ TEST(GTV, NegativeIntegerTest) {
 TEST(GTV, MaxIntegerTest) {
     gtv::IntegerValue value(std::numeric_limits<long long>::max());
 
-    std::string expected_hex = "A30A02087FFFFFFFFFFFFFFF";
+    std::string expected_hex = "a30a02087fffffffffffffff";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -132,7 +132,7 @@ TEST(GTV, MaxIntegerTest) {
 TEST(GTV, MinIntegerTest) {
     gtv::IntegerValue value(std::numeric_limits<long long>::min());
 
-    std::string expected_hex = "A30A02088000000000000000";
+    std::string expected_hex = "a30a02088000000000000000";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -140,7 +140,7 @@ TEST(GTV, MinIntegerTest) {
 TEST(GTV, SimpleOctetStringTest) {
     gtv::OctetStringValue value({0xaf, 0xfe, 0xca, 0xfe});
 
-    std::string expected_hex = "A1060404AFFECAFE";
+    std::string expected_hex = "a1060404affecafe";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -148,7 +148,7 @@ TEST(GTV, SimpleOctetStringTest) {
 TEST(GTV, EmptyOctetStringTest) {
     gtv::OctetStringValue value({});
 
-    std::string expected_hex = "A1020400";
+    std::string expected_hex = "a1020400";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -157,7 +157,7 @@ TEST(GTV, SimpleArrayTest) {
     gtv::ArrayValue value;
     value.Add(std::make_shared<gtv::UTF8StringValue>("test"));
 
-    std::string expected_hex = "A50A3008A2060C0474657374";
+    std::string expected_hex = "a50a3008a2060c0474657374";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -165,7 +165,7 @@ TEST(GTV, SimpleArrayTest) {
 TEST(GTV, EmptyArrayTest) {
     gtv::ArrayValue value;
 
-    std::string expected_hex = "A5023000";
+    std::string expected_hex = "a5023000";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -179,7 +179,7 @@ TEST(GTV, ArrayInArrayTest) {
 
     value.Add(inner_value);
 
-    std::string expected_hex = "A5123010A50E300CA30A02088000000000000000";
+    std::string expected_hex = "a5123010a50e300ca30a02088000000000000000";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -196,8 +196,8 @@ TEST(GTV, FullArrayTest) {
     value.Add(std::make_shared<gtv::ArrayValue>());
 
     std::string expected_hex =
-        "A5263024A2060C0474657374A0020500A30A02087FFFFFFFFFFFFFFFA1060404DEADBE"
-        "EFA5023000";
+        "a5263024a2060c0474657374a0020500a30a02087fffffffffffffffa1060404deadbe"
+        "efa5023000";
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(value.Encode()));
 }
@@ -278,7 +278,7 @@ TEST(GTV, BuildArrayInitializeTest) {
         gtv::AbstractValueFactory::Build("test"),
         gtv::AbstractValueFactory::Build(1337),
         gtv::AbstractValueFactory::Build(PostchainUtil::HexStringToByteVector(
-            "93E262166DB3AE72872A28DF9A8FBF9F411EB83040088C70C0953F6724F924A"
+            "93e262166db3ae72872a28df9a8fbf9f411eb83040088c70c0953f6724f924a"
             "0")),
     };
 
@@ -293,7 +293,7 @@ TEST(GTV, SimpleHashTest) {
 
     auto hash = gtv::AbstractValue::Hash(value);
     std::string expected =
-        "BD0582E368DFB006FA34A75F372F761D3CFB6CD58BF5E4853ADDF767F55D8265";
+        "bd0582e368dfb006fa34a75f372f761d3cfb6cd58bf5e4853addf767f55d8265";
     EXPECT_EQ(expected, PostchainUtil::ByteVectorToHexString(hash));
 }
 
@@ -305,7 +305,7 @@ TEST(GTV, ArrayHashTest) {
     auto hash =
         gtv::AbstractValue::Hash(std::make_shared<gtv::ArrayValue>(value));
     std::string expected =
-        "ACA6EA1208967EBC2D140D1496DDE2D09E40ADBD843161DB9D237C5504E9E0EB";
+        "aca6ea1208967ebc2d140d1496dde2d09e40adbd843161db9d237c5504e9e0eb";
     EXPECT_EQ(expected, PostchainUtil::ByteVectorToHexString(hash));
 }
 
@@ -321,6 +321,6 @@ TEST(GTV, FullArrayHashTest) {
 
     auto hash = gtv::AbstractValue::Hash(value);
     std::string expected =
-        "E74615C8E242EE865655B24A17B1454E0F14523520384903682CD31500907A2D";
+        "e74615c8e242ee865655b24a17b1454e0f14523520384903682cd31500907a2d";
     EXPECT_EQ(expected, PostchainUtil::ByteVectorToHexString(hash));
 }

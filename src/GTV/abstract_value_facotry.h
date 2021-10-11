@@ -21,9 +21,19 @@ class AbstractValueFactory {
     static std::shared_ptr<ArrayValue> EmptyArray() {
         return std::make_shared<ArrayValue>();
     }
+
     static std::shared_ptr<ArrayValue> Build(
         const std::vector<std::shared_ptr<AbstractValue>>& values) {
         return std::make_shared<ArrayValue>(values);
+    }
+
+    template <class T>
+    static std::shared_ptr<ArrayValue> Build(const std::vector<T>& values) {
+        auto array = EmptyArray();
+        for (auto value : values) {
+            array->Add(Build(value));
+        }
+        return array;
     }
 
     template <class T, std::enable_if_t<std::is_integral<T>::value, int> = 0>

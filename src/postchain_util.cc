@@ -85,7 +85,7 @@ std::string PostchainUtil::ByteVectorToHexString(
     const std::vector<unsigned char>& bytes) {
     std::stringstream ss;
 
-    ss << std::hex << std::uppercase << std::setfill('0');
+    ss << std::hex << std::setfill('0');
     for (auto byte : bytes) {
         ss << std::setw(2) << (int)byte;
     }

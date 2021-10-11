@@ -4,6 +4,7 @@ add_library(
     ASN1/writer.cc
     ASN1/reader.cc
     GTV/abstract_value.cc
+    operation.cc
     postchain_util.cc
 )
 

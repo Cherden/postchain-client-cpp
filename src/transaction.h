@@ -7,29 +7,51 @@
 
 #include "GTV/abstract_value.h"
 #include "GTV/abstract_value_facotry.h"
+#include "GTX/gtx.h"
+
 #include "operation.h"
+#include "common.h"
 
 namespace chromia {
 namespace postchain {
-class Transaction {
-  public:
-    Transaction(const std::string& blockchain_rid);
-    Operation& AddOperation(const std::string& operation_name);
-    Operation& AddOperation(const Operation& operation);
-    Transaction& operator<<(const Operation& obj) {
-        AddOperation(obj);
-        return *this;
-    }
-    void AddSigner(unsigned char* signer);
-    void Sign(unsigned char* private_key, unsigned char* public_key);
-    std::vector<unsigned char> GetBufferToSign();
-    gtv::AbstractValue GetGtvTxBody();
 
-  private:
-    std::string blockchain_rid_;
-    std::vector<Operation> operations_;
-    std::vector<unsigned char*> signers_;
-    std::vector<unsigned char*> signatures_;
+namespace client {
+class Gtx;
+}
+
+class TxStatusResponse
+{
+public:
+	std::string status_ = "";
+	std::string reject_reason_ = "";
+};
+
+class Transaction {
+public:
+
+	Transaction(std::shared_ptr<client::Gtx> gtx, std::string base_url, std::string brid);
+	
+	void AddOperation(std::string name, std::shared_ptr<gtv::ArrayValue> args);
+
+	void Sign(std::vector<byte> private_key, std::vector<byte> public_key);
+
+	std::string Serialize()
+	{
+		return this->gtx_object_->Serialize();
+	}
+
+	std::string GetTxRID();
+
+
+	bool IsSent();
+private:
+	std::shared_ptr<client::Gtx> gtx_object_;
+	std::string base_url_;
+	std::string brid_;
+	bool sent_ = false;
+	bool error_;
+
+	// TODO implement the onerror callback
 };
 }  // namespace postchain
 }  // namespace chromia

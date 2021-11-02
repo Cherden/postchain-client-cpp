@@ -28,11 +28,11 @@ class MerkleProof {
     static std::shared_ptr<MerkleProofTreeFactory> proof_factory;
 };
 
-std::shared_ptr<BinaryTreeFactory> MerkleProof::tree_factory =
-    std::make_shared<BinaryTreeFactory>();
-
-std::shared_ptr<MerkleProofTreeFactory> MerkleProof::proof_factory =
-    std::make_shared<MerkleProofTreeFactory>();
+//std::shared_ptr<BinaryTreeFactory> MerkleProof::tree_factory =
+//    std::make_shared<BinaryTreeFactory>();
+//
+//std::shared_ptr<MerkleProofTreeFactory> MerkleProof::proof_factory =
+//    std::make_shared<MerkleProofTreeFactory>();
 
 }  // namespace gtv
 }  // namespace postchain

@@ -12,6 +12,7 @@ class IntegerValue : public AbstractValue {
   public:
     explicit IntegerValue(long long value) : value_(value) {}
 
+	long long GetValue() { return value_; }
   protected:
     unsigned char AddContent(asn1::Writer& asn1_buffer) override {
         asn1_buffer.WriteInteger(value_);

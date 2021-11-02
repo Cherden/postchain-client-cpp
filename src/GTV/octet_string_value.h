@@ -14,6 +14,8 @@ class OctetStringValue : public AbstractValue {
     explicit OctetStringValue(std::vector<unsigned char> value)
         : value_(value){};
 
+	std::vector<unsigned char> GetValue() { return value_; }
+
   protected:
     unsigned char AddContent(asn1::Writer& asn1_buffer) override {
         asn1_buffer.WriteOctetString(value_);

@@ -5,32 +5,46 @@
 #include <string>
 #include <vector>
 
+#include "common.h"
 #include "GTV/abstract_value.h"
 #include "GTV/abstract_value_facotry.h"
+
+using namespace chromia::postchain::gtv;
 
 namespace chromia {
 namespace postchain {
 
+// Forward declaration
+namespace client {
+	class GTXValue;
+}
+
 class Operation {
   public:
-    explicit Operation(std::string name);
 
-    template <class T>
-    Operation& operator<<(const T& obj) {
-        args_.push_back(gtv::AbstractValueFactory::Build(obj));
-        return *this;
-    }
+    Operation(std::string name, std::shared_ptr<ArrayValue> args);
 
-    std::shared_ptr<gtv::AbstractValue> ToAbstractValue() const;
+	std::shared_ptr<client::GTXValue> ToGtxValue();
 
-    std::string Name() const { return name_; }
-    const std::vector<std::shared_ptr<gtv::AbstractValue>>& Args() const {
-        return args_;
-    }
+	std::shared_ptr<AbstractValue> Raw();
+
+	std::vector<byte> Encode();
+
+	std::vector<byte> Decode();
+
+	template <class T>
+	Operation& operator<<(const T& obj);
+
+	std::string GetName() const;
+
+	const std::vector<std::shared_ptr<client::GTXValue>>& GetArgs() const;
 
   private:
-    std::string name_;
-    std::vector<std::shared_ptr<gtv::AbstractValue>> args_;
+    std::string op_name_;
+	std::shared_ptr<ArrayValue> raw_args_;
+    std::vector<std::shared_ptr<client::GTXValue>> args_;
+
+	Operation();
 };
 
 }  // namespace postchain

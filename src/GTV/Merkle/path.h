@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "../abstract_value.h"
-#include "../abstract_value_facotry.h"
+#include "../abstract_value_factory.h"
 
 namespace chromia {
 namespace postchain {

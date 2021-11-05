@@ -7,7 +7,7 @@
 
 #include "common.h"
 #include "GTV/abstract_value.h"
-#include "GTV/abstract_value_facotry.h"
+#include "GTV/abstract_value_factory.h"
 
 using namespace chromia::postchain::gtv;
 

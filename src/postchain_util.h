@@ -76,7 +76,6 @@ class PostchainUtil {
 	*/
 	static std::vector<unsigned char> SignDigest(std::vector<unsigned char> &digest_buffer, std::vector<unsigned char> &private_key);
 
-
 	/**
 	* TODO comment this
 	*/
@@ -86,6 +85,14 @@ class PostchainUtil {
 	* TODO comment this
 	*/
 	static std::string QueryToJSONString(std::string query_name, std::vector<QueryObject> query_objects);
+
+	/**
+	* range : [min, max]
+	* @param min
+	* @param max
+	* @return int
+	*/
+	static int RandomIntInRange(int min, int max);
 
 private:
 	static secp256k1_context *secp_context_;

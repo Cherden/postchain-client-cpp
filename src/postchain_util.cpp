@@ -147,7 +147,7 @@ bool PostchainUtil::GeneratePrivateKey(std::vector<unsigned char> &private_key)
 	private_key.empty();
 	for (int i = 0; i < 32; i++)
 	{
-		private_key.push_back(33 + i); // !!! IMPORTANT TO-DO randomize !!!
+		private_key.push_back(RandomIntInRange(POSTCHAIN_BYTE_MIN, POSTCHAIN_BYTE_MAX)); // Generate random number in interval min unsigned char, max unsigned char
 	}
 
 	//Check private key
@@ -307,6 +307,19 @@ std::string PostchainUtil::QueryToJSONString(std::string query_name, std::vector
 	}
 
 	return json_root.dump();
+}
+
+int PostchainUtil::RandomIntInRange(int min, int max)
+{
+	static bool first = true;
+	if (first)
+	{
+		srand(time(NULL)); //seeding for the first time only!
+		first = false;
+	}
+
+	int res = min + rand() % ((max + 1) - min);
+	return res; //TO-DO check this.
 }
 
 }  // namespace postchain

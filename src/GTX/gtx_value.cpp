@@ -1,10 +1,6 @@
 #include "gtx_value.h"
 #include "dict_pair.h"
-
 #include "../ASN1/writer.h"
-
-#include "CoreMinimal.h"
-
 
 namespace chromia {
 namespace postchain {
@@ -21,10 +17,12 @@ bool is_big_endian(void)
 	return bint.c[0] == 1;
 }
 
+
 GTXValue::GTXValue()
 {
 	this->choice_ = GTXValueChoice::NotSet;
 }
+
 
 bool GTXValue::Equals(GTXValue *obj)
 {
@@ -45,10 +43,10 @@ bool GTXValue::Equals(GTXValue *obj)
 	}
 }
 
+
 std::vector<unsigned char> GTXValue::Encode()
 {
 	// TO-DO update naming convenrions
-	UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() type: %d"), (int) this->choice_);
 
 	Writer messageWriter;
 
@@ -58,7 +56,6 @@ std::vector<unsigned char> GTXValue::Encode()
 	{
 	case (GTXValueChoice::Null):
 	{
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() GTXValueChoice::Null"));
 		choiceConstants.push_back(0xa0);
 		messageWriter.WriteNull();
 		break;
@@ -69,37 +66,25 @@ std::vector<unsigned char> GTXValue::Encode()
 	// |--0xa--| |--type--| |----length----|
 	case (GTXValueChoice::ByteArray):
 	{
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() GTXValueChoice::ByteArray  length: %d"), this->byte_array_.size());
-
 		choiceConstants.push_back(0xa1);
-
 		messageWriter.WriteOctetString(this->byte_array_);
 		break;
 	}
 	case (GTXValueChoice::String):
 	{
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() GTXValueChoice::String length: %d"), this->string_.size());
-
 		choiceConstants.push_back(0xa2);
-
 		messageWriter.WriteUTF8String(this->string_);
 		break;
 	}
 	case (GTXValueChoice::Integer):
 	{
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() GTXValueChoice::Integer"));
-
 		choiceConstants.push_back(0xa3);
-
 		messageWriter.WriteInteger(this->integer_);
 		break;
 	}
 	case (GTXValueChoice::Array):
 	{
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() GTXValueChoice::Array length: %d"), this->array_.size());
-
 		choiceConstants.push_back(0xa5);
-
 		messageWriter.PushSequence();
 		for(auto &gtxValue : this->array_)
 		{
@@ -110,10 +95,7 @@ std::vector<unsigned char> GTXValue::Encode()
 	}
 	case (GTXValueChoice::Dict):
 	{
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() GTXValueChoice::Dict"));
-
 		choiceConstants.push_back(0xa4);
-
 		messageWriter.PushSequence();
 		for(auto &dictPair : this->dict_)
 		{
@@ -130,7 +112,6 @@ std::vector<unsigned char> GTXValue::Encode()
 	}
 
 	int choiceSize = messageWriter.GetEncodedLength();
-	UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() choiceSize: %d"), choiceSize);
 
 	if (choiceSize < 128)
 	{
@@ -138,8 +119,6 @@ std::vector<unsigned char> GTXValue::Encode()
 	}
 	else
 	{
-		//TO-DO find BitConverter alternative
-
 		char* choiceSizeAsBytes = static_cast<char*>(static_cast<void*>(&choiceSize));
 
 		std::vector<unsigned char> sizeInBytes = TrimByteList(choiceSizeAsBytes, 4);
@@ -148,8 +127,6 @@ std::vector<unsigned char> GTXValue::Encode()
 		
 		if (!is_big_endian()) // is LittleEndian
 		{
-			UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() isLittleEndian"));
-
 			std::reverse(sizeInBytes.begin(), sizeInBytes.end());
 		}
 
@@ -166,19 +143,9 @@ std::vector<unsigned char> GTXValue::Encode()
 		choiceConstants.push_back(writer_encoded[i]);
 	}
 
-	UE_LOG(LogTemp, Display, TEXT("CHROMA::GTXValue::Encode() return length: %d + %d = %d"),
-		choiceConstants.size(),
-		writer_encoded.size(),
-		choiceConstants.size()
-	);
-
 	return choiceConstants;
 }
 
-//GTXValue GTXValue::Decode(Reader sequence)
-//{
-//
-//}
 
 std::vector<unsigned char> GTXValue::TrimByteList(char* byteList, int length)
 {

@@ -1,15 +1,10 @@
 #include "postchain_util.h"
-
 #include <openssl/evp.h>
-
 #include <algorithm>
 #include <iomanip>
 #include <ios>
 #include <sstream>
-
 #include "SECP256K/include/secp256k1_recovery.h"
-
-#include "CoreMinimal.h"
 
 namespace chromia {
 namespace postchain {
@@ -159,8 +154,6 @@ bool PostchainUtil::GeneratePrivateKey(std::vector<unsigned char> &private_key)
 	int result = secp256k1_ec_seckey_verify(PostchainUtil::secp_context_, private_key.data());
 	if (result == 0)
 	{
-		//TO-DO handle error
-		//UE_LOG(LogTemp, Error, TEXT("CHROMA::secp256k1_ec_seckey_verify failed"));
 		return false;
 	}
 
@@ -178,7 +171,6 @@ bool PostchainUtil::GenerateCompresedPublicKey(std::vector<unsigned char> privat
 	if (result == 0)
 	{
 		return false;
-		//UE_LOG(LogTemp, Error, TEXT("CHROMA::secp256k1_ec_pubkey_create failed"));
 	}
 
 	// Serialize public key
@@ -190,7 +182,6 @@ bool PostchainUtil::GenerateCompresedPublicKey(std::vector<unsigned char> privat
 	if (result == 0)
 	{
 		return false;
-		//UE_LOG(LogTemp, Error, TEXT("CHROMA::secp256k1_ec_pubkey_serialize failed"));
 	}
 
 	return true;
@@ -250,15 +241,8 @@ std::vector<unsigned char> PostchainUtil::SignDigest(std::vector<unsigned char> 
 	std::vector<unsigned char> sigbytes(64);
 	int recid;
 
-	int result = secp256k1_ecdsa_sign_recoverable(PostchainUtil::secp_context_, &recoverable_signature, digest_buffer.data(), private_key.data(), NULL, NULL);
-	UE_LOG(LogTemp, Error, TEXT("CHROMA::secp256k1_ecdsa_sign_recoverable result: %d"), result);
-
-	result = secp256k1_ecdsa_recoverable_signature_serialize_compact(PostchainUtil::secp_context_, sigbytes.data(), &recid, &recoverable_signature);
-	UE_LOG(LogTemp, Error, TEXT("CHROMA::secp256k1_ecdsa_sign_recoverable result: %d  recid: %d"), result, recid);
-	if (recid >= 0 && recid <= 3)
-	{
-		UE_LOG(LogTemp, Error, TEXT("CHROMA::recid ok"));
-	}
+	secp256k1_ecdsa_sign_recoverable(PostchainUtil::secp_context_, &recoverable_signature, digest_buffer.data(), private_key.data(), NULL, NULL);
+	secp256k1_ecdsa_recoverable_signature_serialize_compact(PostchainUtil::secp_context_, sigbytes.data(), &recid, &recoverable_signature);
 
 	return sigbytes;
 }

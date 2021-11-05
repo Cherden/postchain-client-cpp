@@ -7,8 +7,7 @@
 #include <ios>
 #include <sstream>
 
-#include "../SECP256K/include/secp256k1_recovery.h"
-//#include "../SECP256K/src/modules/recovery/main_impl.h"
+#include "SECP256K/include/secp256k1_recovery.h"
 
 #include "CoreMinimal.h"
 
@@ -262,6 +261,68 @@ std::vector<unsigned char> PostchainUtil::SignDigest(std::vector<unsigned char> 
 	}
 
 	return sigbytes;
+}
+
+std::map<std::string, std::shared_ptr<AbstractValue>> PostchainUtil::QueryToDict(std::string query_name, std::vector<QueryObject> query_objects)
+{
+	std::map<std::string, std::shared_ptr<AbstractValue>> query_dict;
+
+	query_dict.insert(std::pair<std::string, std::shared_ptr<AbstractValue>>("type", AbstractValueFactory::Build(query_name)));
+
+	if (query_objects.size() > 0)
+	{
+		for(QueryObject &entry : query_objects)
+		{
+			if (std::dynamic_pointer_cast<gtv::OctetStringValue>(entry.content_))
+			{
+				std::shared_ptr<gtv::OctetStringValue> casted = std::dynamic_pointer_cast<gtv::OctetStringValue>(entry.content_);
+				std::string content_as_string = PostchainUtil::ByteVectorToHexString(casted->GetValue());
+				query_dict.insert(std::pair<std::string, std::shared_ptr<AbstractValue>>(entry.name_, AbstractValueFactory::Build(content_as_string)));
+			}
+			else
+			{
+				query_dict.insert(std::pair<std::string, std::shared_ptr<AbstractValue>>(entry.name_, entry.content_));
+			}
+		}
+	}
+
+	return query_dict;
+}
+
+std::string PostchainUtil::QueryToJSONString(std::string query_name, std::vector<QueryObject> query_objects)
+{
+	nlohmann::json json_root;
+
+	json_root["type"] = query_name;
+
+	if (query_objects.size() > 0)
+	{
+		for (QueryObject &entry : query_objects)
+		{
+			if (std::dynamic_pointer_cast<gtv::OctetStringValue>(entry.content_))
+			{
+				std::shared_ptr<gtv::OctetStringValue> casted = std::dynamic_pointer_cast<gtv::OctetStringValue>(entry.content_);
+				std::string content_as_string = PostchainUtil::ByteVectorToHexString(casted->GetValue());
+				json_root[entry.name_] = content_as_string;
+			}
+			else if (std::dynamic_pointer_cast<gtv::IntegerValue>(entry.content_))
+			{
+				std::shared_ptr<gtv::IntegerValue> casted = std::dynamic_pointer_cast<gtv::IntegerValue>(entry.content_);
+				json_root[entry.name_] = casted->GetValue();
+			}
+			else if (std::dynamic_pointer_cast<gtv::UTF8StringValue>(entry.content_))
+			{
+				std::shared_ptr<gtv::UTF8StringValue> casted = std::dynamic_pointer_cast<gtv::UTF8StringValue>(entry.content_);
+				json_root[entry.name_] = casted->GetValue();
+			}
+			else 
+			{
+				throw new std::exception("PostchainUtil::QueryToJSONString unnaccepted entry.content_ type");
+			}
+		}
+	}
+
+	return json_root.dump();
 }
 
 }  // namespace postchain

@@ -1,3 +1,5 @@
+#ifdef POSTCHAIN_TESTS
+
 #include "../src/operation.h"
 
 #include <gtest/gtest.h>
@@ -46,3 +48,5 @@ TEST(Operation, FullOperationTest) {
         "affea303020101";
     EXPECT_EQ(expected, PostchainUtil::ByteVectorToHexString(encoded_op));
 }
+
+#endif // POSTCHAIN_TESTS

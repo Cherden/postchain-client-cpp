@@ -1,3 +1,4 @@
+#ifdef POSTCHAIN_TESTS
 #include "../../src/ASN1/reader.h"
 
 #include <gtest/gtest.h>
@@ -148,3 +149,4 @@ TEST(ASN1Reader, SequenceTest) {
     auto op2_seq = op_seq.ReadSequence();
     EXPECT_EQ(op2_name, op2_seq.ReadUTF8String());
 }
+#endif // POSTCHAIN_TESTS

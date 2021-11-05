@@ -1,3 +1,4 @@
+#ifdef POSTCHAIN_TESTS
 #include "../../src/ASN1/writer.h"
 
 #include <gtest/gtest.h>
@@ -177,3 +178,4 @@ TEST(ASN1Writer, SequenceTest) {
     EXPECT_EQ(expected_hex,
               PostchainUtil::ByteVectorToHexString(writer.Encode()));
 }
+#endif // POSTCHAIN_TESTS

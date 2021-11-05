@@ -6,8 +6,6 @@
 #include "../operation.h"
 #include "../postchain_util.h"
 #include "../GTV/Merkle/Proof/merkle_proof.h"
-#include "CoreMinimal.h"
-
 
 namespace chromia {
 namespace postchain {
@@ -36,27 +34,23 @@ std::shared_ptr<GTXValue> Gtx::ArgToGTXValue(std::shared_ptr<gtv::AbstractValue>
 
 	if (std::dynamic_pointer_cast<gtv::IntegerValue>(arg))
 	{
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::ArgToGTXValue::GTXValueChoice::IntegerValue length"));
 		gtx_value->choice_ = GTXValueChoice::Integer;
 		gtx_value->integer_ = (long) (std::static_pointer_cast<gtv::IntegerValue>(arg))->GetValue();
 	}
 	else if (std::dynamic_pointer_cast<gtv::OctetStringValue>(arg))
 	{
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::ArgToGTXValue::GTXValueChoice::OctetStringValue length [%d]"), (std::static_pointer_cast<gtv::OctetStringValue>(arg))->GetValue().size());
 		gtx_value->choice_ = GTXValueChoice::ByteArray;
 		gtx_value->byte_array_ = (std::static_pointer_cast<gtv::OctetStringValue>(arg))->GetValue();
 	}
 	else if (std::dynamic_pointer_cast<gtv::UTF8StringValue>(arg))
 	{
-		std::shared_ptr<gtv::UTF8StringValue> casted = std::static_pointer_cast<gtv::UTF8StringValue>(arg);
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::ArgToGTXValue::GTXValueChoice::UTF8StringValue length [%s]"), *FString(UTF8_TO_TCHAR(casted->GetValue().c_str())));
+		std::shared_ptr<gtv::UTF8StringValue> casted = std::static_pointer_cast<gtv::UTF8StringValue>(arg); //TO-DO switch to dynamic
 		gtx_value->choice_ = GTXValueChoice::String;
 		gtx_value->string_ = casted->GetValue();
 	}
 	else if (std::dynamic_pointer_cast<gtv::ArrayValue>(arg))
 	{
 		std::shared_ptr<gtv::ArrayValue> casted = std::dynamic_pointer_cast<gtv::ArrayValue>(arg);
-		UE_LOG(LogTemp, Display, TEXT("CHROMA::ArgToGTXValue::GTXValueChoice::Array length [%d]"), casted->Size());
 
 		gtx_value->choice_ = GTXValueChoice::Array;
 
@@ -65,42 +59,7 @@ std::shared_ptr<GTXValue> Gtx::ArgToGTXValue(std::shared_ptr<gtv::AbstractValue>
 			std::shared_ptr<GTXValue> subArgGtxValue = ArgToGTXValue((*casted)[i]);
 			gtx_value->array_.push_back(subArgGtxValue);
 		}
-
-		//gtxValue->array_ = new List<GTXValue>();
 	}
-	/*
-	else if (arg is object[])
-	{
-		var array = (object[])arg;
-		gtxValue.Choice = GTXValueChoice.Array;
-
-		gtxValue.Array = new List<GTXValue>();
-		foreach(var subArg in array)
-		{
-			gtxValue.Array.Add(ArgToGTXValue((object)subArg));
-		}
-	}
-	else if (arg is Dictionary<string, object>)
-	{
-		gtxValue.Choice = GTXValueChoice.Dict;
-
-		var dict = (Dictionary<string, object>)arg;
-
-		gtxValue.Dict = new List<DictPair>();
-		foreach(var dictPair in dict)
-		{
-			gtxValue.Dict.Add(new DictPair(dictPair.Key, ArgToGTXValue(dictPair.Value)));
-		}
-	}
-	else if (arg is Operation)
-	{
-		return ((Operation)arg).ToGtxValue();
-	}
-	else
-	{
-		throw new System.Exception("Chromia.PostchainClient.GTX Gtx.ArgToGTXValue() Can't create GTXValue out of type " + arg.GetType());
-	}*/
-
 
 	return gtx_value;
 }
@@ -144,16 +103,9 @@ void Gtx::Sign(std::vector<byte> private_key, std::vector<byte> public_key)
 std::vector<byte> Gtx::GetBufferToSign()
 {
 	std::vector<std::vector<byte>> old_signatures = this->signatures_;
-
 	std::shared_ptr<AbstractValue> body = GetGtvTxBody();
 	std::vector<byte> encoded_buffer = AbstractValue::Hash(body);
-
-	FString asHex = UTF8_TO_TCHAR(PostchainUtil::ByteVectorToHexString(encoded_buffer).c_str());
-
-	UE_LOG(LogTemp, Display, TEXT("CHROMA::ProcessRequest() len: %d   %d  [%s]"), encoded_buffer.size(), asHex.Len(), *asHex);
-
 	this->signatures_ = old_signatures;
-
 	return encoded_buffer;
 }
 
@@ -231,24 +183,16 @@ void Gtx::AddSignature(std::vector<byte> public_key, std::vector<byte> signature
 
 std::string Gtx::Serialize()
 {
-	UE_LOG(LogTemp, Display, TEXT("Gtx::Serialize()"))
-
 	std::vector<byte> byte_encoded = Encode();
 	std::string str_encoded = PostchainUtil::ByteVectorToHexString(byte_encoded);
-
-	UE_LOG(LogTemp, Display, TEXT("Gtx::Serialize()::ProcessRequest() byte_encoded: %d  str_encoded: %d"), byte_encoded.size(), str_encoded.size());
-
 	return str_encoded;
 }
 
 std::vector<byte> Gtx::Encode()
 {
-	UE_LOG(LogTemp, Display, TEXT("Gtx::Serialize()"));
-
 	auto abs_signatures = AbstractValueFactory::EmptyArray();
 	for (auto & sig : this->signatures_)
 	{
-		UE_LOG(LogTemp, Display, TEXT("add signature"));
 		abs_signatures->Add(AbstractValueFactory::Build(sig));
 	}
 
@@ -261,36 +205,12 @@ std::vector<byte> Gtx::Encode()
 	std::string gtv_hex = PostchainUtil::ByteVectorToHexString(AbstractValue::Hash(gtv_body));
 	std::string gtx_hex = PostchainUtil::ByteVectorToHexString(AbstractValue::Hash(gtx_body));
 
-	UE_LOG(LogTemp, Display, TEXT("CHROMA::ProcessRequest() gtv_hex: %s"), *(FString(UTF8_TO_TCHAR(gtv_hex.c_str()))));
-	UE_LOG(LogTemp, Display, TEXT("CHROMA::ProcessRequest() gtx_hex: %s"), *(FString(UTF8_TO_TCHAR(gtx_hex.c_str()))));
-
 	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(gtx_body);
-	UE_LOG(LogTemp, Display, TEXT("CHROMA::ProcessRequest() gtv_body: %d  gtx_value: %d"), gtv_body->Size(), gtx_body->Size());
-
 	std::vector<byte> encoded = gtx_value->Encode();
 
 	return encoded;
 }
 
-/*
-
-
-	
-Gtx Gtx::Decode(std::vector<byte> encodedMessage)
-{
-
-}
-
-int Gtx::GetLength(std::vector<byte> encodedMessage)
-{
-
-}
-
-byte Gtx::GetOctetLength(std::vector<byte> encodedMessage)
-{
-
-}
-*/
 }  // namespace client
 }  // namespace postchain
 }  // namespace chromia

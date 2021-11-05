@@ -3,7 +3,9 @@
 
 #include <string>
 #include <vector>
-#include "../SECP256K/include/secp256k1.h"
+#include "SECP256K/include/secp256k1.h"
+#include "query.h"
+#include "../../nlohmann/json.hpp"
 
 namespace chromia {
 namespace postchain {
@@ -73,6 +75,17 @@ class PostchainUtil {
 	* @return the signature
 	*/
 	static std::vector<unsigned char> SignDigest(std::vector<unsigned char> &digest_buffer, std::vector<unsigned char> &private_key);
+
+
+	/**
+	* TODO comment this
+	*/
+	static std::map<std::string, std::shared_ptr<AbstractValue>> QueryToDict(std::string query_name, std::vector<QueryObject> query_objects);
+
+	/**
+	* TODO comment this
+	*/
+	static std::string QueryToJSONString(std::string query_name, std::vector<QueryObject> query_objects);
 
 private:
 	static secp256k1_context *secp_context_;

@@ -2,7 +2,7 @@
 #define POSTCHAIN_CLIENT_QUERY_H_
 
 #include "GTV/abstract_value.h" 
-#include "GTV/abstract_value_factory.h" //TO-DO rename this
+#include "GTV/abstract_value_factory.h"
 
 using namespace chromia::postchain::gtv;
 

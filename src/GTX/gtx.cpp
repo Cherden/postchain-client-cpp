@@ -35,16 +35,16 @@ std::shared_ptr<GTXValue> Gtx::ArgToGTXValue(std::shared_ptr<gtv::AbstractValue>
 	if (std::dynamic_pointer_cast<gtv::IntegerValue>(arg))
 	{
 		gtx_value->choice_ = GTXValueChoice::Integer;
-		gtx_value->integer_ = (long) (std::static_pointer_cast<gtv::IntegerValue>(arg))->GetValue();
+		gtx_value->integer_ = (long) (std::dynamic_pointer_cast<gtv::IntegerValue>(arg))->GetValue();
 	}
 	else if (std::dynamic_pointer_cast<gtv::OctetStringValue>(arg))
 	{
 		gtx_value->choice_ = GTXValueChoice::ByteArray;
-		gtx_value->byte_array_ = (std::static_pointer_cast<gtv::OctetStringValue>(arg))->GetValue();
+		gtx_value->byte_array_ = (std::dynamic_pointer_cast<gtv::OctetStringValue>(arg))->GetValue();
 	}
 	else if (std::dynamic_pointer_cast<gtv::UTF8StringValue>(arg))
 	{
-		std::shared_ptr<gtv::UTF8StringValue> casted = std::static_pointer_cast<gtv::UTF8StringValue>(arg); //TO-DO switch to dynamic
+		std::shared_ptr<gtv::UTF8StringValue> casted = std::dynamic_pointer_cast<gtv::UTF8StringValue>(arg); //TO-DO switch to dynamic
 		gtx_value->choice_ = GTXValueChoice::String;
 		gtx_value->string_ = casted->GetValue();
 	}
@@ -69,9 +69,7 @@ void Gtx::AddSignerToGtx(std::vector<byte> signer)
 {
 	if (this->signatures_.size() != 0)
 	{
-		return;
-		// TO-DO handle errors
-		// throw new Exception("Cannot add signers to an already signed gtx");
+		throw new std::exception("Cannot add signers to an already signed gtx");
 	}
 
 	this->signers_.push_back(signer);

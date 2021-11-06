@@ -21,7 +21,7 @@ Reader Reader::ReadSequence() {
                                         bytes_.begin() + length);
     bytes_.erase(bytes_.begin(), bytes_.begin() + length);
 
-    return Reader(sequence); //TO-DO check memory management on this
+    return Reader(sequence);
 }
 
 void Reader::ReadNull() {

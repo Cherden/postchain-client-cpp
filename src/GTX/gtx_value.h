@@ -36,17 +36,9 @@ public:
 
 	GTXValue();
 
-	bool Equals(GTXValue *obj);
-	
 	std::vector<unsigned char> Encode();
 
-	//static GTXValue Decode(Reader sequence);
-
 	static std::vector<unsigned char> TrimByteList(char* byteList, int length);
-
-	// public object[] ToObjectArray(); TO-DO check if needed and valid in C++
-
-	std::string ToString();
 };
 }  // namespace client
 }  // namespace postchain

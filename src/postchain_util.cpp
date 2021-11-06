@@ -47,6 +47,7 @@ std::vector<unsigned char> PostchainUtil::LongToByteVector(
     return bytes;
 }
 
+
 long long PostchainUtil::ByteVectorToLong(std::vector<unsigned char> bytes,
                                           bool mind_sign) {
     if (bytes.size() > sizeof(long long)) {
@@ -71,6 +72,7 @@ long long PostchainUtil::ByteVectorToLong(std::vector<unsigned char> bytes,
     return number;
 }
 
+
 std::vector<unsigned char> PostchainUtil::HexStringToByteVector(
     const std::string& hex_string) {
     std::vector<unsigned char> bytes;
@@ -81,6 +83,7 @@ std::vector<unsigned char> PostchainUtil::HexStringToByteVector(
 
     return bytes;
 }
+
 
 std::string PostchainUtil::ByteVectorToHexString(
     const std::vector<unsigned char>& bytes) {
@@ -93,6 +96,7 @@ std::string PostchainUtil::ByteVectorToHexString(
 
     return ss.str();
 }
+
 
 std::string PostchainUtil::Sha256(std::vector<unsigned char> buffer) {
     EVP_MD_CTX* context = EVP_MD_CTX_new();
@@ -125,10 +129,12 @@ std::string PostchainUtil::Sha256(std::vector<unsigned char> buffer) {
     return hashed_buffer;
 }
 
+
 bool PostchainUtil::IsLittleEndian() {
     int n = 1;
     return *(char*)&n == 1;
 }
+
 
 void PostchainUtil::InitSECPContext()
 {
@@ -137,6 +143,7 @@ void PostchainUtil::InitSECPContext()
 		PostchainUtil::secp_context_ = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
 	}
 }
+
 
 bool PostchainUtil::GeneratePrivateKey(std::vector<unsigned char> &private_key)
 {
@@ -147,7 +154,7 @@ bool PostchainUtil::GeneratePrivateKey(std::vector<unsigned char> &private_key)
 	private_key.empty();
 	for (int i = 0; i < 32; i++)
 	{
-		private_key.push_back(RandomIntInRange(POSTCHAIN_BYTE_MIN, POSTCHAIN_BYTE_MAX)); // Generate random number in interval min unsigned char, max unsigned char
+		private_key.push_back(RandomIntInRange(POSTCHAIN_BYTE_MIN, POSTCHAIN_BYTE_MAX));
 	}
 
 	//Check private key
@@ -159,6 +166,7 @@ bool PostchainUtil::GeneratePrivateKey(std::vector<unsigned char> &private_key)
 
 	return true;
 }
+
 
 bool PostchainUtil::GenerateCompresedPublicKey(std::vector<unsigned char> private_key, std::vector<unsigned char> &public_key)
 {
@@ -187,29 +195,22 @@ bool PostchainUtil::GenerateCompresedPublicKey(std::vector<unsigned char> privat
 	return true;
 }
 
-std::string PostchainUtil::KeyToString(std::vector<unsigned char> &key)
-{
-	std::string out;
-	//TO-DO 
-	return out;
-}
 
 bool PostchainUtil::GenerateKeyPair(std::vector<unsigned char> &private_key, std::vector<unsigned char> &public_key)
 {
 	if (!PostchainUtil::GeneratePrivateKey(private_key))
 	{
-		// TO-DO handle error
 		return false;
 	}
 
 	if (!PostchainUtil::GenerateCompresedPublicKey(private_key, public_key))
 	{
-		// TO-DO handle error
 		return false;
 	}
 
 	return true;
 }
+
 
 std::vector<unsigned char> PostchainUtil::Sign(std::vector<unsigned char> &content, std::vector<unsigned char> &private_key)
 {
@@ -225,6 +226,7 @@ std::vector<unsigned char> PostchainUtil::Sign(std::vector<unsigned char> &conte
 
 	return PostchainUtil::SignDigest(content, private_key);
 }
+
 
 std::vector<unsigned char> PostchainUtil::SignDigest(std::vector<unsigned char> &digest_buffer, std::vector<unsigned char> &private_key)
 {
@@ -246,6 +248,7 @@ std::vector<unsigned char> PostchainUtil::SignDigest(std::vector<unsigned char> 
 
 	return sigbytes;
 }
+
 
 std::map<std::string, std::shared_ptr<AbstractValue>> PostchainUtil::QueryToDict(std::string query_name, std::vector<QueryObject> query_objects)
 {
@@ -272,6 +275,7 @@ std::map<std::string, std::shared_ptr<AbstractValue>> PostchainUtil::QueryToDict
 
 	return query_dict;
 }
+
 
 std::string PostchainUtil::QueryToJSONString(std::string query_name, std::vector<QueryObject> query_objects)
 {
@@ -309,6 +313,7 @@ std::string PostchainUtil::QueryToJSONString(std::string query_name, std::vector
 	return json_root.dump();
 }
 
+
 int PostchainUtil::RandomIntInRange(int min, int max)
 {
 	static bool first = true;
@@ -319,7 +324,7 @@ int PostchainUtil::RandomIntInRange(int min, int max)
 	}
 
 	int res = min + rand() % ((max + 1) - min);
-	return res; //TO-DO check this.
+	return res;
 }
 
 }  // namespace postchain

@@ -20,8 +20,6 @@ public:
 
 	DictPair(std::string name = "", GTXValue *value = nullptr);
 	
-	bool Equals(DictPair *value);
-
 	std::vector<unsigned char> Encode();
 
 	static DictPair Decode(Reader *sequence);

@@ -1,22 +1,11 @@
 #include "gtx_value.h"
 #include "dict_pair.h"
 #include "../ASN1/writer.h"
+#include "../postchain_util.h"
 
 namespace chromia {
 namespace postchain {
 namespace client {
-
-//TO-DO move this to some class
-bool is_big_endian(void)
-{
-	union {
-		uint32_t i;
-		char c[4];
-	} bint = { 0x01020304 };
-
-	return bint.c[0] == 1;
-}
-
 
 GTXValue::GTXValue()
 {
@@ -24,40 +13,18 @@ GTXValue::GTXValue()
 }
 
 
-bool GTXValue::Equals(GTXValue *obj)
-{
-	if (obj == nullptr)
-	{
-		return false;
-	}
-	else 
-	{
-		return false;
-		// TO-DO
-		/*return this.Choice.Equals(gtxValue.Choice)
-			&& ((this.ByteArray == null || gtxValue.ByteArray == null) ? this.ByteArray == gtxValue.ByteArray : Enumerable.SequenceEqual(this.ByteArray, gtxValue.ByteArray))
-			&& ((this.String == null || gtxValue.String == null) ? this.String == gtxValue.String : this.String.Equals(gtxValue.String))
-			&& this.Integer.Equals(gtxValue.Integer)
-			&& ((this.Dict == null || gtxValue.Dict == null) ? this.Dict == gtxValue.Dict : Enumerable.SequenceEqual(this.Dict, gtxValue.Dict))
-			&& ((this.Array == null || gtxValue.Array == null) ? this.Array == gtxValue.Array : Enumerable.SequenceEqual(this.Array, gtxValue.Array));*/
-	}
-}
-
-
 std::vector<unsigned char> GTXValue::Encode()
 {
-	// TO-DO update naming convenrions
+	Writer message_writer;
 
-	Writer messageWriter;
-
-	std::vector<unsigned char> choiceConstants;
+	std::vector<unsigned char> choice_constants;
 	
 	switch (this->choice_)
 	{
 	case (GTXValueChoice::Null):
 	{
-		choiceConstants.push_back(0xa0);
-		messageWriter.WriteNull();
+		choice_constants.push_back(0xa0);
+		message_writer.WriteNull();
 		break;
 	}
 	// The CHOICE in Asn1 is not implement in the used (experimental) library, yet.
@@ -66,84 +33,83 @@ std::vector<unsigned char> GTXValue::Encode()
 	// |--0xa--| |--type--| |----length----|
 	case (GTXValueChoice::ByteArray):
 	{
-		choiceConstants.push_back(0xa1);
-		messageWriter.WriteOctetString(this->byte_array_);
+		choice_constants.push_back(0xa1);
+		message_writer.WriteOctetString(this->byte_array_);
 		break;
 	}
 	case (GTXValueChoice::String):
 	{
-		choiceConstants.push_back(0xa2);
-		messageWriter.WriteUTF8String(this->string_);
+		choice_constants.push_back(0xa2);
+		message_writer.WriteUTF8String(this->string_);
 		break;
 	}
 	case (GTXValueChoice::Integer):
 	{
-		choiceConstants.push_back(0xa3);
-		messageWriter.WriteInteger(this->integer_);
+		choice_constants.push_back(0xa3);
+		message_writer.WriteInteger(this->integer_);
 		break;
 	}
 	case (GTXValueChoice::Array):
 	{
-		choiceConstants.push_back(0xa5);
-		messageWriter.PushSequence();
+		choice_constants.push_back(0xa5);
+		message_writer.PushSequence();
 		for(auto &gtxValue : this->array_)
 		{
-			messageWriter.WriteEncodedValue(gtxValue->Encode());
+			message_writer.WriteEncodedValue(gtxValue->Encode());
 		}
-		messageWriter.PopSequence();
+		message_writer.PopSequence();
 		break;
 	}
 	case (GTXValueChoice::Dict):
 	{
-		choiceConstants.push_back(0xa4);
-		messageWriter.PushSequence();
+		choice_constants.push_back(0xa4);
+		message_writer.PushSequence();
 		for(auto &dictPair : this->dict_)
 		{
-			messageWriter.WriteEncodedValue(dictPair->Encode());
+			message_writer.WriteEncodedValue(dictPair->Encode());
 		}
-		messageWriter.PopSequence();
+		message_writer.PopSequence();
 		break;
 	}
 	default:
 	{
-		// TO-DO handle errors
-		//throw new System.Exception("Chromia.PostchainClient.GTX.Messages GTXValue.Encode() GTXValueChoice.Default case. Unknown choice " + this.Choice);
+		throw new std::exception("Chromia.PostchainClient.GTX.Messages GTXValue.Encode() GTXValueChoice.Default case. Unknown choice ");
 	}
 	}
 
-	int choiceSize = messageWriter.GetEncodedLength();
+	int choice_size = message_writer.GetEncodedLength();
 
-	if (choiceSize < 128)
+	if (choice_size < 128)
 	{
-		choiceConstants.push_back((unsigned char) choiceSize);
+		choice_constants.push_back((unsigned char)choice_size);
 	}
 	else
 	{
-		char* choiceSizeAsBytes = static_cast<char*>(static_cast<void*>(&choiceSize));
+		char* choice_size_as_bytes = static_cast<char*>(static_cast<void*>(&choice_size));
 
-		std::vector<unsigned char> sizeInBytes = TrimByteList(choiceSizeAsBytes, 4);
-		byte sizeLength = (byte) sizeInBytes.size();
-		choiceConstants.push_back((byte)(0x80 + sizeLength));
+		std::vector<unsigned char> size_in_bytes = TrimByteList(choice_size_as_bytes, 4);
+		byte sizeLength = (byte)size_in_bytes.size();
+		choice_constants.push_back((byte)(0x80 + sizeLength));
 		
-		if (!is_big_endian()) // is LittleEndian
+		if (PostchainUtil::IsLittleEndian())
 		{
-			std::reverse(sizeInBytes.begin(), sizeInBytes.end());
+			std::reverse(size_in_bytes.begin(), size_in_bytes.end());
 		}
 
-		for (size_t i = 0; i < sizeInBytes.size(); i++)
+		for (size_t i = 0; i < size_in_bytes.size(); i++)
 		{
-			choiceConstants.push_back(sizeInBytes[i]);
+			choice_constants.push_back(size_in_bytes[i]);
 		}
 	}
 	
-	std::vector<unsigned char> writer_encoded = messageWriter.Encode();
+	std::vector<unsigned char> writer_encoded = message_writer.Encode();
 	
 	for (int i = 0; i < writer_encoded.size(); i++)
 	{
-		choiceConstants.push_back(writer_encoded[i]);
+		choice_constants.push_back(writer_encoded[i]);
 	}
 
-	return choiceConstants;
+	return choice_constants;
 }
 
 
@@ -166,11 +132,6 @@ std::vector<unsigned char> GTXValue::TrimByteList(char* byteList, int length)
 	return trimmedBytes;
 }
 
-std::string GTXValue::ToString()
-{
-	//TO-DO
-	return std::string();
-}
 
 }  // namespace client
 }  // namespace postchain

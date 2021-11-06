@@ -34,7 +34,7 @@ class PostchainUtil {
     static bool IsLittleEndian();
 
 	/**
-	  * Creates a SECP256K private key
+	  * Creates a SECP256K random private key
 	  * @param private_key - Reference to the key wich will be created
 	  * @return true if the execution was successfull, false otherwise
 	  */
@@ -55,11 +55,6 @@ class PostchainUtil {
 	  */
 	static bool GenerateKeyPair(std::vector<unsigned char> &private_key, std::vector<unsigned char> &public_key);
 
-	/** 
-	  *Get string representation of some binary private or public key 
-	*/
-	static std::string KeyToString(std::vector<unsigned char> &key);
-	
 	/**
 	   * @param content to sign. It will be digested before signing.
 	   * @param private_key The private key to sign the content with
@@ -77,12 +72,12 @@ class PostchainUtil {
 	static std::vector<unsigned char> SignDigest(std::vector<unsigned char> &digest_buffer, std::vector<unsigned char> &private_key);
 
 	/**
-	* TODO comment this
+	* Transform list of QueryObjects to std::map. 
 	*/
 	static std::map<std::string, std::shared_ptr<AbstractValue>> QueryToDict(std::string query_name, std::vector<QueryObject> query_objects);
 
 	/**
-	* TODO comment this
+	* Transform list of QueryObjects to json string
 	*/
 	static std::string QueryToJSONString(std::string query_name, std::vector<QueryObject> query_objects);
 

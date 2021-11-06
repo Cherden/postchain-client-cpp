@@ -19,20 +19,6 @@ namespace client {
 		}
 	}
 
-	bool DictPair::Equals(DictPair *obj)
-	{
-		if (obj == nullptr)
-		{
-			return false;
-		}
-		else 
-		{
-			return false;
-			//TO-DO
-			/*return this.Name.Equals(dictPair.Name)
-				&& this.Value.Equals(dictPair.Value);*/
-		}
-	}
 
 	std::vector<unsigned char> DictPair::Encode()
 	{
@@ -40,7 +26,7 @@ namespace client {
 
 		messageWriter->PushSequence();
 		messageWriter->WriteUTF8String(this->name_);
-		// TO-DO messageWriter->WriteEncodedValue(this->value_->Encode());
+		//TO-DO messageWriter->WriteEncodedValue(this->value_->Encode());
 		messageWriter->PopSequence();
 
 		return messageWriter->Encode();
@@ -52,7 +38,7 @@ namespace client {
 		Reader dictSequence = sequence->ReadSequence();
 
 		dict.name_ = dictSequence.ReadUTF8String();
-		//dict->value_ = GTXValue.Decode(dictSequence);
+		//TO-DO dict->value_ = GTXValue.Decode(dictSequence);
 
 		return dict;
 	}

@@ -26,6 +26,11 @@ BlockchainInfo::BlockchainInfo(std::string name, std::string website, std::strin
 	);
 }
 
+void BlockchainInfo::GetInfo(std::shared_ptr<BlockchainClient> connection, std::function<void(BlockchainInfo)> on_success, std::function<void(std::string)> on_error)
+{
+	//connection->Query()
+}
+
 } // namespace ft3
 } // namespace postchain
 } // namespace chromia

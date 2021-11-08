@@ -1,5 +1,9 @@
 #include <string>
 #include "rate_limit_info.h"
+#include "../../../src/blockchain_client.h"
+
+using namespace chromia::postchain::client;
+
 
 namespace chromia {
 namespace postchain {
@@ -19,7 +23,7 @@ public:
 	BlockchainInfo(std::string name, std::string website, std::string description,
 		int rate_limit_active, int rate_limit_max_points, int rate_limit_recovery_time, int rate_limit_points_at_account_creation);
 
-	//static void GetInfo(BlockchainClient connection);
+	static void GetInfo(std::shared_ptr<BlockchainClient> connection, std::function<void(BlockchainInfo)> on_success, std::function<void(std::string)> on_error);
 };
 } // namespace ft3
 } //namespace postchain

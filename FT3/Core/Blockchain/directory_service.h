@@ -7,7 +7,7 @@ namespace ft3 {
 class DirectoryService
 {
 public:
-	virtual std::shared_ptr<ChainConnectionInfo> GetChainConnectionInfo(std::string id) {};
+	virtual std::shared_ptr<ChainConnectionInfo> GetChainConnectionInfo(std::string id) { return nullptr; };
 };
 
 } // namespace ft3

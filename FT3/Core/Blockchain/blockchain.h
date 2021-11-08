@@ -24,26 +24,23 @@ public:
 		this->directory_service_ = directory_service;
 	}
 
-	static void Initialize(string blockchain_rid, DirectoryService directory_service, std::function<void(int, std::string)> on_success, std::function<void(int, std::string)> on_error)
+	static void Initialize(string blockchain_rid, DirectoryService directory_service, std::function<void(std::shared_ptr<BlockchainInfo>)> on_success, std::function<void(std::string)> on_error)
 	{
-		ChainConnectionInfo chainConnectionInfo = directory_service.GetChainConnectionInfo(blockchain_rid);
+		std::shared_ptr<ChainConnectionInfo> chainConnectionInfo = directory_service.GetChainConnectionInfo(blockchain_rid);
 
-	/*	if (chainConnectionInfo == null)
+		if (chainConnectionInfo == nullptr)
 		{
-			throw new Exception("Cannot find details for chain with RID: " + blockchainRID);
-		}*/
+			throw new std::exception("Cannot find details for chain with RID: " + blockchain_rid);
+		}
 
-		GameObject goConnection = new GameObject();
-		goConnection.name = "Blockchain_" + blockchainRID;
-		BlockchainClient connection = goConnection.AddComponent<BlockchainClient>();
+		std::shared_ptr<BlockchainClient> connection = std::make_shared<BlockchainClient>();
 
-		connection.Setup(
-			blockchainRID,
-			chainConnectionInfo.Url
-		);
+		connection->Setup(blockchain_rid, chainConnectionInfo->url_);
 
-		yield return BlockchainInfo.GetInfo(connection,
-			(BlockchainInfo info) = > onSuccess(new Blockchain(blockchainRID, info, connection, directoryService)), onError);
+		//std::function<void(std::shared_ptr<BlockchainInfo>)> on_success, std::function<void(std::string)> on_error
+
+		/*BlockchainInfo::GetInfo(connection,
+			(BlockchainInfo info) = > onSuccess(new Blockchain(blockchainRID, info, connection, directoryService)), onError);*/
 	}
 
 	/*

@@ -1,80 +1,66 @@
-﻿//using System.Linq;
-//using System.Text;
-//using System;
-//
-//namespace Chromia.Postchain.Ft3
-//{
-//    public static class Util
-//    {
-//        public static byte[] HexStringToBuffer(string text)
-//        {
-//            return Enumerable.Range(0, text.Length)
-//                            .Where(x => x % 2 == 0)
-//                            .Select(x => Convert.ToByte(text.Substring(x, 2), 16))
-//                            .ToArray();
-//        }
-//
-//        public static string ByteArrayToString(byte[] ba)
-//        {
-//            StringBuilder hex = new StringBuilder(ba.Length * 2);
-//            foreach (byte b in ba)
-//            {
-//                hex.AppendFormat("{0:x2}", b);
-//            }
-//
-//            return hex.ToString();
-//        }
-//
-//        public static string AuthTypeToString(AuthType type)
-//        {
-//            switch (type)
-//            {
-//                case AuthType.SingleSig:
-//                    return "S";
-//                case AuthType.MultiSig:
-//                    return "M";
-//                default:
-//                    return "";
-//            }
-//        }
-//
-//        public static string FlagTypeToString(FlagsType type)
-//        {
-//            switch (type)
-//            {
-//                case FlagsType.Account:
-//                    return "A";
-//                case FlagsType.Transfer:
-//                    return "T";
-//                default:
-//                    return "";
-//            }
-//        }
-//
-//        public static FlagsType StringToFlagType(string type)
-//        {
-//            switch (type)
-//            {
-//                case "A":
-//                    return FlagsType.Account;
-//                case "T":
-//                    return FlagsType.Transfer;
-//                default:
-//                    return FlagsType.None;
-//            }
-//        }
-//
-//        public static AuthType StringToAuthType(string type)
-//        {
-//            switch (type)
-//            {
-//                case "S":
-//                    return AuthType.SingleSig;
-//                case "M":
-//                    return AuthType.MultiSig;
-//                default:
-//                    return AuthType.None;
-//            }
-//        }
-//    }
-//}
+﻿#include "../../src/common.h"
+#include "../User/account.h"
+
+#include <vector>
+
+namespace chromia {
+namespace postchain {
+namespace ft3 {
+class Util
+{
+public:
+    static std::string AuthTypeToString(AuthType type)
+    {
+        switch (type)
+        {
+		case AuthType::SingleSig:
+            return "S";
+		case AuthType::MultiSig:
+            return "M";
+        default:
+            return "";
+        }
+    }
+
+    static std::string FlagTypeToString(FlagsType type)
+    {
+        switch (type)
+        {
+		case FlagsType::Account:
+            return "A";
+		case FlagsType::Transfer:
+            return "T";
+        default:
+            return "";
+        }
+    }
+
+    static FlagsType StringToFlagType(std::string type)
+    {
+		if (type.compare("A") == 0)
+		{
+			return FlagsType::Account;
+		}
+		if (type.compare("T") == 0)
+		{
+			return FlagsType::Transfer;
+		}
+		FlagsType::None;
+    }
+
+    static AuthType StringToAuthType(std::string type)
+    {
+		if (type.compare("S") == 0)
+		{
+			return AuthType::SingleSig;
+		}
+		if (type.compare("M") == 0)
+		{
+			return AuthType::MultiSig;
+		}
+		return AuthType::None;
+    }
+};
+} // namespace http
+} // namespace postchain
+} // namespace chromia

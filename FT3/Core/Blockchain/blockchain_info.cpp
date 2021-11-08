@@ -1,4 +1,7 @@
 #include "blockchain_info.h"
+#include "CoreMinimal.h"
+#include "../../../../nlohmann/json.hpp"
+#include "../../../../ChromaUnreal/Utils.h"
 
 namespace chromia {
 namespace postchain {
@@ -26,9 +29,18 @@ BlockchainInfo::BlockchainInfo(std::string name, std::string website, std::strin
 	);
 }
 
-void BlockchainInfo::GetInfo(std::shared_ptr<BlockchainClient> connection, std::function<void(BlockchainInfo)> on_success, std::function<void(std::string)> on_error)
+void BlockchainInfo::GetInfo(std::shared_ptr<BlockchainClient> connection, std::function<void(std::shared_ptr<BlockchainInfo>)> on_success, std::function<void(std::string)> on_error)
 {
-	//connection->Query()
+	std::function<void(std::string)> on_success_wrapper = [on_success](std::string content) {
+		UE_LOG(LogTemp, Error, TEXT("CHROMA::BlockchainInfo::GetInfo callback wrapper: %s"),  *(ChromaUtils::STDStringToFString(content)));
+		
+		nlohmann::json json_content = nlohmann::json::parse(content);
+		
+		std::shared_ptr<BlockchainInfo> info = std::make_shared<BlockchainInfo>();
+		on_success(info);
+	};
+
+	connection->Query("ft3.get_blockchain_info", {}, on_success_wrapper, on_error);
 }
 
 } // namespace ft3

@@ -43,11 +43,14 @@ public:
 	/*std::vector<QueryObject> queryObjects;
 	queryObjects.push_back(QueryObject("name", AbstractValueFactory::Build(ChromaUtils::FStringToSTDString(username))));*/
 	void Query(std::string query_name, std::vector<QueryObject> query_objects, 
-		std::function<void(int, std::string)> on_success, std::function<void(int, std::string)> on_error)
+		std::function<void(std::string)> on_success, std::function<void(std::string)> on_error)
 	{
 		std::string payload = PostchainUtil::QueryToJSONString(query_name, query_objects);
 		std::string url = this->base_url_ + "/query" + this->blockchain_rid_;
-		//http::HttpRequestWrapper http_request(url, on_success);
+		
+		std::shared_ptr<UHttpRequest> http_request = UHttpRequest::BuildHttpRequest(url, on_success, on_error);
+		http_request->SetContent(payload);
+		http_request->Post();
 	}
 
 };

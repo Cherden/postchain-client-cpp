@@ -34,25 +34,20 @@ public:
 		}
 
 		std::shared_ptr<BlockchainClient> connection = std::make_shared<BlockchainClient>();
-
 		connection->Setup(blockchain_rid, chainConnectionInfo->url_);
-
-		//std::function<void(std::shared_ptr<BlockchainInfo>)> on_success, std::function<void(std::string)> on_error
-
-		/*BlockchainInfo::GetInfo(connection,
-			(BlockchainInfo info) = > onSuccess(new Blockchain(blockchainRID, info, connection, directoryService)), onError);*/
+		BlockchainInfo::GetInfo(connection, on_success, on_error);
 	}
 
-	/*
 	public BlockchainSession NewSession(User user)
 	{
 		return new BlockchainSession(user, this);
 	}
 
+	/*
 	public IEnumerator GetAccountsByParticipantId(string id, User user, Action<Account[]> onSuccess, Action<string> onError)
 	{
 		yield return Account.GetByParticipantId(id, this.NewSession(user), onSuccess, onError);
-	}
+
 
 	public IEnumerator GetAccountsByAuthDescriptorId(string id, User user, Action<Account[]> onSuccess, Action<string> onError)
 	{

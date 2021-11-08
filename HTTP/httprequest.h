@@ -31,8 +31,8 @@ public:
 	UHttpRequest(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {};
 
 	static std::shared_ptr<UHttpRequest> BuildHttpRequest(std::string url, 
-		std::function<void(int, std::string)> success_callback, 
-		std::function<void(int, std::string)> error_callback);
+		std::function<void(std::string)> success_callback, 
+		std::function<void(std::string)> error_callback);
 
 	void SetContent(std::string content);
 
@@ -44,8 +44,8 @@ private:
 
 	std::string url_;
 	std::string content_;
-	std::function<void(int, std::string)> success_callback_;
-	std::function<void(int, std::string)> error_callback_;
+	std::function<void(std::string)> success_callback_;
+	std::function<void(std::string)> error_callback_;
 
 	///*Called when the server has responded to http request*/
 	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);

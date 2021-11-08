@@ -2,7 +2,7 @@
 #include "../../ChromaUnreal/Utils.h"
 
 std::shared_ptr<UHttpRequest> UHttpRequest::BuildHttpRequest(std::string url, 
-	std::function<void(int, std::string)> success_callback, std::function<void(int, std::string)> error_callback)
+	std::function<void(std::string)> success_callback, std::function<void(std::string)> error_callback)
 {
 	std::shared_ptr<UHttpRequest> request(NewObject<UHttpRequest>());
 	request->url_ = url;
@@ -45,11 +45,12 @@ void UHttpRequest::Post()
 
 void UHttpRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	if (bWasSuccessful){
-		success_callback_(Response->GetResponseCode(), ChromaUtils::FStringToSTDString(Response->GetContentAsString()));
+	if (bWasSuccessful)
+	{
+		success_callback_(ChromaUtils::FStringToSTDString(Response->GetContentAsString()));
 	}
 	else 
 	{
-		error_callback_(Response->GetResponseCode(), "UHttpRequest Failed");
+		error_callback_("UHttpRequest Failed");
 	}
 }

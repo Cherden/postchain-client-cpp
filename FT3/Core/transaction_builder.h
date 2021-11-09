@@ -7,6 +7,7 @@
 #include "../../src/common.h"
 #include "../../src/postchain_transaction.h"
 #include "transaction.h"
+#include "../Core/operation.h"
 
 namespace chromia {
 namespace postchain {
@@ -22,7 +23,7 @@ public:
         this->blockchain_ = blockchain;
     }
 
-    std::shared_ptr<TransactionBuilder> Add(std::shared_ptr<Operation> operation)
+    std::shared_ptr<TransactionBuilder> Add(std::shared_ptr<ft3::Operation> operation)
     {
         this->operations_.push_back(operation);
         return std::shared_ptr<TransactionBuilder>(this);
@@ -33,7 +34,7 @@ public:
 		std::shared_ptr<PostchainTransaction> tx = this->blockchain_->connection_->NewTransaction(signers); //TO-DO add on error
         for (auto &op : operations_)
         {
-            tx->AddOperation(op->GetName(), op->GetRawArgs());
+            tx->AddOperation(op->name_, op->args_);
         }
 		return std::make_shared<Transaction>(tx);
     }
@@ -45,7 +46,7 @@ public:
 		return tx;
     }
 private:
-	std::vector<std::shared_ptr<Operation>> operations_;
+	std::vector<std::shared_ptr<ft3::Operation>> operations_;
 };
 } // namespace ft3
 } // namespace postchain

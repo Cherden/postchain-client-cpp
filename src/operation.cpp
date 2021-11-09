@@ -15,6 +15,11 @@ const std::vector<std::shared_ptr<client::GTXValue>>& Operation::GetArgs() const
 	return args_;
 }
 
+const std::shared_ptr<ArrayValue>& Operation::GetRawArgs() const
+{
+	return raw_args_;
+}
+
 std::shared_ptr<AbstractValue> Operation::Raw()
 {
 	std::shared_ptr<ArrayValue> out = AbstractValueFactory::EmptyArray();

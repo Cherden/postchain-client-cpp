@@ -4,15 +4,15 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-Operation::Operation(std::string name, std::shared_ptr<AbstractValue> args)
+Operation::Operation(std::string name, std::shared_ptr<ArrayValue> args)
 {
 	this->name_ = name;
 	this->args_ = args;
 }
 
-Operation Operation::Op(std::string name, std::shared_ptr<AbstractValue> args)
+std::shared_ptr<Operation> Operation::Op(std::string name, std::shared_ptr<ArrayValue> args)
 {
-	return Operation(name, args);
+	return std::make_shared<Operation>(name, args);
 }
 
 } // namespace ft3

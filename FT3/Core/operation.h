@@ -10,11 +10,11 @@ class Operation
 {
 public:
 	std::string name_;
-	std::shared_ptr<AbstractValue> args_;
+	std::shared_ptr<ArrayValue> args_;
 
-	Operation(std::string name, std::shared_ptr<AbstractValue> args);
+	Operation(std::string name, std::shared_ptr<ArrayValue> args);
 
-	static Operation Op(std::string name, std::shared_ptr<AbstractValue> args);
+	static std::shared_ptr<Operation> Op(std::string name, std::shared_ptr<ArrayValue> args);
 
 };
 } // namespace ft3

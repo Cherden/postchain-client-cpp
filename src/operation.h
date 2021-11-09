@@ -39,6 +39,8 @@ class Operation {
 
 	const std::vector<std::shared_ptr<client::GTXValue>>& GetArgs() const;
 
+	const std::shared_ptr<ArrayValue>& GetRawArgs() const;
+
   private:
     std::string op_name_;
 	std::shared_ptr<ArrayValue> raw_args_;

@@ -1,39 +1,52 @@
-//using System.Collections.Generic;
-//using System;
-//
-//namespace Chromia.Postchain.Ft3
-//{
-//    public class TransactionBuilder
-//    {
-//        private List<Operation> _operations;
-//        public readonly Blockchain Blockchain;
-//
-//        public TransactionBuilder(Blockchain blockchain)
-//        {
-//            Blockchain = blockchain;
-//            _operations = new List<Operation>();
-//        }
-//
-//        public TransactionBuilder Add(Operation operation)
-//        {
-//            _operations.Add(operation);
-//            return this;
-//        }
-//
-//        public Transaction Build(byte[][] signers, Action<string> onError)
-//        {
-//            var tx = Blockchain.Connection.NewTransaction(signers, onError);
-//            foreach (var op in _operations)
-//            {
-//                tx.AddOperation(op.Name, op.Args);
-//            }
-//
-//            return new Transaction(tx);
-//        }
-//
-//        public Transaction BuildAndSign(User user, Action<string> onError)
-//        {
-//            return this.Build(user.AuthDescriptor.Signers.ToArray(), onError).Sign(user.KeyPair);
-//        }
-//    }
-//}
+#pragma once
+
+#include <memory>
+#include <vector>
+#include "./Blockchain/blockchain.h"
+#include "../User/user.h"
+#include "../../src/common.h"
+#include "../../src/postchain_transaction.h"
+#include "transaction.h"
+
+namespace chromia {
+namespace postchain {
+namespace ft3 {
+class TransactionBuilder
+{
+
+public:
+	std::shared_ptr<Blockchain> blockchain_;
+
+    TransactionBuilder(std::shared_ptr<Blockchain> blockchain)
+    {
+        this->blockchain_ = blockchain;
+    }
+
+    std::shared_ptr<TransactionBuilder> Add(std::shared_ptr<Operation> operation)
+    {
+        this->operations_.push_back(operation);
+        return std::shared_ptr<TransactionBuilder>(this);
+    }
+
+    std::shared_ptr<Transaction> Build(std::vector<std::vector<byte>> signers, std::function<void(std::string)> on_error)
+    {
+		std::shared_ptr<PostchainTransaction> tx = this->blockchain_->connection_->NewTransaction(signers); //TO-DO add on error
+        for (auto &op : operations_)
+        {
+            tx->AddOperation(op->GetName(), op->GetRawArgs());
+        }
+		return std::make_shared<Transaction>(tx);
+    }
+
+    std::shared_ptr<Transaction> BuildAndSign(std::shared_ptr<User> user, std::function<void(std::string)> on_error)
+    {
+		std::shared_ptr<Transaction> tx = this->Build(user->auth_descriptor_->signers_, on_error);
+		tx->Sign(user->key_pair_);
+		return tx;
+    }
+private:
+	std::vector<std::shared_ptr<Operation>> operations_;
+};
+} // namespace ft3
+} // namespace postchain
+} // namespace chromia

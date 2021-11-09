@@ -6,7 +6,7 @@
 #include "SECP256K/include/secp256k1.h"
 #include "query.h"
 #include "../../nlohmann/json.hpp"
-#include "./transaction.h"
+#include "./postchain_transaction.h"
 #include "./postchain_util.h"
 #include "../HTTP/httprequest.h"
 
@@ -28,7 +28,7 @@ public:
 		this->base_url_ = base_url;
 	}
 
-	std::shared_ptr<Transaction> NewTransaction(std::vector<std::vector<byte>> signers)
+	std::shared_ptr<PostchainTransaction> NewTransaction(std::vector<std::vector<byte>> signers) // TO-DO add on-error callback
 	{
 		std::shared_ptr<Gtx> new_gtx = std::make_shared<Gtx>(this->blockchain_rid_);
 
@@ -37,7 +37,7 @@ public:
 			new_gtx->AddSignerToGtx(signer);
 		}
 
-		return std::make_shared<Transaction>(new_gtx, this->base_url_, this->blockchain_rid_);
+		return std::make_shared<PostchainTransaction>(new_gtx, this->base_url_, this->blockchain_rid_);
 	}
 
 	/*std::vector<QueryObject> queryObjects;

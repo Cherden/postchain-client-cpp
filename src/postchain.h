@@ -5,14 +5,14 @@
 #include <string>
 #include <vector>
 
-#include "transaction.h"
+#include "postchain_transaction.h"
 
 namespace chromia {
 namespace postchain {
 class Postchain {
   public:
     Postchain(std::string interface);
-    Transaction& Transaction(std::string signers);
+    PostchainTransaction& Transaction(std::string signers);
     std::string Query(std::string name);
 };
 }  // namespace postchain

@@ -26,10 +26,10 @@ public:
 	std::string reject_reason_ = "";
 };
 
-class Transaction {
+class PostchainTransaction {
 public:
 
-	Transaction(std::shared_ptr<client::Gtx> gtx, std::string base_url, std::string brid);
+	PostchainTransaction(std::shared_ptr<client::Gtx> gtx, std::string base_url, std::string brid);
 	
 	void AddOperation(std::string name, std::shared_ptr<gtv::ArrayValue> args);
 
@@ -42,6 +42,20 @@ public:
 
 	std::string GetTxRID();
 
+	void Post()
+	{
+		//TO-DO
+	}
+
+	void PostAndWait(std::function<void()> callback)
+	{
+		//TO-DO
+	}
+
+	std::vector<byte> Encode()
+	{
+		//TO-DO
+	}
 
 	bool IsSent();
 private:

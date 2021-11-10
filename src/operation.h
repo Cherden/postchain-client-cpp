@@ -19,10 +19,10 @@ namespace client {
 	class GTXValue;
 }
 
-class Operation {
+class PostchainOperation {
   public:
 
-    Operation(std::string name, std::shared_ptr<ArrayValue> args);
+	PostchainOperation(std::string name, std::shared_ptr<ArrayValue> args);
 
 	std::shared_ptr<client::GTXValue> ToGtxValue();
 
@@ -33,7 +33,7 @@ class Operation {
 	std::vector<byte> Decode();
 
 	template <class T>
-	Operation& operator<<(const T& obj);
+	PostchainOperation& operator<<(const T& obj);
 
 	std::string GetName() const;
 
@@ -46,7 +46,7 @@ class Operation {
 	std::shared_ptr<ArrayValue> raw_args_;
     std::vector<std::shared_ptr<client::GTXValue>> args_;
 
-	Operation();
+	PostchainOperation();
 };
 
 }  // namespace postchain

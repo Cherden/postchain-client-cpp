@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include "rate_limit_info.h"
 #include "../../../src/blockchain_client.h"

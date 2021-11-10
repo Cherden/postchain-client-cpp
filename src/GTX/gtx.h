@@ -14,7 +14,7 @@ namespace chromia {
 namespace postchain {
 
 // Forward declaration
-class Operation;
+class PostchainOperation;
 
 namespace client {
 
@@ -24,7 +24,7 @@ class GTXValue;
 class Gtx {
 public:
 	std::string blockchain_rid_;
-	std::vector<Operation*> operations_;
+	std::vector<PostchainOperation*> operations_;
 	std::vector<std::vector<byte>> signers_;
 	std::vector<std::vector<byte>> signatures_;
 
@@ -50,15 +50,8 @@ public:
 	
 	std::vector<byte> Encode();
 
-	/*
-	static Gtx Decode(std::vector<byte> encodedMessage);
-	*/
-	
-
 private:
 	Gtx();
-	/*static int GetLength(std::vector<byte> encodedMessage);
-	static byte GetOctetLength(std::vector<byte> encodedMessage);*/
 };
 }  // namespace client
 }  // namespace postchain

@@ -5,22 +5,22 @@
 namespace chromia {
 namespace postchain {
 
-std::string Operation::GetName() const
+std::string PostchainOperation::GetName() const
 { 
 	return op_name_; 
 }
 
-const std::vector<std::shared_ptr<client::GTXValue>>& Operation::GetArgs() const
+const std::vector<std::shared_ptr<client::GTXValue>>& PostchainOperation::GetArgs() const
 {
 	return args_;
 }
 
-const std::shared_ptr<ArrayValue>& Operation::GetRawArgs() const
+const std::shared_ptr<ArrayValue>& PostchainOperation::GetRawArgs() const
 {
 	return raw_args_;
 }
 
-std::shared_ptr<AbstractValue> Operation::Raw()
+std::shared_ptr<AbstractValue> PostchainOperation::Raw()
 {
 	std::shared_ptr<ArrayValue> out = AbstractValueFactory::EmptyArray();
 	out->Add(AbstractValueFactory::Build(this->op_name_));
@@ -35,7 +35,7 @@ std::shared_ptr<AbstractValue> Operation::Raw()
 	return out;
 }
 
-Operation::Operation(std::string op_name, std::shared_ptr<gtv::ArrayValue> args)
+PostchainOperation::PostchainOperation(std::string op_name, std::shared_ptr<gtv::ArrayValue> args)
 {
 	this->op_name_ = op_name;
 	this->raw_args_ = args;
@@ -47,7 +47,7 @@ Operation::Operation(std::string op_name, std::shared_ptr<gtv::ArrayValue> args)
 }
 
 template <class T>
-Operation& Operation::operator<<(const T& obj)
+PostchainOperation& PostchainOperation::operator<<(const T& obj)
 {
 	args_.push_back(gtv::AbstractValueFactory::Build(obj));
 	return *this;

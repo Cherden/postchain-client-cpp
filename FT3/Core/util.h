@@ -1,65 +1,22 @@
-﻿#include "../../src/common.h"
-#include "../User/account.h"
+﻿#pragma once
 
 #include <vector>
+#include "../../src/common.h"
+#include "../forward_declarations.h"
 
 namespace chromia {
 namespace postchain {
 namespace ft3 {
-class Util
+class FT3Util
 {
 public:
-    static std::string AuthTypeToString(AuthType type)
-    {
-        switch (type)
-        {
-		case AuthType::SingleSig:
-            return "S";
-		case AuthType::MultiSig:
-            return "M";
-        default:
-            return "";
-        }
-    }
+	static std::string AuthTypeToString(AuthType type);
 
-    static std::string FlagTypeToString(FlagsType type)
-    {
-        switch (type)
-        {
-		case FlagsType::Account:
-            return "A";
-		case FlagsType::Transfer:
-            return "T";
-        default:
-            return "";
-        }
-    }
+	static std::string FlagTypeToString(FlagsType type);
 
-    static FlagsType StringToFlagType(std::string type)
-    {
-		if (type.compare("A") == 0)
-		{
-			return FlagsType::Account;
-		}
-		if (type.compare("T") == 0)
-		{
-			return FlagsType::Transfer;
-		}
-		FlagsType::None;
-    }
+	static FlagsType StringToFlagType(std::string type);
 
-    static AuthType StringToAuthType(std::string type)
-    {
-		if (type.compare("S") == 0)
-		{
-			return AuthType::SingleSig;
-		}
-		if (type.compare("M") == 0)
-		{
-			return AuthType::MultiSig;
-		}
-		return AuthType::None;
-    }
+	static AuthType StringToAuthType(std::string type);
 };
 } // namespace http
 } // namespace postchain

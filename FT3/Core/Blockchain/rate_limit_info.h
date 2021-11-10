@@ -1,3 +1,5 @@
+#pragma once
+
 namespace chromia {
 namespace postchain {
 namespace ft3 {

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../chain_connection_info.h"
 
 namespace chromia {
@@ -8,6 +10,7 @@ class DirectoryService
 {
 public:
 	virtual std::shared_ptr<ChainConnectionInfo> GetChainConnectionInfo(std::string id) { return nullptr; };
+	virtual ~DirectoryService() = default;
 };
 
 } // namespace ft3

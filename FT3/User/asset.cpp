@@ -1,67 +1,128 @@
-//using Chromia.Postchain.Client;
-//using System.Collections;
-//using Newtonsoft.Json;
-//using System;
-//
-//namespace Chromia.Postchain.Ft3
-//{
-//    public class Asset
-//    {
-//        public string Id;
-//        public string Name;
-//
-//        [JsonProperty(PropertyName = "issuing_chain_rid")]
-//        public string IssuingChainRid;
-//
-//        public Asset(string name, string chainId)
-//        {
-//            this.Name = name;
-//            this.IssuingChainRid = chainId;
-//            this.Id = HashId();
-//        }
-//
-//        [JsonConstructor]
-//        public Asset(string id, string name, string issuing_chain_rid)
-//        {
-//            this.Id = id;
-//            this.Name = name;
-//            this.IssuingChainRid = issuing_chain_rid;
-//        }
-//
-//        private string HashId()
-//        {
-//            var body = new object[] {
-//                this.Name,
-//                Util.HexStringToBuffer(this.IssuingChainRid)
-//            };
-//
-//            var hash = PostchainUtil.HashGTV(body);
-//            return Util.ByteArrayToString(hash);
-//        }
-//
-//        public static IEnumerator Register(string name, string chainId, Blockchain blockchain, Action<Asset> onSuccess, Action<string> onError)
-//        {
-//            yield return blockchain.TransactionBuilder()
-//                .Add(Operation.Op("ft3.dev_register_asset", name, chainId))
-//                .Build(new byte[][] { }, onError)
-//                .PostAndWait(() => onSuccess(new Asset(name, chainId)));
-//        }
-//
-//        public static IEnumerator GetByName(string name, Blockchain blockchain, Action<Asset[]> onSuccess, Action<string> onError)
-//        {
-//            yield return blockchain.Query<Asset[]>("ft3.get_asset_by_name",
-//                new (string, object)[] { ("name", name) }, onSuccess, onError);
-//        }
-//
-//        public static IEnumerator GetById(string id, Blockchain blockchain, Action<Asset> onSuccess, Action<string> onError)
-//        {
-//            yield return blockchain.Query<Asset>("ft3.get_asset_by_id",
-//                new (string, object)[] { ("asset_id", id) }, onSuccess, onError);
-//        }
-//
-//        public static IEnumerator GetAssets(Blockchain blockchain, Action<Asset[]> onSuccess, Action<string> onError)
-//        {
-//            yield return blockchain.Query<Asset[]>("ft3.get_all_assets", null, onSuccess, onError);
-//        }
-//    }
-//}
+#include "asset.h"
+#include "../Core/transaction_builder.h"
+#include "../Core/Blockchain/blockchain.h"
+#include "../Core/transaction.h"
+#include "../Core/operation.h"
+
+namespace chromia {
+namespace postchain {
+namespace ft3 {
+
+Asset::Asset(std::string name, std::string chain_id)
+{
+	this->name_ = name;
+	this->issuing_chain_rid_ = chain_id;
+	this->id_ = HashId();
+}
+
+Asset::Asset(std::string id, std::string name, std::string issuing_chain_rid)
+{
+	this->id_ = id;
+	this->name_ = name;
+	this->issuing_chain_rid_ = issuing_chain_rid;
+}
+
+void Asset::Register(std::string name, std::string chain_id, std::shared_ptr<Blockchain> blockchain,
+	std::function<void(std::shared_ptr<Asset>)> on_success,
+	std::function<void(string)> on_error)
+{
+	std::shared_ptr<TransactionBuilder> tx_builder = blockchain->NewTransactionBuilder();
+
+	std::shared_ptr<ArrayValue> op_args;
+	op_args->Add(AbstractValueFactory::Build(name));
+	op_args->Add(AbstractValueFactory::Build(chain_id));
+	tx_builder->Add(ft3::Operation::Op("ft3.dev_register_asset", op_args));
+
+	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
+
+	std::function<void()> on_success_wrapper = [on_success, name, chain_id]() {
+		on_success(std::make_shared<Asset>(name, chain_id));
+	};
+
+	tx->PostAndWait(on_success_wrapper);
+}
+
+void Asset::GetByName(std::string name, std::shared_ptr<Blockchain> blockchain,
+	std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error)
+{
+	std::vector<QueryObject> query_objects;
+	query_objects.push_back(QueryObject("name", AbstractValueFactory::Build(name)));
+
+	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {
+		// TO-DO check parsing
+		nlohmann::json json_content = nlohmann::json::parse(content);
+		if (json_content.contains("id") && json_content.contains("name") && json_content.contains("issuing_chain_rid"))
+		{
+			std::shared_ptr<Asset> asset = std::make_shared<Asset>(json_content["id"], json_content["name"], json_content["issuing_chain_rid"]);
+			std::vector<std::shared_ptr<Asset>> assets;
+			assets.push_back(asset);
+			on_success(assets);
+		}
+		else
+		{
+			on_error("Asset::GetByName failed, corrupted resposne");
+		}
+	};
+
+	blockchain->Query("ft3.get_asset_by_name", query_objects, on_success_wrapper, on_error);
+}
+
+void Asset::GetById(string id, std::shared_ptr<Blockchain> blockchain,
+	std::function<void(std::shared_ptr<Asset>)> on_success, std::function<void(string)> on_error)
+{
+	std::vector<QueryObject> query_objects;
+	query_objects.push_back(QueryObject("asset_id", AbstractValueFactory::Build(id)));
+
+	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {
+		// TO-DO check parsing
+		nlohmann::json json_content = nlohmann::json::parse(content);
+		if (json_content.contains("id") && json_content.contains("name") && json_content.contains("issuing_chain_rid"))
+		{
+			std::shared_ptr<Asset> asset = std::make_shared<Asset>(json_content["id"], json_content["name"], json_content["issuing_chain_rid"]);
+			on_success(asset);
+		}
+		else
+		{
+			on_error("Assrt::GetById failed, corrupted resposne");
+		}
+	};
+
+	blockchain->Query("ft3.get_asset_by_id", query_objects, on_success_wrapper, on_error);
+}
+
+void Asset::GetAssets(string id, std::shared_ptr<Blockchain> blockchain,
+	std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error)
+{
+	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {
+		// TO-DO check parsing
+		nlohmann::json json_content = nlohmann::json::parse(content);
+		if (json_content.contains("id") && json_content.contains("name") && json_content.contains("issuing_chain_rid"))
+		{
+			std::shared_ptr<Asset> asset = std::make_shared<Asset>(json_content["id"], json_content["name"], json_content["issuing_chain_rid"]);
+			std::vector<std::shared_ptr<Asset>> assets;
+			assets.push_back(asset);
+			on_success(assets);
+		}
+		else
+		{
+			on_error("Assrt::GetAssets failed, corrupted resposne");
+		}
+	};
+
+	blockchain->Query("ft3.get_all_assets", {}, on_success_wrapper, on_error);
+}
+
+std::string Asset::HashId()
+{
+	std::shared_ptr<ArrayValue> body = AbstractValueFactory::EmptyArray();
+	body->Add(AbstractValueFactory::Build(this->name_));
+	body->Add(AbstractValueFactory::Build(PostchainUtil::HexStringToByteVector(this->issuing_chain_rid_)));
+
+	std::vector<byte> hash = AbstractValue::Hash(body);
+	std::string hash_hex = PostchainUtil::ByteVectorToHexString(hash);
+	return hash_hex;
+}
+
+} // namespace ft3
+} // namespace postchain
+} // namespace chromia

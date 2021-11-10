@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../src/GTV/abstract_value.h"
 #include <vector>
 

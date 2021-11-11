@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "../ASN1/reader.h"
+#include "../ASN1/tag.h"
 
 using namespace chromia::postchain::asn1;
 
@@ -37,6 +38,8 @@ public:
 	GTXValue();
 
 	std::vector<unsigned char> Encode();
+
+	static std::shared_ptr<GTXValue> Decode(std::shared_ptr<asn1::Reader> sequence);
 
 	static std::vector<unsigned char> TrimByteList(char* byteList, int length);
 };

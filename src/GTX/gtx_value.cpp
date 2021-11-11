@@ -113,6 +113,73 @@ std::vector<unsigned char> GTXValue::Encode()
 }
 
 
+std::shared_ptr<GTXValue> GTXValue::Decode(std::shared_ptr<asn1::Reader> sequence)
+{
+	std::shared_ptr<GTXValue> val;
+
+	byte choice = sequence->ReadChoice();
+	sequence->ReadLength();
+	switch (choice)
+	{
+	case asn1::tag::kNull:
+	{
+		val->choice_ = GTXValueChoice::Null;
+		sequence->ReadChoice();
+		sequence->ReadChoice();
+		break;
+	}
+	case asn1::tag::kOctetString:
+	{
+		val->choice_ = GTXValueChoice::ByteArray;
+		val->byte_array_ = sequence->ReadOctetString();
+		break;
+	}
+	case asn1::tag::kUTF8String:
+	{
+		val->choice_ = GTXValueChoice::String;
+		val->string_ = sequence->ReadUTF8String();
+		break;
+	}
+	case asn1::tag::kInteger:
+	{
+		val->choice_ = GTXValueChoice::Integer;
+		val->integer_ = sequence->ReadInteger();
+		break;
+	}
+	case asn1::tag::kArray:
+	{
+		throw std::exception("GTXValue::Decode() asn1::tag::kArray not implemented");
+		/*val.Choice = GTXValueChoice.Array;
+		val.Array = new List<GTXValue>();
+		var innerSequence = sequence.ReadSequence();
+		while (innerSequence.RemainingBytes > 0)
+		{
+			val.Array.Add(GTXValue.Decode(innerSequence));
+		}*/
+		break;
+	}
+	case asn1::tag::kDict:
+	{
+		throw std::exception("GTXValue::Decode() asn1::tag::kDict not implemented");
+		/*val.Choice = GTXValueChoice.Dict;
+		val.Dict = new List<DictPair>();
+		var innerSequence = sequence.ReadSequence();
+		while (innerSequence.RemainingBytes > 0)
+		{
+			val.Dict.Add(DictPair.Decode(innerSequence));
+		}*/
+		break;
+	}
+	default:
+	{
+		throw std::exception("GTXValue::Decode() Unknown choice tag");
+	}
+	}
+
+	return val;
+}
+
+
 std::vector<unsigned char> GTXValue::TrimByteList(char* byteList, int length)
 {
 	std::vector<unsigned char> trimmedBytes;

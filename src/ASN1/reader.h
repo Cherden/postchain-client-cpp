@@ -22,10 +22,12 @@ class Reader {
 
     std::size_t RemainingBytes() { return bytes_.size(); }
 
+	std::size_t ReadLength();
+
   private:
     unsigned char ReadByte(const unsigned char* expected = nullptr);
     std::vector<unsigned char> ReadBytes(std::size_t length);
-    std::size_t ReadLength();
+   
     long long ReadIntegerInternal(unsigned int byte_amount,
                                   bool mind_sign = false);
 

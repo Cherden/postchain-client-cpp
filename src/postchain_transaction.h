@@ -55,6 +55,7 @@ public:
 	std::vector<byte> Encode()
 	{
 		//TO-DO
+		return {};
 	}
 
 	bool IsSent();

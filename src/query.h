@@ -3,6 +3,7 @@
 
 #include "GTV/abstract_value.h" 
 #include "GTV/abstract_value_factory.h"
+#include <string>
 
 using namespace chromia::postchain::gtv;
 
@@ -18,6 +19,24 @@ struct QueryObject
 	{
 		this->name_ = name;
 		this->content_ = content;
+	}
+
+	QueryObject(std::string name, int content)
+	{
+		this->name_ = name;
+		this->content_ = AbstractValueFactory::Build(content);
+	}
+
+	QueryObject(std::string name, std::string content)
+	{
+		this->name_ = name;
+		this->content_ = AbstractValueFactory::Build(content);
+	}
+
+	QueryObject(std::string name, std::vector<byte> content)
+	{
+		this->name_ = name;
+		this->content_ = AbstractValueFactory::Build(content);
 	}
 };
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <memory>
 #include "../../src/GTV/abstract_value_facotry.h"
 #include "../Core/operation.h"

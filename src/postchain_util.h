@@ -89,6 +89,8 @@ class PostchainUtil {
 	*/
 	static int RandomIntInRange(int min, int max);
 
+	static bool StringToBool(const std::string & value);
+
 private:
 	static secp256k1_context *secp_context_;
 

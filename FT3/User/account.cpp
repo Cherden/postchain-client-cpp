@@ -4,6 +4,12 @@
 #include "rate_limit.h"
 #include "../Core/Blockchain/blockchain.h"
 #include "../Core/Blockchain/blockchain_session.h"
+#include "user.h"
+#include "../Core/transaction_builder.h"
+#include "../Core/transaction.h"
+#include "account_dev_operations.h"
+#include "account_operations.h"
+#include "AuthDescriptor/auth_descriptor_factory.h"
 
 namespace chromia {
 namespace postchain {
@@ -58,30 +64,26 @@ std::shared_ptr<Blockchain> Account::GetBlockchain()
 void Account::GetByParticipantId(std::string id, std::shared_ptr<BlockchainSession> session,
 	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error)
 {
+	std::function<void(std::string)> on_success_wrapper = [session, on_success, on_error](std::string content) {
+		std::vector<std::string> account_ids;
+		// TO-DO
+		Account::GetByIds(account_ids, session, on_success, on_error);
+	};
 
+	session->Query("ft3.get_accounts_by_participant_id", {QueryObject("id", id)}, on_success_wrapper, on_error);
 }
-
-//void Account::GetByParticipantId(std::string id, std::shared_ptr<BlockchainSession> session,
-//	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error) 
-//{}
-/*{
-	std::vector<std::string> account_ids;
-	yield return session.Query<string[]>("ft3.get_accounts_by_participant_id", new (string, object)[] { ("id", id) },
-		(string[] _accountIDs) => accountIDs = _accountIDs, onError);
-
-	yield return Account.GetByIds(accountIDs, session, onSuccess, onError);
-}*/
 
 void Account::GetByAuthDescriptorId(std::string id, std::shared_ptr<BlockchainSession> session,
 	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error)
-{}
-/* {
-	 string[] accountIDs = null;
-	 yield return session.Query<string[]>("ft3.get_accounts_by_auth_descriptor_id", new (string, object)[] { ("descriptor_id", id) },
-		 (string[] _accountIDs) => accountIDs = _accountIDs, onError);
+{
+	std::function<void(std::string)> on_success_wrapper = [session, on_success, on_error](std::string content) {
+		std::vector<std::string> account_ids;
+		// TO-DO
+		Account::GetByIds(account_ids, session, on_success, on_error);
+	};
 
-	 yield return Account.GetByIds(accountIDs, session, onSuccess, onError);
- }*/
+	session->Query("ft3.get_accounts_by_auth_descriptor_id", { QueryObject("descriptor_id", id) }, on_success_wrapper, on_error);
+}
 
 void Account::Register(std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<BlockchainSession> session,
 	std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
@@ -90,150 +92,170 @@ void Account::Register(std::shared_ptr<AuthDescriptor> auth_descriptor, std::sha
 
 std::vector<byte> Account::RawTransactionRegister(std::shared_ptr<User> user, std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain)
 {
-	return {};
-}
-/* {
-var signers = new List<byte[]>();
-signers.AddRange(user.AuthDescriptor.Signers);
-signers.AddRange(authDescriptor.Signers);
+	std::vector<std::vector<byte>> signers;
 
-return blockchain.TransactionBuilder()
-	.Add(AccountDevOperations.Register(user.AuthDescriptor))
-	.Add(AccountOperations.AddAuthDescriptor(user.AuthDescriptor.ID, user.AuthDescriptor.ID, authDescriptor))
-	.Build(signers.ToArray(), null)
-	.Sign(user.KeyPair)
-	.Raw();
-}*/
+	for (auto &signer : user->auth_descriptor_->signers_)
+	{
+		signers.push_back(signer);
+	}
+
+	for (auto &signer : auth_descriptor->signers_)
+	{
+		signers.push_back(signer);
+	}
+
+	std::shared_ptr<TransactionBuilder> tx_builder = blockchain->NewTransactionBuilder();
+
+	return tx_builder->Add(AccountDevOperations::Register(user->auth_descriptor_))
+		->Add(AccountOperations::AddAuthDescriptor(user->auth_descriptor_->id_, user->auth_descriptor_->id_, auth_descriptor))
+		->Build(signers, nullptr)
+		->Sign(user->key_pair_)
+		->Raw();
+}
+
 
 std::vector<byte> Account::RawTransactionAddAuthDescriptor(std::string account_id, std::shared_ptr<User> user,
 	std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain)
 {
-	return {};
-}
-/* {
-	 var signers = new List<byte[]>();
-	 signers.AddRange(user.AuthDescriptor.Signers);
-	 signers.AddRange(authDescriptor.Signers);
+	std::vector<std::vector<byte>> signers;
 
-	 return blockchain.TransactionBuilder()
-		 .Add(AccountOperations.AddAuthDescriptor(user.AuthDescriptor.ID, user.AuthDescriptor.ID, authDescriptor))
-		 .Build(signers.ToArray(), null)
-		 .Sign(user.KeyPair)
-		 .Raw();
- }*/
+	for (auto &signer : user->auth_descriptor_->signers_)
+	{
+		signers.push_back(signer);
+	}
+
+	for (auto &signer : auth_descriptor->signers_)
+	{
+		signers.push_back(signer);
+	}
+
+	std::shared_ptr<TransactionBuilder> tx_builder = blockchain->NewTransactionBuilder();
+
+	return tx_builder->Add(AccountOperations::AddAuthDescriptor(user->auth_descriptor_->id_, user->auth_descriptor_->id_, auth_descriptor))
+		->Build(signers, nullptr)
+		->Sign(user->key_pair_)
+		->Raw();
+}
 
 void Account::GetByIds(std::vector<std::string> ids, std::shared_ptr<BlockchainSession> session,
 	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error)
 {
+	// TO-DO sure that Account::GetById(...) is sync call;
+	std::vector<std::shared_ptr<Account>> accounts;
+	std::function<void(std::shared_ptr<Account>)> on_success_wrapper = [&accounts](std::shared_ptr<Account> account) {
+		accounts.push_back(account);
+	};
 
+	for(auto &id : ids)
+	{
+		Account::GetById(id, session, on_success_wrapper, on_error);
+	}
+
+	on_success(accounts);
 }
-/* {
-	 var accounts = new List<Account>();
-	 foreach (var id in ids)
-	 {
-		 yield return Account.GetById(id, session, (Account account) => accounts.Add(account), onError);
-	 }
 
-	 onSuccess(accounts.ToArray());
- }*/
-
-
-void Account::GetById(std::string id, std::shared_ptr<BlockchainSession> session, std::function<void(Account)> on_success, std::function<void(std::string)> on_error)
+void Account::GetById(std::string id, std::shared_ptr<BlockchainSession> session, std::function<void(shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
 {
+	// TO-DO sure that Account::GetById(...) is sync call;
+	shared_ptr<Account> account;
+	session->Query("ft3.get_account_by_id", { QueryObject("id", id) }, [&account, session](std::string lambda_id) {
+		if (lambda_id.size() > 0) {
+			account = std::make_shared<Account>(lambda_id, std::vector<std::shared_ptr<AuthDescriptor>>(), session);
+		}
+	}, on_error);
 
+	account->Sync([on_success, account] () {
+		on_success(account);
+	}, on_error);
 }
 
 
-void Account::AddAuthDescriptor(std::shared_ptr<AuthDescriptor> authDescriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
+void Account::AddAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-
+	this->session_->Call(AccountOperations::AddAuthDescriptor(
+		this->id_, this->session_->user_->auth_descriptor_->id_, auth_descriptor
+	), [&]() {
+		this->auth_descriptors_.push_back(auth_descriptor);
+		on_success();
+	}, on_error);
 }
-/*  {
-	  yield return this.Session.Call(AccountOperations.AddAuthDescriptor(
-		  this.Id,
-		  this.Session.User.AuthDescriptor.ID,
-		  authDescriptor),
-		  () =>
-		  {
-			  this.AuthDescriptor.Add(authDescriptor);
-			  onSuccess();
-		  }, onError
-	  );
-  }*/
+
 
 void Account::IsAuthDescriptorValid(std::string id, std::function<void(bool)> on_success, std::function<void(std::string)> on_error)
 {
-
+	this->session_->Query("ft3.is_auth_descriptor_valid",
+		{ QueryObject("account_id", this->id_), QueryObject("auth_descriptor_id", PostchainUtil::HexStringToByteVector(id)) },
+		[on_success](std::string content) {
+		on_success(PostchainUtil::StringToBool(content));
+		}, on_error);
 }
-/*{
-	yield return Session.Query<bool>("ft3.is_auth_descriptor_valid",
-		new (string, object)[] { ("account_id", this.Id), ("auth_descriptor_id", Util.HexStringToBuffer(id)) },
-		onSuccess,
-		onError
-	);
-}*/
 
-void Account::DeleteAllAuthDescriptorsExclude(std::shared_ptr<AuthDescriptor> authDescriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
+
+void Account::DeleteAllAuthDescriptorsExclude(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-
+	this->session_->Call(AccountOperations::DeleteAllAuthDescriptorsExclude(this->id_, auth_descriptor->id_),
+		[&]() {
+			this->auth_descriptors_.clear();
+			this->auth_descriptors_.push_back(auth_descriptor);
+			on_success();
+		}, on_error);
 }
-/* {
-	 yield return this.Session.Call(AccountOperations.DeleteAllAuthDescriptorsExclude(
-		 this.Id,
-		 authDescriptor.ID),
-		 () =>
-		 {
-			 this.AuthDescriptor.Clear();
-			 this.AuthDescriptor.Add(authDescriptor);
-			 onSuccess();
-		 }, onError
-	 );
- }*/
 
-void Account::DeleteAuthDescriptor(std::shared_ptr<AuthDescriptor> authDescriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
+void Account::DeleteAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-
+	this->session_->Call(AccountOperations::DeleteAuthDescriptor(this->id_, this->session_->user_->auth_descriptor_->id_, auth_descriptor->id_),
+        [&] () {
+		auto to_remove = std::find(this->auth_descriptors_.begin(), this->auth_descriptors_.end(), auth_descriptor);
+		if (to_remove != this->auth_descriptors_.end())
+		{
+			this->auth_descriptors_.erase(to_remove);
+		}
+            
+        on_success();
+    }, on_error);
 }
-//{
-//    yield return this.Session.Call(AccountOperations.DeleteAuthDescriptor(
-//        this.Id,
-//        this.Session.User.AuthDescriptor.ID,
-//        authDescriptor.ID),
-//        () =>
-//        {
-//            this.AuthDescriptor.Remove(authDescriptor);
-//            onSuccess();
-//        }, onError
-//    );
-//}
 
 void Account::Sync(std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-
-	/* yield return SyncAssets(() => { }, onError);
-	 yield return SyncAuthDescriptors(() => { }, onError);
-	 yield return SyncRateLimit(() => { }, onError);
-
-	 onSuccess();*/
+	SyncAssets([]() {}, on_error);
+	SyncAuthDescriptors([]() {}, on_error);
+	SyncRateLimit([]() {}, on_error);
+	on_success();
 }
 
 void Account::SyncAssets(std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-
+	AssetBalance::GetByAccountId(this->id_, this->session_->blockchain_,
+		[&] (std::vector<std::shared_ptr<AssetBalance>> balances) {
+		this->assets_ = balances;
+		on_success();
+	}, on_error);
 }
-//{
-//    yield return AssetBalance.GetByAccountId(this.Id, this.Session.Blockchain,
-//        (AssetBalance[] balances) =>
-//        {
-//            this.Assets = balances.ToList();
-//            onSuccess();
-//        }, onError
-//    );
-//}
 
 void Account::SyncAuthDescriptors(std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
+	std::vector<std::shared_ptr<AuthDescriptorFactory::AuthDescriptorQuery>> auth_descriptors;
 
+	this->session_->Query("ft3.get_account_auth_descriptors", { QueryObject("id", this->id_) },
+		[&auth_descriptors] (std::string) {
+			//TO-DO auth_descriptors->push_back();
+		}, on_error);
+
+	std::shared_ptr<AuthDescriptorFactory> auth_descriptor_factory = std::make_shared<AuthDescriptorFactory>();
+	std::vector<std::shared_ptr<AuthDescriptor>> auth_list;
+
+	for(auto &auth_descriptor : auth_descriptors)
+	{
+		auth_list.push_back(
+			authDescriptorFactory.Create(
+				FT3Util::StringToAuthType((string) auth_descriptor->type),
+				PostchainUtil::HexStringToByteVector((string) auth_descriptor->args)
+			)
+		);
+	}
+
+	//this.AuthDescriptor = authList;
+	//onSuccess();
 }
 /*{
 	AuthDescriptorFactory.AuthDescriptorQuery[] authDescriptors = null;

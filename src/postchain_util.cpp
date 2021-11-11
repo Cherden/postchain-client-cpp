@@ -327,5 +327,11 @@ int PostchainUtil::RandomIntInRange(int min, int max)
 	return res;
 }
 
+
+bool PostchainUtil::StringToBool(const std::string & value)
+{
+	return value.compare("true") == 0;
+}
+
 }  // namespace postchain
 }  // namespace chromia

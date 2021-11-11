@@ -41,15 +41,6 @@ public:
 	std::shared_ptr<ArrayValue> ToGTV();
 };
 
-class AuthDescriptor : public GtvSerializable
-{
-public:
-	std::string id_;
-	std::vector<std::vector<byte>> signers_;
-	std::shared_ptr<IAuthdescriptorRule> rule_;
-	std::vector<byte> Hash() {};
-};
-
 class Account
 {
 public:
@@ -82,15 +73,15 @@ public:
 	static void GetByIds(std::vector<std::string> ids, std::shared_ptr<BlockchainSession> session,
 		std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error);
 
-	static void GetById(std::string id, std::shared_ptr<BlockchainSession> session, std::function<void(Account)> on_success, std::function<void(std::string)> on_error);
+	static void GetById(std::string id, std::shared_ptr<BlockchainSession> session, std::function<void(shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
 
-	void AddAuthDescriptor(std::shared_ptr<AuthDescriptor> authDescriptor, std::function<void()> on_success, std::function<void(std::string)> on_error);
+	void AddAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error);
 
 	void IsAuthDescriptorValid(std::string id, std::function<void(bool)> on_success, std::function<void(std::string)> on_error);
 
-	void DeleteAllAuthDescriptorsExclude(std::shared_ptr<AuthDescriptor> authDescriptor, std::function<void()> on_success, std::function<void(std::string)> on_error);
+	void DeleteAllAuthDescriptorsExclude(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error);
 
-	void DeleteAuthDescriptor(std::shared_ptr<AuthDescriptor> authDescriptor, std::function<void()> on_success, std::function<void(std::string)> on_error);
+	void DeleteAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error);
 
 	void Sync(std::function<void()> on_success, std::function<void(std::string)> on_error);
 

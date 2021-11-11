@@ -70,7 +70,12 @@ RuleExpression::RuleExpression(std::string name, std::string op, long value)
 RuleCompositeExpressionOperator RuleExpression::And()
 {
 	std::shared_ptr<RuleExpression> this_shared(this);
-	return RuleCompositeExpressionOperator(std::dynamic_pointer_cast<IAuthdescriptorRule>(this_shared), "and");
+	std::shared_ptr<IAuthdescriptorRule> casted = std::dynamic_pointer_cast<IAuthdescriptorRule>(this_shared);
+	/*if (!casted)
+	{
+		throw new std::exception("RuleExpression::And() cast to IAuthdescriptorRule failed");
+	}*/
+	return RuleCompositeExpressionOperator(casted, "and");
 }
 
 std::shared_ptr<ArrayValue> RuleExpression::ToGTV()

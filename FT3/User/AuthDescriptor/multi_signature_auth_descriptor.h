@@ -12,7 +12,7 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-class MultiSignatureAuthDescriptor : AuthDescriptor
+class MultiSignatureAuthDescriptor : public AuthDescriptor
 {
 public:
 	std::vector<std::vector<byte>> pubkeys_;

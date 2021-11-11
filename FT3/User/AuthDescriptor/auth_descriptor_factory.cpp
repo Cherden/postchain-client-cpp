@@ -1,5 +1,7 @@
 #include "auth_descriptor_factory.h"
 #include "../account.h"
+#include "single_signature_auth_descriptor.h"
+#include "multi_signature_auth_descriptor.h"
 
 namespace chromia {
 namespace postchain {

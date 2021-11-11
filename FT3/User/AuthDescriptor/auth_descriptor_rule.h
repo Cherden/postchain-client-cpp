@@ -42,7 +42,7 @@ private:
 	RuleExpression Expression(std::string op, long value);
 };
 
-class RuleExpression : IAuthdescriptorRule
+class RuleExpression : public IAuthdescriptorRule
 {
 public:
 	std::string name_;
@@ -95,7 +95,7 @@ public:
 	std::shared_ptr<RuleCompositeExpression> CompositeExpression(std::string op, long value);
 };
 
-class RuleCompositeExpression : IAuthdescriptorRule
+class RuleCompositeExpression : public IAuthdescriptorRule
 {
 public:
 	std::string operator_;

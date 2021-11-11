@@ -11,7 +11,7 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-class SingleSignatureAuthDescriptor : AuthDescriptor
+class SingleSignatureAuthDescriptor : public AuthDescriptor
 {
 public:
 	std::shared_ptr<Flags> flags_;

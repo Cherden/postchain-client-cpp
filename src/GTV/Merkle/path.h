@@ -60,6 +60,8 @@ class PathElement {
     explicit PathElement(std::shared_ptr<SearchablePathElement> previous)
         : previous_(previous) {}
 
+	virtual ~PathElement() = default;
+
     const std::shared_ptr<SearchablePathElement> Previous() const {
         return previous_;
     }
@@ -74,6 +76,8 @@ class PathLeafElement : public PathElement {
     explicit PathLeafElement(std::shared_ptr<SearchablePathElement> previous)
         : PathElement(previous) {}
 
+	virtual ~PathLeafElement() = default;
+
     bool operator==(const PathLeafElement &b) const {
         return previous_ == b.previous_;
     }
@@ -86,6 +90,8 @@ class SearchablePathElement : public PathElement {
   public:
     SearchablePathElement(std::shared_ptr<SearchablePathElement> previous)
         : PathElement(previous) {}
+
+	virtual ~SearchablePathElement() = default;
 
     virtual std::shared_ptr<AbstractValue> GetSearchKey() = 0;
 };

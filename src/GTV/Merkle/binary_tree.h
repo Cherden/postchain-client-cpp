@@ -29,6 +29,9 @@ class BinaryTreeElement {
         kArrayHeadNode,
         kDictHeadNode
     };
+
+	virtual ~BinaryTreeElement() = default;
+
     void SetPathElement(std::shared_ptr<PathElement> path_element) {
         path_element_ = path_element;
     }

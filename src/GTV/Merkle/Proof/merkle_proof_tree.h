@@ -33,6 +33,8 @@ class ProofNode : public MerkleProofElement {
               std::shared_ptr<MerkleProofElement> right)
         : prefix_(prefix), left_(left), right_(right) {}
 
+	virtual ~ProofNode() = default;
+
     const unsigned char Prefix() { return prefix_; }
     const std::shared_ptr<MerkleProofElement> Left() { return left_; }
     const std::shared_ptr<MerkleProofElement> Right() { return right_; }
@@ -49,6 +51,9 @@ class ProofNodeSimple : public ProofNode {
     ProofNodeSimple(std::shared_ptr<MerkleProofElement> left,
                     std::shared_ptr<MerkleProofElement> right)
         : ProofNode(hash_prefix::kNode, left, right) {}
+
+	virtual ~ProofNodeSimple() = default;
+
     virtual Type GetType() override { return Type::kProofNodeSimple; }
 };
 
@@ -57,6 +62,8 @@ class ProofValueLeaf : public MerkleProofElement {
     ProofValueLeaf(std::shared_ptr<AbstractValue> content,
                    std::shared_ptr<SearchablePathElement> path_elem)
         : content_(content), path_elem_(path_elem) {}
+
+	virtual ~ProofValueLeaf() = default;
 
     const std::shared_ptr<AbstractValue> Content() const { return content_; }
     virtual Type GetType() override { return Type::kProofValueLeaf; }
@@ -70,6 +77,8 @@ class ProofHashedLeaf : public MerkleProofElement {
   public:
     ProofHashedLeaf(std::vector<unsigned char> merkle_hash)
         : merkle_hash_(merkle_hash) {}
+
+	virtual ~ProofHashedLeaf() = default;
 
     bool operator==(const ProofHashedLeaf &b) const {
         return merkle_hash_ == b.merkle_hash_;
@@ -91,6 +100,8 @@ class ProofNodeArrayHead : public ProofNode {
         : ProofNode(hash_prefix::kNodeArray, left, right),
           path_elem_(path_elem) {}
 
+	virtual ~ProofNodeArrayHead() = default;
+
     virtual Type GetType() override { return Type::kProofNodeArrayHead; }
 
   private:
@@ -105,6 +116,8 @@ class ProofNodeDictHead : public ProofNode {
         std::shared_ptr<SearchablePathElement> path_elem = nullptr)
         : ProofNode(hash_prefix::kNodeDict, left, right),
           path_elem_(path_elem) {}
+
+	virtual ~ProofNodeDictHead() = default;
 
     virtual Type GetType() override { return Type::kProofNodeDictHead; }
 

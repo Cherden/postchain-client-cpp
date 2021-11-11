@@ -148,20 +148,20 @@ std::shared_ptr<GTXValue> GTXValue::Decode(std::shared_ptr<asn1::Reader> sequenc
 	}
 	case asn1::tag::kArray:
 	{
-		throw std::exception("GTXValue::Decode() asn1::tag::kArray not implemented");
-		/*val.Choice = GTXValueChoice.Array;
-		val.Array = new List<GTXValue>();
-		var innerSequence = sequence.ReadSequence();
-		while (innerSequence.RemainingBytes > 0)
+		val->choice_ = GTXValueChoice::Array;
+		std::shared_ptr<Reader> inner_sequence = std::make_shared<Reader>(sequence->ReadSequence());
+		while (inner_sequence->RemainingBytes() > 0)
 		{
-			val.Array.Add(GTXValue.Decode(innerSequence));
-		}*/
+			val->array_.push_back(GTXValue::Decode(inner_sequence));
+		}
 		break;
 	}
 	case asn1::tag::kDict:
 	{
 		throw std::exception("GTXValue::Decode() asn1::tag::kDict not implemented");
-		/*val.Choice = GTXValueChoice.Dict;
+		/*
+		TO-DO
+		val.Choice = GTXValueChoice.Dict;
 		val.Dict = new List<DictPair>();
 		var innerSequence = sequence.ReadSequence();
 		while (innerSequence.RemainingBytes > 0)

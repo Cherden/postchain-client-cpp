@@ -42,6 +42,66 @@ public:
 	static std::shared_ptr<GTXValue> Decode(std::shared_ptr<asn1::Reader> sequence);
 
 	static std::vector<unsigned char> TrimByteList(char* byteList, int length);
+
+	std::string ToString()
+	{
+		switch (this->choice_)
+		{
+		case (GTXValueChoice::Null):
+		{
+			return "null";
+		}
+		case (GTXValueChoice::ByteArray):
+		{
+			return "0x" + PostchainUtil::ByteVectorToHexString(this->byte_array_);
+		}
+		case (GTXValueChoice::String):
+		{
+			return this->string_;
+		}
+		case (GTXValueChoice::Integer):
+		{
+			return std::to_string(this->integer_);
+		}
+		case (GTXValueChoice::Array):
+		{
+			std::string ret = "[";
+			if (this->array_.size() == 0)
+			{
+				return ret + "]";
+			}
+
+			for(auto &elm : this->array_)
+			{
+				ret += elm->ToString() + ", ";
+			}
+
+			ret = ret.substr(0, ret.size() - 1);
+			return ret + "]";
+		}
+		case (GTXValueChoice::Dict):
+		{
+			/*std::string ret = "[";
+			if (Dict.Count == 0)
+			{
+				return ret + "]";
+			}
+
+			foreach(var elm in Dict)
+			{
+				ret += @"{{""" + elm.Name + @""": " + elm.Value.ToString() + "}, ";
+			}
+
+			return ret.Remove(ret.Length - 2) + "]";*/
+			throw std::exception("GtxValue::ToString() Dict type not implemented");
+			return "";
+		}
+		default:
+		{
+			return "";
+		}
+		}
+	}
 };
 }  // namespace client
 }  // namespace postchain

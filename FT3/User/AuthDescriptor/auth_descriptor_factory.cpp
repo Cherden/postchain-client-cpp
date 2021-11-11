@@ -2,6 +2,12 @@
 #include "../account.h"
 #include "single_signature_auth_descriptor.h"
 #include "multi_signature_auth_descriptor.h"
+#include <vector>
+#include "../../../src/ASN1/reader.h"
+#include "../../../src/GTX/gtx_value.h"
+
+using namespace chromia::postchain::asn1;
+using namespace chromia::postchain::client;
 
 namespace chromia {
 namespace postchain {
@@ -21,45 +27,55 @@ std::shared_ptr<AuthDescriptor> AuthDescriptorFactory::Create(AuthType type, std
 
 std::shared_ptr<SingleSignatureAuthDescriptor> AuthDescriptorFactory::CreateSingleSig(std::vector<byte> args)
 {
-	/*var gtxTransaction = new AsnReader(args);
-	var gtxValue = GTXValue.Decode(gtxTransaction);
-	var flags = new List<FlagsType>();
+	std::shared_ptr<asn1::Reader> gtx_transaction = std::make_shared<asn1::Reader>(args);
+	std::shared_ptr<client::GTXValue> gtx_value = GTXValue::Decode(gtx_transaction);
+	std::vector<FlagsType> flags;
 
-	foreach(var flag in gtxValue.Array[0].Array)
+	if (gtx_value->array_.size() < 2)
 	{
-		flags.Add(Util.StringToFlagType((string)flag.String));
+		throw std::exception("AuthDescriptorFactory::CreateSingleSig (gtx_value->array_.size() == 0)");
+	}
+	
+	for (std::shared_ptr<client::GTXValue> &flag : gtx_value->array_[0]->array_)
+	{
+		flags.push_back(FT3Util::StringToFlagType(flag->ToString()));
 	}
 
-	return new SingleSignatureAuthDescriptor(
-		Util.HexStringToBuffer((string)gtxValue.Array[1].String),
-		flags.ToArray()
-	);*/
-	return nullptr;
+	std::shared_ptr<SingleSignatureAuthDescriptor> ret = std::make_shared<SingleSignatureAuthDescriptor>(
+		PostchainUtil::HexStringToByteVector(gtx_value->array_[1]->string_),
+		flags);
+
+	return ret;
 }
 
 std::shared_ptr<MultiSignatureAuthDescriptor> AuthDescriptorFactory::CreateMultiSig(std::vector<byte> args)
 {
-	/*var gtxTransaction = new AsnReader(args);
-	var gtxValue = GTXValue.Decode(gtxTransaction);
+	std::shared_ptr<asn1::Reader> gtx_transaction = std::make_shared<asn1::Reader>(args);
+	std::shared_ptr<client::GTXValue> gtx_value = GTXValue::Decode(gtx_transaction);
+	std::vector<FlagsType> flags;
+	std::vector<std::vector<byte>> pubkeys;
 
-	var flags = new List<FlagsType>();
-	var pubKeys = new List<byte[]>();
-	var signatureRequired = (int)gtxValue.Array[1].Integer;
+	int signature_required = (int) gtx_value->array_[1]->integer_;
 
-	foreach(var flag in gtxValue.Array[0].Array)
+	if (gtx_value->array_.size() < 3)
 	{
-		flags.Add(Util.StringToFlagType((string)flag.String));
+		throw std::exception("AuthDescriptorFactory::CreateSingleSig (gtx_value->array_.size() == 0)");
 	}
 
-	foreach(var pubKey in gtxValue.Array[2].Array)
+	for (std::shared_ptr<client::GTXValue> &flag : gtx_value->array_[0]->array_)
 	{
-		pubKeys.Add(Util.HexStringToBuffer((string)pubKey.String));
+		flags.push_back(FT3Util::StringToFlagType(flag->ToString()));
 	}
 
-	return new MultiSignatureAuthDescriptor(
-		pubKeys, signatureRequired, flags.ToArray()
-	);*/
-	return nullptr;
+	for(auto& pubkey : gtx_value->array_[2]->array_)
+	{
+		pubkeys.push_back(PostchainUtil::HexStringToByteVector(pubkey->string_));
+	}
+
+	std::shared_ptr<MultiSignatureAuthDescriptor> ret = std::make_shared<MultiSignatureAuthDescriptor>(
+		pubkeys, signature_required, flags);
+
+	return ret;
 }
 
 } // namespace http

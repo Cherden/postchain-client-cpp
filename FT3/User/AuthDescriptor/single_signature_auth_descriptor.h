@@ -1,61 +1,47 @@
-//using System.Collections.Generic;
-//using System.Linq;
-//
-//using Chromia.Postchain.Client;
-//
-//namespace Chromia.Postchain.Ft3
-//{
-//    public class SingleSignatureAuthDescriptor : AuthDescriptor
-//    {
-//        private byte[] _pubkey;
-//        public Flags Flags;
-//        public readonly IAuthdescriptorRule AuthRule;
-//
-//        public SingleSignatureAuthDescriptor(byte[] pubKey, FlagsType[] flags, IAuthdescriptorRule rule = null)
-//        {
-//            this._pubkey = pubKey;
-//            this.Flags = new Flags(flags.ToList());
-//            this.AuthRule = rule;
-//        }
-//
-//        public List<byte[]> Signers
-//        {
-//            get => new List<byte[]>() { this._pubkey };
-//        }
-//
-//        public string ID
-//        {
-//            get => Util.ByteArrayToString(this.Hash());
-//        }
-//
-//        public IAuthdescriptorRule Rule
-//        {
-//            get => this.AuthRule;
-//        }
-//
-//        public object[] ToGTV()
-//        {
-//            var gtv = new object[] {
-//                Util.AuthTypeToString(AuthType.SingleSig),
-//                new List<string>(){Util.ByteArrayToString(this._pubkey)}.ToArray(),
-//                new List<object>(){this.Flags.ToGTV(), Util.ByteArrayToString(this._pubkey)}.ToArray(),
-//                this.AuthRule?.ToGTV()
-//            };
-//
-//            return gtv;
-//        }
-//
-//        public byte[] Hash()
-//        {
-//            var gtv = new object[] {
-//                Util.AuthTypeToString(AuthType.SingleSig),
-//                new List<byte[]>(){this._pubkey}.ToArray(),
-//                new List<object>(){this.Flags.ToGTV(), Util.ByteArrayToString(this._pubkey)}.ToArray(),
-//                this.AuthRule?.ToGTV()
-//
-//            };
-//
-//            return PostchainUtil.HashGTV(gtv);
-//        }
-//    }
-//}
+#pragma once
+
+#include "../../../src/GTV/abstract_value_factory.h"
+#include "../../../src/GTV/array_value.h"
+#include "../../forward_declarations.h"
+#include "../../Core/util.h"
+
+using namespace chromia::postchain::gtv;
+
+namespace chromia {
+namespace postchain {
+namespace ft3 {
+
+class SingleSignatureAuthDescriptor : AuthDescriptor
+{
+public:
+	std::shared_ptr<Flags> flags_;
+	std::shared_ptr<IAuthdescriptorRule> auth_rule_;
+	
+	std::vector<byte> Signers()
+	{
+		return this->pubkey_;
+	}
+
+	std::string ID()
+	{
+		return PostchainUtil::ByteVectorToHexString(this->Hash());
+	}
+
+	std::shared_ptr<IAuthdescriptorRule> Rule()
+	{
+		return this->auth_rule_;
+	}
+
+	SingleSignatureAuthDescriptor(std::vector<byte> pubkey, std::vector<FlagsType> flags, std::shared_ptr<IAuthdescriptorRule> rule = nullptr);
+	
+	std::shared_ptr<gtv::ArrayValue> ToGTV();
+	
+	std::vector<byte> Hash();
+
+private:
+	std::vector<byte> pubkey_;
+};
+} // namespace ft3
+} // namespace postchain
+} // namespace chromia
+

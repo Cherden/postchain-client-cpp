@@ -15,25 +15,25 @@ class DirectoryServiceBase;
 class RateLimit;
 class RateLimitInfo;
 
-class IAuthdescriptorRule;
 class TransactionBuilder;
 class Transaction;
 class User;
 class Operation;
 class Flags;
-class AuthDescriptor;
 class Account;
 class Asset;
 class AccountOperations;
 
 class RuleVariable;
 class Rules;
-class IAuthdescriptorRule;
 class RuleExpression;
 class RuleCompositeExpressionOperator;
 class RuleCompositeExpressionVariable;
 class RuleCompositeExpression;
 class AssetBalance;
+
+class SingleSignatureAuthDescriptor;
+class MultiSignatureAuthDescriptor;
 
 class GtvSerializable
 {
@@ -48,6 +48,16 @@ public:
 	virtual std::shared_ptr<ArrayValue> ToGTV() = 0;
 	virtual ~IAuthdescriptorRule() = default;
 };
+
+class AuthDescriptor : public GtvSerializable
+{
+public:
+	std::string id_;
+	std::vector<std::vector<byte>> signers_;
+	std::shared_ptr<IAuthdescriptorRule> rule_;
+	std::vector<byte> Hash() {};
+};
+
 
 } // namespace http
 } // namespace postchain

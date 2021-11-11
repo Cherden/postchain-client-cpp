@@ -1,5 +1,8 @@
+#pragma once
+
 #include <vector>
 #include <memory>
+#include "../../forward_declarations.h"
 
 namespace chromia {
 namespace postchain {
@@ -8,66 +11,22 @@ namespace ft3 {
 class AuthDescriptorFactory
 {
 public:
-    /*std::shared_ptr<AuthDescriptor> Create(AuthType type, byte[] args)
-    {
-        switch (type)
-        {
-            case AuthType.SingleSig:
-                return this.CreateSingleSig(args);
-            case AuthType.MultiSig:
-                return this.CreateMultiSig(args);
-        }
-        return null;
-    }
-*/
-	/*
-    private SingleSignatureAuthDescriptor CreateSingleSig(byte[] args)
-    {
-        var gtxTransaction = new AsnReader(args);
-        var gtxValue = GTXValue.Decode(gtxTransaction);
-        var flags = new List<FlagsType>();
 
-        foreach (var flag in gtxValue.Array[0].Array)
-        {
-            flags.Add(Util.StringToFlagType((string)flag.String));
-        }
+	class AuthDescriptorQuery
+	{
+	public:
+		std::string id;
+		std::string type;
+		std::string args;
+	};
 
-        return new SingleSignatureAuthDescriptor(
-            Util.HexStringToBuffer((string)gtxValue.Array[1].String),
-            flags.ToArray()
-        );
-    }
+	std::shared_ptr<AuthDescriptor> Create(AuthType type, std::vector<byte> args);
 
-    private MultiSignatureAuthDescriptor CreateMultiSig(byte[] args)
-    {
-        var gtxTransaction = new AsnReader(args);
-        var gtxValue = GTXValue.Decode(gtxTransaction);
+private:
+	std::shared_ptr<SingleSignatureAuthDescriptor> CreateSingleSig(std::vector<byte> args);
 
-        var flags = new List<FlagsType>();
-        var pubKeys = new List<byte[]>();
-        var signatureRequired = (int)gtxValue.Array[1].Integer;
-
-        foreach (var flag in gtxValue.Array[0].Array)
-        {
-            flags.Add(Util.StringToFlagType((string)flag.String));
-        }
-
-        foreach (var pubKey in gtxValue.Array[2].Array)
-        {
-            pubKeys.Add(Util.HexStringToBuffer((string)pubKey.String));
-        }
-
-        return new MultiSignatureAuthDescriptor(
-            pubKeys, signatureRequired, flags.ToArray()
-        );
-    }
-
-    public struct AuthDescriptorQuery
-    {
-        public string id;
-        public string type;
-        public string args;
-    }*/
+	std::shared_ptr<MultiSignatureAuthDescriptor> CreateMultiSig(std::vector<byte> args);
+  
 };
 } // namespace http
 } // namespace postchain

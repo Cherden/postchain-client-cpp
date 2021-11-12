@@ -1,6 +1,7 @@
 #include "account.h"
 #include "../Core/util.h"
 #include "asset_balance.h"
+#include "asset.h"
 #include "rate_limit.h"
 #include "../Core/Blockchain/blockchain.h"
 #include "../Core/Blockchain/blockchain_session.h"
@@ -172,6 +173,8 @@ void Account::GetById(std::string id, std::shared_ptr<BlockchainSession> session
 
 void Account::AddAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
+	// TO-DO validate sync call;
+
 	this->session_->Call(AccountOperations::AddAuthDescriptor(
 		this->id_, this->session_->user_->auth_descriptor_->id_, auth_descriptor
 	), [&]() {
@@ -183,6 +186,7 @@ void Account::AddAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor,
 
 void Account::IsAuthDescriptorValid(std::string id, std::function<void(bool)> on_success, std::function<void(std::string)> on_error)
 {
+	// TO-DO validate sync call;
 	this->session_->Query("ft3.is_auth_descriptor_valid",
 		{ QueryObject("account_id", this->id_), QueryObject("auth_descriptor_id", PostchainUtil::HexStringToByteVector(id)) },
 		[on_success](std::string content) {
@@ -193,6 +197,7 @@ void Account::IsAuthDescriptorValid(std::string id, std::function<void(bool)> on
 
 void Account::DeleteAllAuthDescriptorsExclude(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
+	// TO-DO validate sync call;
 	this->session_->Call(AccountOperations::DeleteAllAuthDescriptorsExclude(this->id_, auth_descriptor->id_),
 		[&]() {
 			this->auth_descriptors_.clear();
@@ -247,169 +252,131 @@ void Account::SyncAuthDescriptors(std::function<void()> on_success, std::functio
 	for(auto &auth_descriptor : auth_descriptors)
 	{
 		auth_list.push_back(
-			authDescriptorFactory.Create(
+			auth_descriptor_factory->Create(
 				FT3Util::StringToAuthType((string) auth_descriptor->type),
 				PostchainUtil::HexStringToByteVector((string) auth_descriptor->args)
 			)
 		);
 	}
 
-	//this.AuthDescriptor = authList;
-	//onSuccess();
+	this->auth_descriptors_.empty();
+	this->auth_descriptors_.insert(this->auth_descriptors_.begin(), auth_list.begin(), auth_list.end());
+
+	on_success();
 }
-/*{
-	AuthDescriptorFactory.AuthDescriptorQuery[] authDescriptors = null;
-
-	yield return this.Session.Query<AuthDescriptorFactory.AuthDescriptorQuery[]>("ft3.get_account_auth_descriptors",
-		new (string, object)[] { ("id", this.Id) },
-		(AuthDescriptorFactory.AuthDescriptorQuery[] authQuery) =>
-		{
-			authDescriptors = authQuery;
-		}, onError);
-
-	var authDescriptorFactory = new AuthDescriptorFactory();
-	List<AuthDescriptor> authList = new List<AuthDescriptor>();
-
-	foreach (var authDescriptor in authDescriptors)
-	{
-		authList.Add(
-			authDescriptorFactory.Create(
-				Util.StringToAuthType((string)authDescriptor.type),
-				Util.HexStringToBuffer((string)authDescriptor.args)
-			)
-		);
-	}
-
-	this.AuthDescriptor = authList;
-	onSuccess();
-}*/
 
 void Account::SyncRateLimit(std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-
-}
-/*{
-	yield return RateLimit.GetByAccountRateLimit(this.Id, this.Session.Blockchain,
-		(RateLimit rateLimit) =>
-		{
-			this.RateLimit = rateLimit;
-			onSuccess();
-		}, onError
+	RateLimit::GetByAccountRateLimit(this->id_, this->session_->blockchain_,
+		[&] (std::shared_ptr<RateLimit> rate_limit) {
+			this->rate_limit_ = rate_limit; // TO-DO check previous rate_limit deallocation, check if destructor is called
+			on_success();
+		}, on_error
 	);
-}*/
+}
 
 std::shared_ptr<AssetBalance> Account::GetAssetById(std::string id)
 {
+	for (auto &asset_balance : this->assets_)
+	{
+		if (asset_balance->asset_->id_.compare(id) == 0)
+		{
+			return asset_balance;
+		}
+	}
 	return nullptr;
 }
-//{
-//    return this.Assets.Find(assetBalance => assetBalance.Asset.Id.Equals(id));
-//}
 
 void Account::TransferInputsToOutputs(std::shared_ptr<AbstractValue> inputs, std::shared_ptr<AbstractValue> outputs,
 	std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
+	// TO-DO validate sync call;
 
+	bool is_transfer_completed = false;
+
+	this->session_->Call(AccountOperations::Transfer(inputs, outputs), 
+		[&is_transfer_completed]() { is_transfer_completed = true; },
+		on_error);
+
+	if (is_transfer_completed)
+	{
+		this->SyncAssets(on_success, on_error);
+	}
 }
-/* {
-		bool isTransferCompleted = false;
 
-		yield return this.Session.Call(AccountOperations.Transfer(inputs, outputs),
-			() => isTransferCompleted = true, onError);
-
-		if (isTransferCompleted)
-		{
-			yield return this.SyncAssets(onSuccess, onError);
-		}
-	}*/
 
 void Account::Transfer(std::string account_id, std::string asset_id, long amount,
 	std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
+	std::shared_ptr<ArrayValue> input = AbstractValueFactory::EmptyArray();
+	input->Add(AbstractValueFactory::Build(this->id_));
+	input->Add(AbstractValueFactory::Build(asset_id));
+	input->Add(AbstractValueFactory::Build(this->session_->user_->auth_descriptor_->id_));
+	input->Add(AbstractValueFactory::Build(amount));
+	input->Add(AbstractValueFactory::EmptyArray());
 
+	std::shared_ptr<ArrayValue> output = AbstractValueFactory::EmptyArray();
+	input->Add(AbstractValueFactory::Build(account_id));
+	input->Add(AbstractValueFactory::Build(asset_id));
+	input->Add(AbstractValueFactory::Build(amount));
+	input->Add(AbstractValueFactory::EmptyArray());
+
+	this->TransferInputsToOutputs(
+		AbstractValueFactory::Build({ input }),
+		AbstractValueFactory::Build({ output }),  
+		on_success, on_error
+	);
 }
-//{
-//    var input = new List<object>{
-//        this.Id,
-//        assetId,
-//        this.Session.User.AuthDescriptor.ID,
-//        amount,
-//        new object[] {}
-//    }.ToArray();
 
-//    var output = new List<object>{
-//        accountId,
-//        assetId,
-//        amount,
-//        new object[] {}
-//    }.ToArray();
 
-//    yield return this.TransferInputsToOutputs(
-//        new object[] { input },
-//        new object[] { output },
-//        onSuccess, onError
-//    );
-//}
-
-void Account::BurnTokens(std::string assetId, long amount, std::function<void()> on_success, std::function<void(std::string)> on_error)
+void Account::BurnTokens(std::string asset_id, long amount, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
+	std::shared_ptr<ArrayValue> input = AbstractValueFactory::EmptyArray();
+	input->Add(AbstractValueFactory::Build(this->id_));
+	input->Add(AbstractValueFactory::Build(asset_id));
+	input->Add(AbstractValueFactory::Build(this->session_->user_->auth_descriptor_->id_));
+	input->Add(AbstractValueFactory::Build(amount));
+	input->Add(AbstractValueFactory::EmptyArray());
 
+	this->TransferInputsToOutputs(
+		AbstractValueFactory::Build({ input }),
+		AbstractValueFactory::EmptyArray(),
+		on_success, on_error
+	);
 }
-//{
-	/* var input = new List<object>(){
-		this.Id,
-		assetId,
-		this.Session.User.AuthDescriptor.Hash(),
-		amount,
-		new object[] {}
-	}.ToArray();
 
-	yield return this.TransferInputsToOutputs(
-		new List<object>() { input }.ToArray(),
-		new List<object>() { }.ToArray(),
-		onSuccess, onError
-	);*/
-	// }
 
-void Account::XcTransfer(std::string destination_chain_id, std::string destination_account_id, std::string assetId, long amount,
+void Account::XcTransfer(std::string destination_chain_id, std::string destination_account_id, std::string asset_id, long amount,
 	std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
+	std::shared_ptr<ft3::Operation> xc_op = this->XcTransferOp(destination_chain_id, destination_account_id, asset_id, amount);
 
-}
-/*{
-	yield return this.Session.Call(this.XcTransferOp(
-		destinationChainId, destinationAccountId, assetId, amount),
-		() =>
-		{
-			this.SyncAssets(onSuccess, onError);
-		}, onError
+	this->session_->Call(this->XcTransferOp(
+		destination_chain_id, destination_account_id, asset_id, amount),
+		[this, on_success, on_error] () {
+			this->SyncAssets(on_success, on_error);
+		}, on_error
 	);
-}*/
-
-std::shared_ptr<ft3::Operation> Account::XcTransferOp(std::string destination_chain_id, std::string destinationAccountId, std::string asset_id, long amount)
-{
-	return nullptr;
 }
-/*{
-	var source = new object[] {
-		this.Id,
-		assetId,
-		this.Session.User.AuthDescriptor.ID,
-		amount,
-		new object[]{}
-	};
 
-	var target = new object[] {
-		destinationAccountId,
-		new object[]{}
-	};
 
-	var hops = new string[] {
-		destinationChainId
-	};
+std::shared_ptr<ft3::Operation> Account::XcTransferOp(std::string destination_chain_id, std::string destination_account_id, std::string asset_id, long amount)
+{
+	std::shared_ptr<ArrayValue> source = AbstractValueFactory::EmptyArray();
+	source->Add(AbstractValueFactory::Build(this->id_));
+	source->Add(AbstractValueFactory::Build(asset_id));
+	source->Add(AbstractValueFactory::Build(this->session_->user_->auth_descriptor_->id_));
+	source->Add(AbstractValueFactory::Build(amount));
+	source->Add(AbstractValueFactory::EmptyArray());
 
-	return AccountOperations.XcTransfer(source, target, hops);
-}*/
+	std::shared_ptr<ArrayValue> target = AbstractValueFactory::EmptyArray();
+	source->Add(AbstractValueFactory::Build(destination_account_id));
+	source->Add(AbstractValueFactory::EmptyArray());
+
+	std::vector<std::string> hops = {destination_chain_id};
+
+	return AccountOperations::XcTransfer(source, target, hops);
+}
 
 } // namespace http
 } // namespace postchain

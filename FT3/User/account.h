@@ -93,12 +93,12 @@ public:
 	void Transfer(std::string account_id, std::string asset_id, long amount,
 		std::function<void()> on_success, std::function<void(std::string)> on_error);
 
-	void BurnTokens(std::string assetId, long amount, std::function<void()> on_success, std::function<void(std::string)> on_error);
+	void BurnTokens(std::string asset_id, long amount, std::function<void()> on_success, std::function<void(std::string)> on_error);
 
 	void XcTransfer(std::string destination_chain_id, std::string destination_account_id, std::string assetId, long amount,
 		std::function<void()> on_success, std::function<void(std::string)> on_error);
 
-	std::shared_ptr<ft3::Operation> XcTransferOp(std::string destination_chain_id, std::string destinationAccountId, std::string asset_id, long amount);
+	std::shared_ptr<ft3::Operation> XcTransferOp(std::string destination_chain_id, std::string destination_account_id, std::string asset_id, long amount);
 
 private:
 	void SyncAssets(std::function<void()> on_success, std::function<void(std::string)> on_error);

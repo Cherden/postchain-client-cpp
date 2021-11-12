@@ -63,7 +63,7 @@ public:
         return std::make_shared<ft3::Operation>("nop", op_args);
     }
 
-    static std::shared_ptr<ft3::Operation> Op(std::string name, std::shared_ptr<AbstractValue> args)
+    static std::shared_ptr<ft3::Operation> Op(std::string name, std::shared_ptr<ArrayValue> args)
     {
 		return nullptr;
 		//return std::make_shared<ft3::Operation>(name, args);

@@ -21,8 +21,8 @@ public:
 	Blockchain(std::string id, std::shared_ptr<BlockchainInfo> info, std::shared_ptr<BlockchainClient> connection,
 		std::shared_ptr<DirectoryService> directory_service);
 
-	static void Initialize(string blockchain_rid, DirectoryService directory_service,
-		std::function<void(std::shared_ptr<BlockchainInfo>)> on_success, std::function<void(std::string)> on_error);
+	static void Initialize(string blockchain_rid, std::shared_ptr<DirectoryService> directory_service,
+		std::function<void(std::shared_ptr<Blockchain>)> on_success, std::function<void(std::string)> on_error);
 
 	std::shared_ptr<TransactionBuilder> NewTransactionBuilder();
 
@@ -37,17 +37,17 @@ public:
 	void RegisterAccount(std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<User> user,
 		std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
 
-	void GetAssetsByName(string name, std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error);
+	void GetAssetsByName(string name, std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(std::string)> on_error);
 
-	void GetAssetById(string id, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
+	void GetAssetById(string id, std::function<void(std::shared_ptr<Asset>)> on_success, std::function<void(std::string)> on_error);
 
-	void GetAllAssets(std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error);
+	void GetAllAssets(std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(std::string)> on_error);
 
-	void LinkChain(string chainId, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
+	void LinkChain(string chain_id, std::function<void()> on_success, std::function<void(std::string)> on_error);
 
-	void IsLinkedWithChain(string chainId, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
+	void IsLinkedWithChain(string chain_id, std::function<void(bool)> on_success, std::function<void(std::string)> on_error);
 
-	void GetLinkedChainsIds(std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
+	void GetLinkedChainsIds(std::function<void(std::vector<std::string>)> on_success, std::function<void(std::string)> on_error);
 
 	void GetLinkedChains(std::function<void(std::vector<std::shared_ptr<Blockchain>>)> on_success, std::function<void(std::string)> on_error);
 
@@ -60,5 +60,5 @@ private:
 	std::shared_ptr<DirectoryService> directory_service_;
 };
 } // namespace ft3
-} //namespace postchain
-} //namespace chromia
+} // namespace postchain
+} // namespace chromia

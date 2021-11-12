@@ -2,6 +2,13 @@
 #include "blockchain_info.h"
 #include "directory_service.h"
 #include "../../Core/transaction_builder.h"
+#include "../../Core/transaction.h"
+#include "../../User/account.h"
+#include "../../User/asset.h"
+#include "../../User/user.h"
+#include "../operation.h"
+#include "../../../src/GTV/abstract_value_factory.h"
+#include "../../User/account_operations.h"
 
 namespace chromia {
 namespace postchain {
@@ -16,10 +23,10 @@ Blockchain::Blockchain(std::string id, std::shared_ptr<BlockchainInfo> info, std
 	this->directory_service_ = directory_service;
 }
 
-void Blockchain::Initialize(string blockchain_rid, DirectoryService directory_service,
-	std::function<void(std::shared_ptr<BlockchainInfo>)> on_success, std::function<void(std::string)> on_error)
+void Blockchain::Initialize(string blockchain_rid, std::shared_ptr<DirectoryService> directory_service,
+	std::function<void(std::shared_ptr<Blockchain>)> on_success, std::function<void(std::string)> on_error)
 {
-	std::shared_ptr<ChainConnectionInfo> chainConnectionInfo = directory_service.GetChainConnectionInfo(blockchain_rid);
+	std::shared_ptr<ChainConnectionInfo> chainConnectionInfo = directory_service->GetChainConnectionInfo(blockchain_rid);
 
 	if (chainConnectionInfo == nullptr)
 	{
@@ -28,14 +35,12 @@ void Blockchain::Initialize(string blockchain_rid, DirectoryService directory_se
 
 	std::shared_ptr<BlockchainClient> connection = std::make_shared<BlockchainClient>();
 	connection->Setup(blockchain_rid, chainConnectionInfo->url_);
-	BlockchainInfo::GetInfo(connection, on_success, on_error);
+	BlockchainInfo::GetInfo(connection, 
+		[=] (std::shared_ptr<BlockchainInfo> blockchain_info) { 
+			on_success(std::make_shared<Blockchain>(blockchain_rid, blockchain_info, directory_service));
+		}
+	, on_error);
 }
-
-//void Blockchain::Query(std::string query_name, std::vector<QueryObject> query_objects,
-//	std::function<void(std::string)> on_success, std::function<void(std::string)> on_error)
-//{
-//	//this->connection_->Query(query_name, query_objects, on_success, on_error);
-//}
 
 std::shared_ptr<TransactionBuilder> Blockchain::NewTransactionBuilder()
 {
@@ -52,114 +57,102 @@ std::shared_ptr<BlockchainSession> Blockchain::NewSession(std::shared_ptr<User> 
 void Blockchain::GetAccountsByParticipantId(string id, std::shared_ptr<User> user,
 	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error)
 {
-	//yield return Account.GetByParticipantId(id, this.NewSession(user), onSuccess, onError);
+	Account::GetByParticipantId(id, this->NewSession(user), on_success, on_error);
 }
 
 void Blockchain::GetAccountsByAuthDescriptorId(string id, std::shared_ptr<User> user,
 	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error)
 {
-	//yield return Account.GetByAuthDescriptorId(id, this.NewSession(user), onSuccess, onError);
+	Account::GetByAuthDescriptorId(id, this->NewSession(user), on_success, on_error);
 }
 
 void Blockchain::RegisterAccount(std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<User> user,
 	std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
 {
-	//yield return Account.Register(authDescriptor, this.NewSession(user), onSuccess, onError);
+	Account::Register(auth_descriptor, this->NewSession(user), on_success, on_error);
 }
 
-void Blockchain::GetAssetsByName(string name, std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error)
+void Blockchain::GetAssetsByName(string name, std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(std::string)> on_error)
 {
-	//yield return Asset.GetByName(name, this, onSuccess, onError);
+	Asset::GetByName(name, std::shared_ptr<Blockchain>(this), on_success, on_error);
 }
 
-void Blockchain::GetAssetById(string id, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
+void Blockchain::GetAssetById(string id, std::function<void(std::shared_ptr<Asset>)> on_success, std::function<void(std::string)> on_error)
 {
-	//yield return Asset.GetById(id, this, onSuccess, onError);
+	Asset::GetById(id, std::shared_ptr<Blockchain>(this), on_success, on_error);
 }
 
-void Blockchain::GetAllAssets(std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error)
+void Blockchain::GetAllAssets(std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(std::string)> on_error)
 {
-	//yield return Asset.GetAssets(this, onSuccess, onError);
+	Asset::GetAssets(std::shared_ptr<Blockchain>(this), on_success, on_error);
 }
 
-void Blockchain::LinkChain(string chainId, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
+void Blockchain::LinkChain(string chain_id, std::function<void()> on_success, std::function<void(std::string)> on_error) 
 {
-	/*yield return this.TransactionBuilder()
-		.Add(Operation.Op("ft3.xc.link_chain", chainId))
-		.Build(new byte[][]{ }, onError)
-		.PostAndWait(onSuccess);*/
+	std::shared_ptr<ArrayValue> op_args = AbstractValueFactory::EmptyArray();
+	op_args->Add(AbstractValueFactory::Build(chain_id));
+
+	std::shared_ptr<ft3::TransactionBuilder> tx_builder = this->NewTransactionBuilder();
+	tx_builder->Add(ft3::Operation::Op("ft3.xc.link_chain", op_args));
+	auto tx = tx_builder->Build({ {} }, on_error);
+	tx->PostAndWait(on_success);
 }
 
-void Blockchain::IsLinkedWithChain(string chainId, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
+void Blockchain::IsLinkedWithChain(string chain_id, std::function<void(bool)> on_success, std::function<void(std::string)> on_error)
 {
-	/*yield return this.Query<int>("ft3.xc.is_linked_with_chain",
-		new (string, object)[] { ("chain_rid", chainId) },
-		(int is_linked) = > onSuccess(is_linked == 1), onError);*/
+	this->Query("ft3.xc.is_linked_with_chain", {QueryObject("chain_rid", chain_id)}, 
+		[on_success] (std::string is_linked) {
+			on_success(is_linked.compare("1") == 0);	
+		}, on_error);
 }
 
-void Blockchain::GetLinkedChainsIds(std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
+void Blockchain::GetLinkedChainsIds(std::function<void(std::vector<std::string>)> on_success, std::function<void(std::string)> on_error)
 {
-	//return this.Query<string[]>("ft3.xc.get_linked_chains", null, onSuccess, onError);
+	this->Query("ft3.xc.get_linked_chains", {},
+		[on_success](std::string content) {
+			//TO-DO
+			on_success({ "" });
+		}, on_error);
 }
 
 void Blockchain::GetLinkedChains(std::function<void(std::vector<std::shared_ptr<Blockchain>>)> on_success, std::function<void(std::string)> on_error)
 {
-	/*string[] chaindIds = null;
-	yield return this.GetLinkedChainsIds(
-		(string[] linkedChains) = > chaindIds = linkedChains, onError
-	);
+	std::vector<std::string> chain_ids;
+	this->GetLinkedChainsIds(
+		[&chain_ids](std::vector<std::string> linked_chains) {
+			for (std::string &id : linked_chains) {
+				chain_ids.push_back(id);
+			}
+		}, on_error);
 
-	List<Blockchain> blockchains = new List<Blockchain>();
-	foreach(var chaindId in chaindIds)
+	std::vector<std::shared_ptr<Blockchain>> blockchains;
+	for(std::string chaind_id : chain_ids)
 	{
-		yield return Blockchain.Initialize(chaindId, this._directoryService,
-			(Blockchain blockchain) = > blockchains.Add(blockchain), onError);
+		Blockchain::Initialize(chaind_id, this->directory_service_,
+			[&blockchains](std::shared_ptr<Blockchain> blockchain) {
+				blockchains.push_back(blockchain);
+		}, on_error);
 	}
 
-	onSuccess(blockchains);*/
-}
-
-void Query(string query_name, std::vector<QueryObject> query_objects, std::function<void(std::string)> on_success, std::function<void(std::string)> on_error)
-{
-//	return this.Connection.Query<T>(queryName, queryObject, onSuccess, onError);
+	on_success(blockchains);
 }
 
 void Blockchain::Query(string query_name, std::vector<QueryObject> query_objects, std::function<void(std::string)> on_success, std::function<void(std::string)> on_error)
 {
-
+	this->connection_->Query(query_name, query_objects, on_success, on_error);
 }
+
 
 void Blockchain::Call(std::shared_ptr<ft3::Operation> operation, std::shared_ptr<User> user,
 	std::function<void()> on_success, std::function<void(string)> on_error)
 {
-
-}
-
-//{
-	/*std::shared_ptr<TransactionBuilder> tx_builder = TransactionBuilder();
-
-	std::shared_ptr<ArrayValue> op_args;
-	op_args->Add(AbstractValueFactory::Build(asset_id));
-	op_args->Add(AbstractValueFactory::Build(account_id));
-	op_args->Add(AbstractValueFactory::Build(amount));
-	tx_builder->Add(ft3::Operation::Op("ft3.dev_give_balance", op_args));
+	auto &tx_builder = this->NewTransactionBuilder();
+	tx_builder->Add(operation);
 	tx_builder->Add(AccountOperations::Nop());
-
-	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
-
-	std::function<void()> on_success_wrapper = [on_success]() {
-		on_success();
-	};*/
-
-	/*tx->PostAndWait(on_success_wrapper);
-
-	return TransactionBuilder()
-		.Add(operation)
-		.Add(AccountOperations.Nop())
-		.Build(user.AuthDescriptor.Signers.ToArray(), onError)
-		.Sign(user.KeyPair)
-		.PostAndWait(onSuccess);*/
-		//}
+	auto &tx = tx_builder->Build(user->auth_descriptor_->signers_, on_error);
+	tx->Sign(user->key_pair_);
+	tx->PostAndWait(on_success);
+}
 
 } // namespace ft3
 } //namespace postchain

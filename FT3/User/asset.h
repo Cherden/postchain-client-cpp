@@ -33,7 +33,7 @@ public:
 	static void GetById(string id, std::shared_ptr<Blockchain> blockchain,
 		std::function<void(std::shared_ptr<Asset>)> on_success, std::function<void(string)> on_error);
 
-	static void GetAssets(string id, std::shared_ptr<Blockchain> blockchain,
+	static void GetAssets(std::shared_ptr<Blockchain> blockchain,
 		std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error);
 
 private:

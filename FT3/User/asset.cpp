@@ -90,7 +90,7 @@ void Asset::GetById(string id, std::shared_ptr<Blockchain> blockchain,
 	blockchain->Query("ft3.get_asset_by_id", query_objects, on_success_wrapper, on_error);
 }
 
-void Asset::GetAssets(string id, std::shared_ptr<Blockchain> blockchain,
+void Asset::GetAssets(std::shared_ptr<Blockchain> blockchain,
 	std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error)
 {
 	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {

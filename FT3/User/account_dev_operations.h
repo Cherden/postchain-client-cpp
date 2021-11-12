@@ -2,8 +2,7 @@
 
 #include <memory>
 #include "../../src/GTV/abstract_value_facotry.h"
-#include "../Core/operation.h"
-#include "account.h"
+#include "../forward_declarations.h"
 
 namespace chromia {
 namespace postchain {
@@ -24,7 +23,7 @@ public:
 		return std::make_shared<ft3::Operation>("ft3.dev_free_op", args);
     }
 
-    static std::shared_ptr<ft3::Operation> GivePoints(string account_id, int points)
+    static std::shared_ptr<ft3::Operation> GivePoints(std::string account_id, int points)
     {
 		std::shared_ptr<ArrayValue> args;
 		args->Add(AbstractValueFactory::Build(account_id));

@@ -15,31 +15,15 @@ private:
 	std::shared_ptr<PostchainTransaction> _tx;
 
 public:
-    Transaction(std::shared_ptr<PostchainTransaction> tx)
-    {
-        _tx = tx;
-    }
+	Transaction(std::shared_ptr<PostchainTransaction> tx);
 
-    std::shared_ptr<Transaction> Sign(std::shared_ptr<KeyPair> keyPair)
-    {
-        this->_tx->Sign(keyPair->priv_key_, keyPair->pub_key_);
-		return std::shared_ptr<Transaction>(this);
-    }
+	std::shared_ptr<Transaction> Sign(std::shared_ptr<KeyPair> keyPair);
 
-    void Post()
-    {
-        return this->_tx->Post();
-    }
+	void Post();
 
-    void PostAndWait(std::function<void()> on_success)
-    {
-		this->_tx->PostAndWait(on_success);
-    }
+	void PostAndWait(std::function<void()> on_success);
 
-	std::vector<byte> Raw()
-    {
-        return this->_tx->Encode();
-    }
+	std::vector<byte> Raw();
 };
 } // namespace ft3
 } // namespace postchain

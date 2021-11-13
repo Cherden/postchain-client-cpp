@@ -91,6 +91,18 @@ class PostchainUtil {
 
 	static bool StringToBool(const std::string & value);
 
+	/**
+	* Try to get std::string from json object by key.
+	* Return nefault value, if key not found.
+	*/
+	static std::string GetSafeJSONString(const nlohmann::json & value, std::string key, std::string default_value = "");
+
+	/**
+	* Try to get integer from json object by key.
+	* Return nefault value, if key not found.
+	*/
+	static int GetSafeJSONInt(const nlohmann::json & value, std::string key, int default_value = 0);
+
 private:
 	static secp256k1_context *secp_context_;
 

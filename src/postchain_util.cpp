@@ -333,5 +333,32 @@ bool PostchainUtil::StringToBool(const std::string & value)
 	return value.compare("true") == 0;
 }
 
+
+std::string PostchainUtil::GetSafeJSONString(const nlohmann::json & value, std::string key, std::string default_value)
+{
+	if (value.contains(key))
+	{
+		return value[key];
+	}
+	else 
+	{
+		return default_value;
+	}
+}
+
+
+int PostchainUtil::GetSafeJSONInt(const nlohmann::json & value, std::string key, int default_value)
+{
+	if (value.contains(key))
+	{
+		return value[key];
+	}
+	else
+	{
+		return default_value;
+	}
+}
+
+
 }  // namespace postchain
 }  // namespace chromia

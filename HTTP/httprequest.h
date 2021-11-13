@@ -9,6 +9,7 @@
 #include <functional>
 
 #include "HttpModule.h"
+#include "HttpManager.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Interfaces/IHttpRequest.h"
 #include "CoreMinimal.h"
@@ -27,28 +28,15 @@ class UHttpRequest : public UObject
 	GENERATED_BODY()
 
 public:
-
-	UHttpRequest(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {};
-
-	static std::shared_ptr<UHttpRequest> BuildHttpRequest(std::string url, 
+	static void SendPostRequest(std::string url, std::string payload,
 		std::function<void(std::string)> success_callback, 
 		std::function<void(std::string)> error_callback);
-
-	void SetContent(std::string content);
-
-	void Get();
-
-	void Post();
-
 private:
+	static bool response_success;
+	static std::string response_content;
 
-	std::string url_;
-	std::string content_;
-	std::function<void(std::string)> success_callback_;
-	std::function<void(std::string)> error_callback_;
-
-	///*Called when the server has responded to http request*/
-	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	/* Called when the server has responded to http request */
+	static void OnSyncResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 };
 
 //} // namespace http

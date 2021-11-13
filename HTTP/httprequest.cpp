@@ -1,56 +1,61 @@
 #include "httprequest.h"
 #include "../../ChromaUnreal/Utils.h"
 
-std::shared_ptr<UHttpRequest> UHttpRequest::BuildHttpRequest(std::string url, 
+bool UHttpRequest::response_success = false;
+
+std::string UHttpRequest::response_content = "{}";
+
+void UHttpRequest::SendPostRequest(std::string url, std::string payload,
 	std::function<void(std::string)> success_callback, std::function<void(std::string)> error_callback)
 {
-	std::shared_ptr<UHttpRequest> request(NewObject<UHttpRequest>());
-	request->url_ = url;
-	request->success_callback_ = success_callback;
-	request->error_callback_ = error_callback;
+	FString furl = ChromaUtils::STDStringToFString(url);
+	FString fcontent = ChromaUtils::STDStringToFString(payload);
 
-	return request;
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
+	Request->OnProcessRequestComplete().BindStatic(&UHttpRequest::OnSyncResponseReceived);
+	Request->SetURL(*furl);
+	Request->SetVerb("POST");
+	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
+	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	Request->SetContentAsString(*fcontent);
+
+	//Send the request
+	bool request_started = Request->ProcessRequest();
+	if (!request_started)
+	{
+		error_callback("UHttpRequest::request->ProcessRequest() failed");
+		return;
+	}
+
+	// Wait for request to finish
+	FHttpModule::Get().GetHttpManager().Flush(false);
+	Request->CancelRequest();
+
+	success_callback("{}");
+
+	if (response_success)
+	{
+		success_callback(response_content);
+	}
+	else
+	{
+		error_callback(response_content);
+	}
 }
 
-
-void UHttpRequest::SetContent(std::string content)
+void UHttpRequest::OnSyncResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	this->content_ = content;
-}
+	UE_LOG(LogTemp, Error, TEXT("CHROMA::OnSyncResponseReceived(): %d"), bWasSuccessful);
 
-
-void UHttpRequest::Get()
-{
-	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> request = FHttpModule::Get().CreateRequest();
-	request->OnProcessRequestComplete().BindUObject(this, &UHttpRequest::OnResponseReceived);
-	request->SetURL(*(ChromaUtils::STDStringToFString(this->url_)));
-	request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
-	request->SetVerb("GET");
-	request->SetContentAsString(*(ChromaUtils::STDStringToFString(this->content_)));
-	request->ProcessRequest();
-}
-
-
-void UHttpRequest::Post()
-{
-	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> request = FHttpModule::Get().CreateRequest();
-	request->OnProcessRequestComplete().BindUObject(this, &UHttpRequest::OnResponseReceived);
-	request->SetURL(*(ChromaUtils::STDStringToFString(this->url_)));
-	request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
-	request->SetVerb("POST");
-	request->SetContentAsString(*(ChromaUtils::STDStringToFString(this->content_)));
-	request->ProcessRequest();
-}
-
-
-void UHttpRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
-{
 	if (bWasSuccessful)
 	{
-		success_callback_(ChromaUtils::FStringToSTDString(Response->GetContentAsString()));
+		UE_LOG(LogTemp, Error, TEXT("CHROMA::OnSyncResponseReceived(): %s"), *(Response->GetContentAsString()));
+		response_success = true;
+		response_content = ChromaUtils::FStringToSTDString(Response->GetContentAsString());
 	}
-	else 
+	else
 	{
-		error_callback_("UHttpRequest Failed");
+		response_success = false;
+		response_content = "UHttpRequest::request failed";
 	}
 }

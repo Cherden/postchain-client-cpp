@@ -1,9 +1,7 @@
 #pragma once
 
-#include "../Core/key_pair.h"
-#include "../User/AuthDescriptor/auth_descriptor_rule.h"
-#include "../User/account.h"
 #include <memory>
+#include "../forward_declarations.h"
 
 namespace chromia {
 namespace postchain {
@@ -15,29 +13,9 @@ public:
 	std::shared_ptr<KeyPair> key_pair_;
 	std::shared_ptr<AuthDescriptor> auth_descriptor_;
 
-//public User(KeyPair keyPair, AuthDescriptor authDescriptor)
-//{
-//    this.KeyPair = keyPair;
-//    this.AuthDescriptor = authDescriptor;
-//}
-//
-//public static User GenerateSingleSigUser(FlagsType[] flags = null)
-//{
-//    if(flags == null)
-//    {
-//        flags = new List<FlagsType>(){FlagsType.Account, FlagsType.Transfer}.ToArray();
-//    }
-//
-//    var keyPair = new KeyPair();
-//
-//    return new User(
-//        keyPair,
-//        new SingleSignatureAuthDescriptor(
-//            keyPair.PubKey,
-//            flags
-//        )
-//    );
-//}
+	User(std::shared_ptr<KeyPair> key_pair, std::shared_ptr<AuthDescriptor> auth_descriptor);
+
+	static std::shared_ptr<User> GenerateSingleSigUser(std::vector<FlagsType> flags);
 };
 } // namespace http
 } // namespace postchain

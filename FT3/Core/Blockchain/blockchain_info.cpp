@@ -1,5 +1,6 @@
 #include "blockchain_info.h"
 #include "CoreMinimal.h"
+#include "../../../src/postchain_util.h"
 #include "../../../../nlohmann/json.hpp"
 #include "../../../../ChromaUnreal/Utils.h"
 
@@ -31,12 +32,22 @@ BlockchainInfo::BlockchainInfo(std::string name, std::string website, std::strin
 
 void BlockchainInfo::GetInfo(std::shared_ptr<BlockchainClient> connection, std::function<void(std::shared_ptr<BlockchainInfo>)> on_success, std::function<void(std::string)> on_error)
 {
-	std::function<void(std::string)> on_success_wrapper = [on_success](std::string content) {
+	std::function<void(std::string)> on_success_wrapper = [&on_success](std::string content) {
 		UE_LOG(LogTemp, Error, TEXT("CHROMA::BlockchainInfo::GetInfo callback wrapper: %s"),  *(ChromaUtils::STDStringToFString(content)));
-		
 		nlohmann::json json_content = nlohmann::json::parse(content);
-		
-		std::shared_ptr<BlockchainInfo> info = std::make_shared<BlockchainInfo>();
+
+		std::string name = PostchainUtil::GetSafeJSONString(json_content, std::string("name"));
+		std::string website = PostchainUtil::GetSafeJSONString(json_content, std::string("website"));
+		std::string description = PostchainUtil::GetSafeJSONString(json_content, std::string("description"));
+		int rate_limit_active = PostchainUtil::GetSafeJSONInt(json_content, std::string("rate_limit_active"));
+		int rate_limit_max_points = PostchainUtil::GetSafeJSONInt(json_content, std::string("rate_limit_max_points"));
+		int rate_limit_recovery_time = PostchainUtil::GetSafeJSONInt(json_content, std::string("rate_limit_recovery_time"));
+		int rate_limit_points_at_account_creation = PostchainUtil::GetSafeJSONInt(json_content, std::string("rate_limit_points_at_account_creation"));
+
+		std::string missing = PostchainUtil::GetSafeJSONString(json_content, std::string("nadsfsdfsdme"));
+
+		std::shared_ptr<BlockchainInfo> info = std::make_shared<BlockchainInfo>(
+			name, website, description, rate_limit_active, rate_limit_max_points, rate_limit_recovery_time, rate_limit_points_at_account_creation);
 		on_success(info);
 	};
 

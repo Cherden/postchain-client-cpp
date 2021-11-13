@@ -35,11 +35,12 @@ void Blockchain::Initialize(string blockchain_rid, std::shared_ptr<DirectoryServ
 
 	std::shared_ptr<BlockchainClient> connection = std::make_shared<BlockchainClient>();
 	connection->Setup(blockchain_rid, chainConnectionInfo->url_);
-	BlockchainInfo::GetInfo(connection, 
-		[=] (std::shared_ptr<BlockchainInfo> blockchain_info) { 
-			on_success(std::make_shared<Blockchain>(blockchain_rid, blockchain_info, directory_service));
-		}
-	, on_error);
+
+	BlockchainInfo::GetInfo(connection, [=](std::shared_ptr<BlockchainInfo> blockchain_info) {
+		on_success(std::make_shared<Blockchain>(blockchain_rid, blockchain_info, connection, directory_service));
+	}, on_error);
+
+	return;
 }
 
 std::shared_ptr<TransactionBuilder> Blockchain::NewTransactionBuilder()
@@ -146,10 +147,10 @@ void Blockchain::Query(string query_name, std::vector<QueryObject> query_objects
 void Blockchain::Call(std::shared_ptr<ft3::Operation> operation, std::shared_ptr<User> user,
 	std::function<void()> on_success, std::function<void(string)> on_error)
 {
-	auto &tx_builder = this->NewTransactionBuilder();
+	auto tx_builder = this->NewTransactionBuilder();
 	tx_builder->Add(operation);
 	tx_builder->Add(AccountOperations::Nop());
-	auto &tx = tx_builder->Build(user->auth_descriptor_->signers_, on_error);
+	auto tx = tx_builder->Build(user->auth_descriptor_->signers_, on_error);
 	tx->Sign(user->key_pair_);
 	tx->PostAndWait(on_success);
 }

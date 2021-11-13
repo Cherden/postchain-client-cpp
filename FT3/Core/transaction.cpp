@@ -19,7 +19,7 @@ std::shared_ptr<Transaction> Transaction::Sign(std::shared_ptr<KeyPair> keyPair)
 
 void Transaction::Post()
 {
-	return this->_tx->Post();
+	//return this->_tx->Post();
 }
 
 void Transaction::PostAndWait(std::function<void()> on_success)

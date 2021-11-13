@@ -16,7 +16,7 @@ public:
 
 	KeyPair(std::vector<byte> private_key, std::vector<byte> pub_key);
 
-	KeyPair(std::string private_key);
+	KeyPair(std::string private_key = "");
 
 };
 

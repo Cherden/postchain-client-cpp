@@ -29,34 +29,19 @@ public:
 class PostchainTransaction {
 public:
 
-	PostchainTransaction(std::shared_ptr<client::Gtx> gtx, std::string base_url, std::string brid);
+	PostchainTransaction(std::shared_ptr<client::Gtx> gtx, std::string base_url, std::string brid, std::function<void(std::string)> on_error);
 	
 	void AddOperation(std::string name, std::shared_ptr<gtv::ArrayValue> args);
 
 	void Sign(std::vector<byte> private_key, std::vector<byte> public_key);
 
-	std::string Serialize()
-	{
-		return this->gtx_object_->Serialize();
-	}
+	std::string Serialize();
 
 	std::string GetTxRID();
 
-	void Post()
-	{
-		//TO-DO
-	}
+	void PostAndWait(std::function<void()> callback);
 
-	void PostAndWait(std::function<void()> callback)
-	{
-		//TO-DO
-	}
-
-	std::vector<byte> Encode()
-	{
-		//TO-DO
-		return {};
-	}
+	std::vector<byte> Encode();
 
 	bool IsSent();
 private:
@@ -66,7 +51,7 @@ private:
 	bool sent_ = false;
 	bool error_;
 
-	// TODO implement the onerror callback
+	std::function<void(std::string)> on_error_ = nullptr;
 };
 }  // namespace postchain
 }  // namespace chromia

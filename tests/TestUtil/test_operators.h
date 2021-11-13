@@ -9,12 +9,18 @@
 class TestOperators
 {
 public:
+
+	static bool Equals(int a, int b)
+	{
+		return a == b;
+	}
+
 	static bool Equals(std::string a, std::string b)
 	{
 		return (a.compare(b) == 0);
 	}
 
-	static bool Equals(std::vector<byte> a, std::vector<byte> b)
+	static bool Equals(std::vector<unsigned char> a, std::vector<unsigned char> b)
 	{
 		if (a.size() != b.size()) return false;
 		for (int i = 0; i < a.size(); i++)

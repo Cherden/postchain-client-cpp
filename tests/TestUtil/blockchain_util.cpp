@@ -5,8 +5,8 @@
 void BlockchainUtil::GetDefaultBlockchain(std::function<void(std::shared_ptr<Blockchain>)> on_success, std::function<void(std::string)> on_error)
 {
 	Blockchain::Initialize(
-		"5759EB34C39B4D34744EC324DFEFAC61526DCEB37FB05D22EB7C95A184380205",
-		DirectoryServiceUtil::GetDefaultDirectoryService("5759EB34C39B4D34744EC324DFEFAC61526DCEB37FB05D22EB7C95A184380205", "http://localhost:7740"),
+		"849AD8C9AC720A21962187D0BDA6168DA274E1D17D39AAD513559171FDDC6914",
+		DirectoryServiceUtil::GetDefaultDirectoryService("849AD8C9AC720A21962187D0BDA6168DA274E1D17D39AAD513559171FDDC6914", "http://localhost:7740"),
 		on_success,
 		on_error
 	);

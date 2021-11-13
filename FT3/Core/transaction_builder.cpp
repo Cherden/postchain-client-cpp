@@ -23,7 +23,7 @@ std::shared_ptr<TransactionBuilder> TransactionBuilder::Add(std::shared_ptr<ft3:
 std::shared_ptr<Transaction> TransactionBuilder::Build(std::vector<std::vector<byte>> signers, std::function<void(std::string)> on_error)
 {
 	on_error; 
-	std::shared_ptr<PostchainTransaction> tx = this->blockchain_->connection_->NewTransaction(signers); //TO-DO add on error
+	std::shared_ptr<PostchainTransaction> tx = this->blockchain_->connection_->NewTransaction(signers, on_error); //TO-DO add on error
 	for (auto &op : operations_)
 	{
 		tx->AddOperation(op->name_, op->args_);

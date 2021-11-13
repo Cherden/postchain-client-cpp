@@ -8,7 +8,7 @@
 #include "../../FT3/Core/key_pair.h"
 #include "../../src/common.h"
 
-std::shared_ptr<User> TestUser::SingleSig(std::shared_ptr<IAuthdescriptorRule> rule = nullptr)
+std::shared_ptr<User> TestUser::SingleSig(std::shared_ptr<IAuthdescriptorRule> rule)
 {
 	std::shared_ptr<KeyPair> key_pair = std::make_shared<KeyPair>();
 	std::shared_ptr<SingleSignatureAuthDescriptor> single_sig_auth_descriptor = std::make_shared<SingleSignatureAuthDescriptor>(
@@ -19,7 +19,7 @@ std::shared_ptr<User> TestUser::SingleSig(std::shared_ptr<IAuthdescriptorRule> r
 	return std::make_shared<User>(key_pair, single_sig_auth_descriptor);
 }
 
-std::shared_ptr<User> TestUser::MultiSig(int required_signatures, int number_of_participants, std::shared_ptr<IAuthdescriptorRule> rule = nullptr)
+std::shared_ptr<User> TestUser::MultiSig(int required_signatures, int number_of_participants, std::shared_ptr<IAuthdescriptorRule> rule)
 {
 	std::vector<std::shared_ptr<KeyPair>> key_pairs;
 	std::vector<std::vector<byte>> pub_keys;

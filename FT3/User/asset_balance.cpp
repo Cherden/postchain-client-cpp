@@ -4,6 +4,7 @@
 #include "../Core/transaction_builder.h"
 #include "../Core/Blockchain/blockchain.h"
 #include "../Core/transaction.h"
+#include "../Core/operation.h"
 
 namespace chromia {
 namespace postchain {

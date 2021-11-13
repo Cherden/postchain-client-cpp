@@ -6,7 +6,6 @@
 
 //#include "GoogleTest/include/gtest/gtest.h"
 
-#include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
 
 #include <functional>
 #include <string>
@@ -26,6 +25,8 @@
 #include "../../FT3/Core/Blockchain/blockchain.h"
 #include "../../FT3/Core/transaction_builder.h"
 #include "../../FT3/Core/transaction.h"
+#include "../../FT3/User/AuthDescriptor/single_signature_auth_descriptor.h"
+#include "../../FT3/User/AuthDescriptor/multi_signature_auth_descriptor.h"
 #include "../../../ChromaUnreal/Utils.h"
 
 
@@ -35,114 +36,61 @@ using namespace chromia::postchain;
 class AccountTest
 {
 private:
-	std::shared_ptr<Blockchain> blockchain_;
+	std::shared_ptr<Blockchain> blockchain_ = nullptr;
 
-	std::function<void(std::string)> default_error_handler_ = [](std::string error) {
-		UE_LOG(LogTemp, Error, TEXT("CHROMA::FT3 [%s]"), *(ChromaUtils::STDStringToFString(error)));
-	};
+	//std::function<void(std::string error)> default_error_handler_ptr = std::bind(&);
 
+	void SetupBlockchain();
 
-	void SetupBlockchain()
-	{
-		std::function<void(std::shared_ptr<Blockchain>)> on_success = [&](std::shared_ptr<Blockchain> blockchain) {
-			this->blockchain_ = blockchain;
-		};
-		
-		std::function<void(std::string)> on_error = [] (std::string error) {
-			UE_LOG(LogTemp, Display, TEXT("FT3::Error. SetupBlockchain()"));
-		};
+	static void EmptyCallback() {}
 
-		BlockchainUtil::GetDefaultBlockchain(on_success, on_error);
-	}
+	static void DefaultErrorHandler(std::string error);
 
-	
-	void EmptyCallback() {}
-
-	
-	void AddAuthDescriptorTo(std::shared_ptr<Account> account, std::shared_ptr<User> admin_user, std::shared_ptr<User> user, std::function<void()> on_success)
-	{
-		vector<vector<byte>> signers;
-		for (auto &signer : admin_user->auth_descriptor_->signers_)
-		{
-			signers.push_back(signer);
-		}
-		for (auto &signer : user->auth_descriptor_->signers_)
-		{
-			signers.push_back(signer);
-		}
-		
-		auto tx_builder = blockchain_->NewTransactionBuilder();
-		tx_builder->Add(AccountOperations::AddAuthDescriptor(account->id_, admin_user->auth_descriptor_->id_, user->auth_descriptor_));
-
-		auto tx = tx_builder->Build(signers, this->default_error_handler_);
-		tx->Sign(admin_user->key_pair_);
-		tx->Sign(user->key_pair_);
-		tx->PostAndWait(on_success);
-	}
+	void AddAuthDescriptorTo(std::shared_ptr<Account> account, std::shared_ptr<User> admin_user, std::shared_ptr<User> user, std::function<void()> on_success);
 
 public:
 
 	// Correctly creates keypair
-	bool AccountTest1()
-	{
-		bool pass = true;
-
-		std::vector<unsigned char> private_key;
-		std::vector<unsigned char> public_key;
-		if (!PostchainUtil::GenerateKeyPair(private_key, public_key))
-		{
-			pass = false;
-		}
-
-		auto user = new KeyPair(PostchainUtil::ByteVectorToHexString(private_key));
-
-		pass = pass && TestOperators::Equals(user->priv_key_, private_key);
-		pass = pass && TestOperators::Equals(user->pub_key_, public_key);
-
-		return pass;
-	}
+	bool AccountTest1();
 
 	// Register account on blockchain
-	bool AccountTest2()
-	{
-		bool pass = true;
+	bool AccountTest2();
 
-		SetupBlockchain();
-		std::shared_ptr<User> user = TestUser::SingleSig();
-		std::shared_ptr<Account> account = nullptr;
-		blockchain_->RegisterAccount(user->auth_descriptor_, user, [&account](std::shared_ptr<Account> _account) {
-			account = _account;
-		}, this->default_error_handler_);
+	// Can add new auth descriptor if has account edit rights
+	bool AccountTest3();
 
-		pass = pass && TestOperators::NotNull(account);
-		return pass;
-	}
+	// Cannot add new auth descriptor if account doesn't have account edit rights
+	bool AccountTest4();
 
-	// can add new auth descriptor if has account edit rights
-	bool AccountTest3()
-	{
-		SetupBlockchain();
-		std::shared_ptr<User> user = TestUser::SingleSig();
+	// should create new multisig account
+	bool AccountTest5();
 
-		std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
-		/*accountBuilder.WithParticipants(new List<KeyPair>() { user.KeyPair });
-		accountBuilder.WithPoints(1);
+	// should update account if 2 signatures provided
+	bool AccountTest6();
 
-		Account account = null;
-		yield return accountBuilder.Build((Account _account) = > { account = _account; }, DefaultErrorHandler);
-		Assert.NotNull(account);
+	// should fail if only one signature provided
+	bool AccountTest7();
 
-		yield return account.AddAuthDescriptor(
-			new SingleSignatureAuthDescriptor(
-				user.KeyPair.PubKey,
-				new List<FlagsType>() { FlagsType.Transfer }.ToArray()
-			),
-			EmptyCallback, DefaultErrorHandler
-		);
+	// should be returned when queried by participant id
+	bool AccountTest8();
 
-		Assert.AreEqual(2, account.AuthDescriptor.Count);*/
-	}
+	// should return two accounts when account is participant of two accounts
+	bool AccountTest9();
 
+	// should return account by id
+	bool AccountTest10();
+
+	// should have only one auth descriptor after calling deleteAllAuthDescriptorsExclude
+	bool AccountTest11();
+
+	// should be able to register account by directly calling \'register_account\' operation
+	bool AccountTest12();
+
+	// should be possible for auth descriptor to delete itself without admin flag
+	bool AccountTest13();
+
+	// shouldn't be possible for auth descriptor to delete other auth descriptor without admin flag
+	bool AccountTest14();
 };
 
 //#endif // FT3_TESTS

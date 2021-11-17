@@ -27,7 +27,10 @@ std::shared_ptr<gtv::ArrayValue> SingleSignatureAuthDescriptor::ToGTV()
 	arr_1->Add(AbstractValueFactory::Build(PostchainUtil::ByteVectorToHexString(this->pubkey_)));
 	gtv->Add(arr_1);
 
-	gtv->Add(this->auth_rule_->ToGTV());
+	if (this->auth_rule_ != nullptr)
+	{
+		gtv->Add(this->auth_rule_->ToGTV());
+	}
 
 	return gtv;
 }
@@ -47,7 +50,10 @@ std::vector<byte> SingleSignatureAuthDescriptor::Hash()
 	arr_1->Add(AbstractValueFactory::Build(PostchainUtil::ByteVectorToHexString(this->pubkey_)));
 	gtv->Add(arr_1);
 
-	gtv->Add(this->auth_rule_->ToGTV());
+	if (this->auth_rule_ != nullptr)
+	{
+		gtv->Add(this->auth_rule_->ToGTV());
+	}
 
 	std::vector<byte> hashed = AbstractValue::Hash(gtv);
 	return hashed;

@@ -22,17 +22,17 @@ void AccountTest::SetupBlockchain()
 void AccountTest::AddAuthDescriptorTo(std::shared_ptr<Account> account, std::shared_ptr<User> admin_user, std::shared_ptr<User> user, std::function<void()> on_success)
 {
 	vector<vector<byte>> signers;
-	for (auto &signer : admin_user->auth_descriptor_->signers_)
+	for (auto &signer : admin_user->auth_descriptor_->Signers())
 	{
 		signers.push_back(signer);
 	}
-	for (auto &signer : user->auth_descriptor_->signers_)
+	for (auto &signer : user->auth_descriptor_->Signers())
 	{
 		signers.push_back(signer);
 	}
 
 	auto tx_builder = blockchain_->NewTransactionBuilder();
-	tx_builder->Add(AccountOperations::AddAuthDescriptor(account->id_, admin_user->auth_descriptor_->id_, user->auth_descriptor_));
+	tx_builder->Add(AccountOperations::AddAuthDescriptor(account->id_, admin_user->auth_descriptor_->ID(), user->auth_descriptor_));
 
 	auto tx = tx_builder->Build(signers, this->DefaultErrorHandler);
 	tx->Sign(admin_user->key_pair_);
@@ -168,7 +168,7 @@ bool AccountTest::AccountTest5()
 		2,
 		std::vector<FlagsType> { FlagsType::eAccount, FlagsType::eTransfer });
 
-	auto tx = blockchain_->connection_->NewTransaction(multi_sig->signers_, this->DefaultErrorHandler);
+	auto tx = blockchain_->connection_->NewTransaction(multi_sig->Signers(), this->DefaultErrorHandler);
 
 	/*var op = AccountDevOperations.Register(multiSig);
 	tx.AddOperation(op.Name, op.Args);
@@ -178,49 +178,51 @@ bool AccountTest::AccountTest5()
 	bool successfully = false;
 	yield return tx.PostAndWait(() = > successfully = true);
 	Assert.True(successfully);*/
+
+	return true;
 }
 
 bool AccountTest::AccountTest6()
 {
-
+	return true;
 }
 
 bool AccountTest::AccountTest7()
 {
-
+	return true;
 }
 
 bool AccountTest::AccountTest8()
 {
-
+	return true;
 }
 
 bool AccountTest::AccountTest9()
 {
-
+	return true;
 }
 
 bool AccountTest::AccountTest10()
 {
-
+	return true;
 }
 
 bool AccountTest::AccountTest11()
 {
-
+	return true;
 }
 
 bool AccountTest::AccountTest12()
 {
-
+	return true;
 }
 
 bool AccountTest::AccountTest13()
 {
-
+	return true;
 }
 
 bool AccountTest::AccountTest14()
 {
-
+	return true;
 }

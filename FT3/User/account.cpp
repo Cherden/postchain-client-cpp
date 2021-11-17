@@ -88,19 +88,35 @@ void Account::GetByAuthDescriptorId(std::string id, std::shared_ptr<BlockchainSe
 
 void Account::Register(std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<BlockchainSession> session,
 	std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
-{}
+{
+	std::shared_ptr<Account> account = nullptr;
+	session->Call(
+		AccountDevOperations::Register(auth_descriptor), 
+		[&account, auth_descriptor, session] (){
+		account = std::make_shared<Account>(
+			PostchainUtil::ByteVectorToHexString(auth_descriptor->Hash()),
+				std::vector<std::shared_ptr<AuthDescriptor>> { auth_descriptor },
+				session);
+	}
+	, on_error);
+
+	if (account != nullptr)
+	{
+		account->Sync([on_success, account]() { on_success(account); }, on_error);
+	}
+}
 
 
 std::vector<byte> Account::RawTransactionRegister(std::shared_ptr<User> user, std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain)
 {
 	std::vector<std::vector<byte>> signers;
 
-	for (auto &signer : user->auth_descriptor_->signers_)
+	for (auto &signer : user->auth_descriptor_->Signers())
 	{
 		signers.push_back(signer);
 	}
 
-	for (auto &signer : auth_descriptor->signers_)
+	for (auto &signer : auth_descriptor->Signers())
 	{
 		signers.push_back(signer);
 	}
@@ -108,7 +124,7 @@ std::vector<byte> Account::RawTransactionRegister(std::shared_ptr<User> user, st
 	std::shared_ptr<TransactionBuilder> tx_builder = blockchain->NewTransactionBuilder();
 
 	return tx_builder->Add(AccountDevOperations::Register(user->auth_descriptor_))
-		->Add(AccountOperations::AddAuthDescriptor(user->auth_descriptor_->id_, user->auth_descriptor_->id_, auth_descriptor))
+		->Add(AccountOperations::AddAuthDescriptor(user->auth_descriptor_->ID(), user->auth_descriptor_->ID(), auth_descriptor))
 		->Build(signers, nullptr)
 		->Sign(user->key_pair_)
 		->Raw();
@@ -120,19 +136,19 @@ std::vector<byte> Account::RawTransactionAddAuthDescriptor(std::string account_i
 {
 	std::vector<std::vector<byte>> signers;
 
-	for (auto &signer : user->auth_descriptor_->signers_)
+	for (auto &signer : user->auth_descriptor_->Signers())
 	{
 		signers.push_back(signer);
 	}
 
-	for (auto &signer : auth_descriptor->signers_)
+	for (auto &signer : auth_descriptor->Signers())
 	{
 		signers.push_back(signer);
 	}
 
 	std::shared_ptr<TransactionBuilder> tx_builder = blockchain->NewTransactionBuilder();
 
-	return tx_builder->Add(AccountOperations::AddAuthDescriptor(user->auth_descriptor_->id_, user->auth_descriptor_->id_, auth_descriptor))
+	return tx_builder->Add(AccountOperations::AddAuthDescriptor(user->auth_descriptor_->ID(), user->auth_descriptor_->ID(), auth_descriptor))
 		->Build(signers, nullptr)
 		->Sign(user->key_pair_)
 		->Raw();
@@ -176,7 +192,7 @@ void Account::AddAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor,
 	// TO-DO validate sync call;
 
 	this->session_->Call(AccountOperations::AddAuthDescriptor(
-		this->id_, this->session_->user_->auth_descriptor_->id_, auth_descriptor
+		this->id_, this->session_->user_->auth_descriptor_->ID(), auth_descriptor
 	), [&]() {
 		this->auth_descriptors_.push_back(auth_descriptor);
 		on_success();
@@ -198,7 +214,7 @@ void Account::IsAuthDescriptorValid(std::string id, std::function<void(bool)> on
 void Account::DeleteAllAuthDescriptorsExclude(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
 	// TO-DO validate sync call;
-	this->session_->Call(AccountOperations::DeleteAllAuthDescriptorsExclude(this->id_, auth_descriptor->id_),
+	this->session_->Call(AccountOperations::DeleteAllAuthDescriptorsExclude(this->id_, auth_descriptor->ID()),
 		[&]() {
 			this->auth_descriptors_.clear();
 			this->auth_descriptors_.push_back(auth_descriptor);
@@ -208,7 +224,7 @@ void Account::DeleteAllAuthDescriptorsExclude(std::shared_ptr<AuthDescriptor> au
 
 void Account::DeleteAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-	this->session_->Call(AccountOperations::DeleteAuthDescriptor(this->id_, this->session_->user_->auth_descriptor_->id_, auth_descriptor->id_),
+	this->session_->Call(AccountOperations::DeleteAuthDescriptor(this->id_, this->session_->user_->auth_descriptor_->ID(), auth_descriptor->ID()),
         [&] () {
 		auto to_remove = std::find(this->auth_descriptors_.begin(), this->auth_descriptors_.end(), auth_descriptor);
 		if (to_remove != this->auth_descriptors_.end())
@@ -311,7 +327,7 @@ void Account::Transfer(std::string account_id, std::string asset_id, long amount
 	std::shared_ptr<ArrayValue> input = AbstractValueFactory::EmptyArray();
 	input->Add(AbstractValueFactory::Build(this->id_));
 	input->Add(AbstractValueFactory::Build(asset_id));
-	input->Add(AbstractValueFactory::Build(this->session_->user_->auth_descriptor_->id_));
+	input->Add(AbstractValueFactory::Build(this->session_->user_->auth_descriptor_->ID()));
 	input->Add(AbstractValueFactory::Build(amount));
 	input->Add(AbstractValueFactory::EmptyArray());
 
@@ -334,7 +350,7 @@ void Account::BurnTokens(std::string asset_id, long amount, std::function<void()
 	std::shared_ptr<ArrayValue> input = AbstractValueFactory::EmptyArray();
 	input->Add(AbstractValueFactory::Build(this->id_));
 	input->Add(AbstractValueFactory::Build(asset_id));
-	input->Add(AbstractValueFactory::Build(this->session_->user_->auth_descriptor_->id_));
+	input->Add(AbstractValueFactory::Build(this->session_->user_->auth_descriptor_->ID()));
 	input->Add(AbstractValueFactory::Build(amount));
 	input->Add(AbstractValueFactory::EmptyArray());
 
@@ -365,7 +381,7 @@ std::shared_ptr<ft3::Operation> Account::XcTransferOp(std::string destination_ch
 	std::shared_ptr<ArrayValue> source = AbstractValueFactory::EmptyArray();
 	source->Add(AbstractValueFactory::Build(this->id_));
 	source->Add(AbstractValueFactory::Build(asset_id));
-	source->Add(AbstractValueFactory::Build(this->session_->user_->auth_descriptor_->id_));
+	source->Add(AbstractValueFactory::Build(this->session_->user_->auth_descriptor_->ID()));
 	source->Add(AbstractValueFactory::Build(amount));
 	source->Add(AbstractValueFactory::EmptyArray());
 

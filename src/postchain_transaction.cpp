@@ -12,6 +12,7 @@ namespace postchain {
 	this->gtx_object_ = gtx;
 	this->base_url_ = base_url;
 	this->brid_ = brid;
+	this->on_error_ = on_error;
 }
 
 

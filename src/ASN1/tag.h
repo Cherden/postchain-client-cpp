@@ -6,13 +6,11 @@ namespace postchain {
 namespace asn1 {
 
 namespace tag {
-constexpr unsigned char kNull = 0xa0;
-constexpr unsigned char kOctetString = 0xa1;
-constexpr unsigned char kUTF8String = 0xa2;
-constexpr unsigned char kInteger = 0x03;
-constexpr unsigned char kDict = 0xa4;
-constexpr unsigned char kArray = 0xa5;
-constexpr unsigned char kSequence = 0x30;
+	constexpr unsigned char kNull = 0x05;
+	constexpr unsigned char kOctetString = 0x04;
+	constexpr unsigned char kUTF8String = 0x0c;
+	constexpr unsigned char kInteger = 0x02;
+	constexpr unsigned char kSequence = 0x30;
 };  // namespace tag
 
 }  // namespace asn1

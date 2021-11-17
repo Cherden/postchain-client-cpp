@@ -25,7 +25,7 @@ std::shared_ptr<PostchainTransaction> BlockchainClient::NewTransaction(std::vect
 		new_gtx->AddSignerToGtx(signer);
 	}
 
-	return std::make_shared<PostchainTransaction>(new_gtx, this->base_url_, this->blockchain_rid_);
+	return std::make_shared<PostchainTransaction>(new_gtx, this->base_url_, this->blockchain_rid_, on_error);
 }
 
 

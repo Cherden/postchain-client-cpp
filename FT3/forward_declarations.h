@@ -52,10 +52,12 @@ public:
 class AuthDescriptor : public GtvSerializable
 {
 public:
-	std::string id_;
-	std::vector<std::vector<byte>> signers_;
-	std::shared_ptr<IAuthdescriptorRule> rule_;
-	std::vector<byte> Hash() {};
+	virtual ~AuthDescriptor() = default;
+
+	virtual std::string ID() = 0;
+	virtual std::vector<std::vector<byte>> Signers() = 0;
+	virtual std::shared_ptr<IAuthdescriptorRule> Rule() = 0;
+	virtual std::vector<byte> Hash() = 0;
 };
 
 

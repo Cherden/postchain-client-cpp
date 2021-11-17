@@ -142,7 +142,7 @@ std::shared_ptr<AuthDescriptor> AccountBuilder::GetAuthDescriptor()
 			participants,
 			this->required_signatures_count_,
 			this->flags_,
-			this->user_->auth_descriptor_->rule_
+			this->user_->auth_descriptor_->Rule()
 			);
 
 		return std::dynamic_pointer_cast<AuthDescriptor>(multi);
@@ -152,7 +152,7 @@ std::shared_ptr<AuthDescriptor> AccountBuilder::GetAuthDescriptor()
 		std::shared_ptr<SingleSignatureAuthDescriptor> multi = std::make_shared<SingleSignatureAuthDescriptor>(
 			this->participants_[0]->pub_key_,
 			this->flags_,
-			this->user_->auth_descriptor_->rule_
+			this->user_->auth_descriptor_->Rule()
 			);
 
 		return std::dynamic_pointer_cast<AuthDescriptor>(multi);

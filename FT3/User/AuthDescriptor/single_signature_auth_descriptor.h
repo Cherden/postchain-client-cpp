@@ -17,17 +17,17 @@ public:
 	std::shared_ptr<Flags> flags_;
 	std::shared_ptr<IAuthdescriptorRule> auth_rule_;
 	
-	std::vector<byte> Signers()
+	std::vector<std::vector<byte>> Signers() override
 	{
-		return this->pubkey_;
+		return std::vector<std::vector<byte>> {this->pubkey_};
 	}
 
-	std::string ID()
+	std::string ID() override
 	{
 		return PostchainUtil::ByteVectorToHexString(this->Hash());
 	}
 
-	std::shared_ptr<IAuthdescriptorRule> Rule()
+	std::shared_ptr<IAuthdescriptorRule> Rule() override
 	{
 		return this->auth_rule_;
 	}

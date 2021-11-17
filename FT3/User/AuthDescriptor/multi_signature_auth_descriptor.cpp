@@ -41,7 +41,10 @@ std::shared_ptr<gtv::ArrayValue> MultiSignatureAuthDescriptor::ToGTV()
 	arr_0->Add(AbstractValueFactory::Build(hexpubs));
 	gtv->Add(arr_0);
 	
-	gtv->Add(this->auth_rule_->ToGTV());
+	if (this->auth_rule_ != nullptr)
+	{
+		gtv->Add(this->auth_rule_->ToGTV());
+	}
 
 	return gtv;
 }
@@ -65,7 +68,10 @@ std::vector<byte> MultiSignatureAuthDescriptor::Hash()
 	arr_0->Add(AbstractValueFactory::Build(hexpubs));
 	gtv->Add(arr_0);
 
-	gtv->Add(this->auth_rule_->ToGTV());
+	if (this->auth_rule_ != nullptr)
+	{
+		gtv->Add(this->auth_rule_->ToGTV());
+	}
 
 	std::vector<byte> hashed = AbstractValue::Hash(gtv);
 	return hashed;

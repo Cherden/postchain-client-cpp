@@ -33,7 +33,7 @@ std::shared_ptr<Transaction> TransactionBuilder::Build(std::vector<std::vector<b
 
 std::shared_ptr<Transaction> TransactionBuilder::BuildAndSign(std::shared_ptr<User> user, std::function<void(std::string)> on_error)
 {
-	std::shared_ptr<Transaction> tx = this->Build(user->auth_descriptor_->signers_, on_error);
+	std::shared_ptr<Transaction> tx = this->Build(user->auth_descriptor_->Signers(), on_error);
 	tx->Sign(user->key_pair_);
 	return tx;
 }

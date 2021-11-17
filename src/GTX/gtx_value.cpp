@@ -146,30 +146,31 @@ std::shared_ptr<GTXValue> GTXValue::Decode(std::shared_ptr<asn1::Reader> sequenc
 		val->integer_ = sequence->ReadInteger();
 		break;
 	}
-	case asn1::tag::kArray:
-	{
-		val->choice_ = GTXValueChoice::Array;
-		std::shared_ptr<Reader> inner_sequence = std::make_shared<Reader>(sequence->ReadSequence());
-		while (inner_sequence->RemainingBytes() > 0)
-		{
-			val->array_.push_back(GTXValue::Decode(inner_sequence));
-		}
-		break;
-	}
-	case asn1::tag::kDict:
-	{
-		throw std::exception("GTXValue::Decode() asn1::tag::kDict not implemented");
-		/*
-		TO-DO
-		val.Choice = GTXValueChoice.Dict;
-		val.Dict = new List<DictPair>();
-		var innerSequence = sequence.ReadSequence();
-		while (innerSequence.RemainingBytes > 0)
-		{
-			val.Dict.Add(DictPair.Decode(innerSequence));
-		}*/
-		break;
-	}
+	// TO-DO
+	//case asn1::tag::kArray:
+	//{
+	//	val->choice_ = GTXValueChoice::Array;
+	//	std::shared_ptr<Reader> inner_sequence = std::make_shared<Reader>(sequence->ReadSequence());
+	//	while (inner_sequence->RemainingBytes() > 0)
+	//	{
+	//		val->array_.push_back(GTXValue::Decode(inner_sequence));
+	//	}
+	//	break;
+	//}
+	//case asn1::tag::kDict:
+	//{
+	//	throw std::exception("GTXValue::Decode() asn1::tag::kDict not implemented");
+	//	/*
+	//	TO-DO
+	//	val.Choice = GTXValueChoice.Dict;
+	//	val.Dict = new List<DictPair>();
+	//	var innerSequence = sequence.ReadSequence();
+	//	while (innerSequence.RemainingBytes > 0)
+	//	{
+	//		val.Dict.Add(DictPair.Decode(innerSequence));
+	//	}*/
+	//	break;
+	//}
 	default:
 	{
 		throw std::exception("GTXValue::Decode() Unknown choice tag");
@@ -199,6 +200,67 @@ std::vector<unsigned char> GTXValue::TrimByteList(char* byteList, int length)
 	return trimmedBytes;
 }
 
+
+std::string GTXValue::ToString()
+{
+	switch (this->choice_)
+	{
+	case (GTXValueChoice::Null):
+	{
+		return "null";
+	}
+	case (GTXValueChoice::ByteArray):
+	{
+		return "0x" + PostchainUtil::ByteVectorToHexString(this->byte_array_);
+	}
+	case (GTXValueChoice::String):
+	{
+		return this->string_;
+	}
+	case (GTXValueChoice::Integer):
+	{
+		return std::to_string(this->integer_);
+	}
+	case (GTXValueChoice::Array):
+	{
+		std::string ret = "[";
+		if (this->array_.size() == 0)
+		{
+			return ret + "]";
+		}
+
+		for (auto &elm : this->array_)
+		{
+			std::string elm_str = elm->ToString();
+			ret += elm_str.size() + "_" + elm_str + ", ";
+		}
+
+		ret = ret.substr(0, ret.size() - 2);
+		return ret + "]";
+	}
+	case (GTXValueChoice::Dict):
+	{
+		/*std::string ret = "[";
+		if (Dict.Count == 0)
+		{
+			return ret + "]";
+		}
+
+		foreach(var elm in Dict)
+		{
+			ret += @"{{""" + elm.Name + @""": " + elm.Value.ToString() + "}, ";
+		}
+
+		return ret.Remove(ret.Length - 2) + "]";*/
+		throw std::exception("GtxValue::ToString() Dict type not implemented");
+		return "";
+	}
+	default:
+	{
+		return "";
+	}
+	}
+}
 
 }  // namespace client
 }  // namespace postchain

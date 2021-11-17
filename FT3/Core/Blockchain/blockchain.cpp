@@ -150,7 +150,7 @@ void Blockchain::Call(std::shared_ptr<ft3::Operation> operation, std::shared_ptr
 	auto tx_builder = this->NewTransactionBuilder();
 	tx_builder->Add(operation);
 	tx_builder->Add(AccountOperations::Nop());
-	auto tx = tx_builder->Build(user->auth_descriptor_->signers_, on_error);
+	auto tx = tx_builder->Build(user->auth_descriptor_->Signers(), on_error);
 	tx->Sign(user->key_pair_);
 	tx->PostAndWait(on_success);
 }

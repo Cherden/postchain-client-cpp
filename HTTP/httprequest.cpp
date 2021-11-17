@@ -31,8 +31,6 @@ void UHttpRequest::SendPostRequest(std::string url, std::string payload,
 	FHttpModule::Get().GetHttpManager().Flush(false);
 	Request->CancelRequest();
 
-	success_callback("{}");
-
 	if (response_success)
 	{
 		success_callback(response_content);

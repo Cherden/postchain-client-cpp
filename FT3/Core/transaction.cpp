@@ -14,7 +14,7 @@ Transaction::Transaction(std::shared_ptr<PostchainTransaction> tx)
 std::shared_ptr<Transaction> Transaction::Sign(std::shared_ptr<KeyPair> keyPair)
 {
 	this->_tx->Sign(keyPair->priv_key_, keyPair->pub_key_);
-	return nullptr; //TO-DO check this return std::shared_ptr<Transaction>(this);
+	return shared_from_this();
 }
 
 void Transaction::Post()

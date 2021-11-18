@@ -18,17 +18,17 @@ BlockchainSession::BlockchainSession(std::shared_ptr<User> user, std::shared_ptr
 
 void BlockchainSession::GetAccountById(string id, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
 {
-	Account::GetById(id, std::shared_ptr<BlockchainSession>(this), on_success, on_error);
+	Account::GetById(id, shared_from_this(), on_success, on_error);
 }
 
 void BlockchainSession::GetAccountsByParticipantId(std::string id, std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error)
 {
-	Account::GetByParticipantId(id, std::shared_ptr<BlockchainSession>(this), on_success, on_error);
+	Account::GetByParticipantId(id, shared_from_this(), on_success, on_error);
 }
 
 void BlockchainSession::GetAccountsByAuthDescriptorId(string id, std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error)
 {
-	Account::GetByAuthDescriptorId(id, std::shared_ptr<BlockchainSession>(this), on_success, on_error);
+	Account::GetByAuthDescriptorId(id, shared_from_this(), on_success, on_error);
 }
 
 void BlockchainSession::Query(string query_name, std::vector<QueryObject> query_objects,

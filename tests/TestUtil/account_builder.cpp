@@ -40,7 +40,7 @@ std::shared_ptr<AccountBuilder> AccountBuilder::WithAuthFlags(std::vector<FlagsT
 	{
 		this->flags_.push_back(flag);
 	}
-	return std::shared_ptr<AccountBuilder>(this);
+	return shared_from_this();
 }
 
 std::shared_ptr<AccountBuilder> AccountBuilder::WithParticipants(std::vector<std::shared_ptr<KeyPair>> participants)
@@ -51,26 +51,26 @@ std::shared_ptr<AccountBuilder> AccountBuilder::WithParticipants(std::vector<std
 		this->participants_.push_back(item);
 	}
 
-	return std::shared_ptr<AccountBuilder>(this);
+	return shared_from_this();
 }
 
 std::shared_ptr<AccountBuilder> AccountBuilder::WithBalance(std::shared_ptr<Asset> asset, int balance)
 {
 	this->asset_ = asset;
 	this->balance_ = balance;
-	return std::shared_ptr<AccountBuilder>(this);
+	return shared_from_this();
 }
 
 std::shared_ptr<AccountBuilder> AccountBuilder::WithPoints(int points)
 {
 	this->points_ = points;
-	return std::shared_ptr<AccountBuilder>(this);
+	return shared_from_this();
 }
 
 std::shared_ptr<AccountBuilder> AccountBuilder::WithRequiredSignatures(int count)
 {
 	this->required_signatures_count_ = count;
-	return std::shared_ptr<AccountBuilder>(this);
+	return shared_from_this();
 }
 
 void AccountBuilder::Build(std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)

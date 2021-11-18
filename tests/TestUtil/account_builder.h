@@ -10,7 +10,10 @@
 
 using namespace chromia::postchain::ft3;
 
-class AccountBuilder
+/**
+* Note, this class is inherited from enable_shared_from_this<...> in order to be able init other instances wich needs shared_ptr<...> reference to this class
+*/
+class AccountBuilder : public std::enable_shared_from_this<AccountBuilder>
 {
 public:
 	AccountBuilder(std::shared_ptr<Blockchain> blockchain, std::shared_ptr<User> user);

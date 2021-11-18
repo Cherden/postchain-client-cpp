@@ -118,7 +118,7 @@ class BinaryTreeFactory {
         auto result = BuildHigherLayer(1, leaf_array);
 
         auto org_root = result[0];
-        if (org_root->GetType() == BinaryTreeElement::Type::kNode) {
+        if (org_root->GetType() == BinaryTreeElement::Type::kNode || org_root->GetType() == BinaryTreeElement::Type::kSubTreeRootNode) {
             auto node_root = std::dynamic_pointer_cast<Node>(org_root);
             return std::make_shared<ArrayHeadNode>(node_root->Left(),
                                                    node_root->Right(), array,

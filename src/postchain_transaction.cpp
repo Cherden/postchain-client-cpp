@@ -2,6 +2,7 @@
 #include "GTX/gtx.h"
 #include "postchain_util.h"
 #include "../HTTP/httprequest.h"
+#include "CoreMinimal.h"
 
 namespace chromia {
 namespace postchain {

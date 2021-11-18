@@ -105,15 +105,15 @@ std::string PostchainUtil::Sha256(std::vector<unsigned char> buffer) {
     unsigned int hash_length = 0;
 
     if (context == NULL) {
-        throw new std::logic_error(
+        throw new std::exception(
             "openssl evp context could not be allocated");
     } else if (!EVP_DigestInit_ex(context, EVP_sha256(), NULL)) {
-        throw new std::logic_error(
+        throw new std::exception(
             "openssl evp digest could not be initialized");
     } else if (!EVP_DigestUpdate(context, &buffer[0], buffer.size())) {
-        throw new std::logic_error("openssl evp digest could not be set");
+        throw new std::exception("openssl evp digest could not be set");
     } else if (!EVP_DigestFinal_ex(context, hash, &hash_length)) {
-        throw new std::logic_error(
+        throw new std::exception(
             "openssl evp sha256 hash could not be created");
     }
 
@@ -217,12 +217,12 @@ std::vector<unsigned char> PostchainUtil::Sign(std::vector<unsigned char> &conte
 {
 	if (private_key.size() == 0)
 	{
-		throw new std::logic_error("PostchainUtil::Sign() missing private_key");
+		throw new std::exception("PostchainUtil::Sign() missing private_key");
 	}
 
 	if (private_key.size() != 32)
 	{
-		throw new std::logic_error("PostchainUtil::Sign() Invalid key length.");
+		throw new std::exception("PostchainUtil::Sign() Invalid key length.");
 	}
 
 	return PostchainUtil::SignDigest(content, private_key);
@@ -234,11 +234,11 @@ std::vector<unsigned char> PostchainUtil::SignDigest(std::vector<unsigned char> 
 	PostchainUtil::InitSECPContext();
 	if (PostchainUtil::secp_context_ == nullptr)
 	{
-		throw new std::logic_error("PostchainUtil::SignDigest missing SECPContext");
+		throw new std::exception("PostchainUtil::SignDigest missing SECPContext");
 	}
 
 	if (digest_buffer.size() == 0)
-		throw new std::logic_error("PostchainUtil::SignDigest digest_buffer.size() == 0");
+		throw new std::exception("PostchainUtil::SignDigest digest_buffer.size() == 0");
 
 	secp256k1_ecdsa_recoverable_signature recoverable_signature;
 	std::vector<unsigned char> sigbytes(64);

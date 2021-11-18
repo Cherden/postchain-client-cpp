@@ -14,12 +14,14 @@ SingleSignatureAuthDescriptor::SingleSignatureAuthDescriptor(std::vector<byte> p
 
 std::shared_ptr<gtv::ArrayValue> SingleSignatureAuthDescriptor::ToGTV()
 {
-	std::shared_ptr<gtv::ArrayValue> gtv;
+	std::shared_ptr<gtv::ArrayValue> gtv = AbstractValueFactory::EmptyArray();
 
 	gtv->Add(AbstractValueFactory::Build(FT3Util::AuthTypeToString(AuthType::eSingleSig)));
 
 	std::shared_ptr<gtv::ArrayValue> arr_0 = AbstractValueFactory::EmptyArray();
-	arr_0->Add(AbstractValueFactory::Build(PostchainUtil::ByteVectorToHexString(this->pubkey_)));
+
+	std::string pass_as_string = PostchainUtil::ByteVectorToHexString(this->pubkey_);
+	arr_0->Add(AbstractValueFactory::Build(pass_as_string));
 	gtv->Add(arr_0);
 
 	std::shared_ptr<gtv::ArrayValue> arr_1 = AbstractValueFactory::EmptyArray();
@@ -30,6 +32,10 @@ std::shared_ptr<gtv::ArrayValue> SingleSignatureAuthDescriptor::ToGTV()
 	if (this->auth_rule_ != nullptr)
 	{
 		gtv->Add(this->auth_rule_->ToGTV());
+	}
+	else 
+	{
+		gtv->Add(AbstractValueFactory::Build(nullptr));
 	}
 
 	return gtv;
@@ -53,6 +59,10 @@ std::vector<byte> SingleSignatureAuthDescriptor::Hash()
 	if (this->auth_rule_ != nullptr)
 	{
 		gtv->Add(this->auth_rule_->ToGTV());
+	}
+	else
+	{
+		gtv->Add(AbstractValueFactory::Build(nullptr));
 	}
 
 	std::vector<byte> hashed = AbstractValue::Hash(gtv);

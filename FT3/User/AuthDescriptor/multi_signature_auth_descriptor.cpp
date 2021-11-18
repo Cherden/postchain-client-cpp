@@ -30,7 +30,7 @@ std::shared_ptr<gtv::ArrayValue> MultiSignatureAuthDescriptor::ToGTV()
 		hexpubs.push_back(PostchainUtil::ByteVectorToHexString(pubkey));
 	}
 
-	std::shared_ptr<gtv::ArrayValue> gtv;
+	std::shared_ptr<gtv::ArrayValue> gtv = AbstractValueFactory::EmptyArray();
 
 	gtv->Add(AbstractValueFactory::Build(FT3Util::AuthTypeToString(AuthType::eMultiSig)));
 	gtv->Add(AbstractValueFactory::Build(hexpubs));
@@ -44,6 +44,10 @@ std::shared_ptr<gtv::ArrayValue> MultiSignatureAuthDescriptor::ToGTV()
 	if (this->auth_rule_ != nullptr)
 	{
 		gtv->Add(this->auth_rule_->ToGTV());
+	}
+	else
+	{
+		gtv->Add(AbstractValueFactory::Build(nullptr));
 	}
 
 	return gtv;
@@ -71,6 +75,10 @@ std::vector<byte> MultiSignatureAuthDescriptor::Hash()
 	if (this->auth_rule_ != nullptr)
 	{
 		gtv->Add(this->auth_rule_->ToGTV());
+	}
+	else
+	{
+		gtv->Add(AbstractValueFactory::Build(nullptr));
 	}
 
 	std::vector<byte> hashed = AbstractValue::Hash(gtv);

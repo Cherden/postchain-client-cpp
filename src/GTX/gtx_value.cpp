@@ -232,7 +232,8 @@ std::string GTXValue::ToString()
 		for (auto &elm : this->array_)
 		{
 			std::string elm_str = elm->ToString();
-			ret += elm_str.size() + "_" + elm_str + ", ";
+			//ret += elm_str.size() + "_" + elm_str + ", ";
+			ret += std::to_string(elm_str.size()) + "_" + elm_str + ", ";
 		}
 
 		ret = ret.substr(0, ret.size() - 2);
@@ -240,6 +241,7 @@ std::string GTXValue::ToString()
 	}
 	case (GTXValueChoice::Dict):
 	{
+
 		/*std::string ret = "[";
 		if (Dict.Count == 0)
 		{
@@ -252,8 +254,8 @@ std::string GTXValue::ToString()
 		}
 
 		return ret.Remove(ret.Length - 2) + "]";*/
-		throw std::exception("GtxValue::ToString() Dict type not implemented");
-		return "";
+		//throw std::exception("GtxValue::ToString() Dict type not implemented");
+		return "{" + std::to_string(dict_.size()) + "}";
 	}
 	default:
 	{

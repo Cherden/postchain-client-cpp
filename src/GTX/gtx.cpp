@@ -30,12 +30,11 @@ std::shared_ptr<GTXValue> Gtx::ArgToGTXValue(std::shared_ptr<gtv::AbstractValue>
 {
 	std::shared_ptr<GTXValue> gtx_value = std::make_shared<GTXValue>();
 
-	if (arg == nullptr)
+	if (std::dynamic_pointer_cast<gtv::NullValue>(arg))
 	{
 		gtx_value->choice_ = GTXValueChoice::Null;
 	}
-
-	if (std::dynamic_pointer_cast<gtv::IntegerValue>(arg))
+	else if (std::dynamic_pointer_cast<gtv::IntegerValue>(arg))
 	{
 		gtx_value->choice_ = GTXValueChoice::Integer;
 		gtx_value->integer_ = (long) (std::dynamic_pointer_cast<gtv::IntegerValue>(arg))->GetValue();
@@ -111,6 +110,11 @@ std::vector<byte> Gtx::GetBufferToSign()
 {
 	std::vector<std::vector<byte>> old_signatures = this->signatures_;
 	std::shared_ptr<AbstractValue> body = GetGtvTxBody();
+
+	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(body);
+	std::string gtx_str = gtx_value->ToString();
+	UE_LOG(LogTemp, Display, TEXT("CHROMA:: GetBufferToSign() GTX body: %d  %s"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
+
 	std::vector<byte> encoded_buffer = AbstractValue::Hash(body);
 
 	std::string buffer_str = PostchainUtil::ByteVectorToHexString(encoded_buffer);

@@ -33,7 +33,7 @@ bool Flags::IsValid(FlagsType flag)
 
 std::shared_ptr<ArrayValue> Flags::ToGTV()
 {
-	std::shared_ptr<ArrayValue> valid_flags;
+	std::shared_ptr<ArrayValue> valid_flags = AbstractValueFactory::EmptyArray();
 	for (FlagsType &flag : this->flag_list_)
 	{
 		if (IsValid(flag))

@@ -9,7 +9,10 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-class TransactionBuilder
+/**
+* Note, this class is inherited from enable_shared_from_this<...> in order to be able init other instances wich needs shared_ptr<...> reference to this class
+*/
+class TransactionBuilder : public std::enable_shared_from_this<TransactionBuilder>
 {
 public:
 	std::shared_ptr<Blockchain> blockchain_;

@@ -17,7 +17,7 @@ TransactionBuilder::TransactionBuilder(std::shared_ptr<Blockchain> blockchain)
 std::shared_ptr<TransactionBuilder> TransactionBuilder::Add(std::shared_ptr<ft3::Operation> operation)
 {
 	this->operations_.push_back(operation);
-	return nullptr; // return std::shared_ptr<TransactionBuilder>(this); //TO-DO check similar references
+	return shared_from_this(); //TO-DO check similar references
 }
 
 std::shared_ptr<Transaction> TransactionBuilder::Build(std::vector<std::vector<byte>> signers, std::function<void(std::string)> on_error)

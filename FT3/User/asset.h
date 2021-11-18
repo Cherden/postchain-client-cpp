@@ -1,10 +1,3 @@
-/**
-* Note:
-* In this class, Blockchain arguments are used as raw pointers, instead of shared pointers, because this functions are called from Blockchain.
-* Inside Blockchain class "this" can be wrapped into shared_ptr only in special conditions.
-* To avoid this complexity, raw pointers are used.
-*/
-
 #pragma once
 
 #include <string>
@@ -30,17 +23,17 @@ public:
 
 	Asset(std::string id, std::string name, std::string issuing_chain_rid);
 
-	static void Register(std::string name, std::string chain_id, Blockchain* blockchain,
+	static void Register(std::string name, std::string chain_id, std::shared_ptr<Blockchain> blockchain,
 		std::function<void(std::shared_ptr<Asset>)> on_success,
 		std::function<void(string)> on_error);
 
-	static void GetByName(std::string name, Blockchain* blockchain,
+	static void GetByName(std::string name, std::shared_ptr<Blockchain> blockchain,
 		std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error);
 
-	static void GetById(string id, Blockchain* blockchain,
+	static void GetById(string id, std::shared_ptr<Blockchain> blockchain,
 		std::function<void(std::shared_ptr<Asset>)> on_success, std::function<void(string)> on_error);
 
-	static void GetAssets(Blockchain* blockchain,
+	static void GetAssets(std::shared_ptr<Blockchain> blockchain,
 		std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error);
 
 private:

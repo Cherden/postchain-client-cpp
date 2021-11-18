@@ -51,7 +51,7 @@ void PostchainTransaction::PostAndWait(std::function<void()> callback)
 	{
 		std::string payload = "{\"tx\": \"" + Serialize() + "\"}";
 
-		std::string url = this->base_url_ + "/tx/";
+		std::string url = this->base_url_ + "/tx/" + this->brid_;
 		UHttpRequest::SendPostRequest(url, payload, [callback](std::string content) { callback(); }, on_error_);
 		this->sent_ = true;
 	}

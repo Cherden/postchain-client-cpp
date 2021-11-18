@@ -11,7 +11,10 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-class Blockchain
+/**
+* Note, this class is inherited from enable_shared_from_this<...> in order to be able init other instances wich needs shared_ptr<...> reference to this class
+*/
+class Blockchain : public std::enable_shared_from_this<Blockchain>
 {
 public:
 	std::string id_;

@@ -232,7 +232,6 @@ std::string GTXValue::ToString()
 		for (auto &elm : this->array_)
 		{
 			std::string elm_str = elm->ToString();
-			//ret += elm_str.size() + "_" + elm_str + ", ";
 			ret += std::to_string(elm_str.size()) + "_" + elm_str + ", ";
 		}
 
@@ -254,8 +253,7 @@ std::string GTXValue::ToString()
 		}
 
 		return ret.Remove(ret.Length - 2) + "]";*/
-		//throw std::exception("GtxValue::ToString() Dict type not implemented");
-		return "{" + std::to_string(dict_.size()) + "}";
+		throw std::exception("GtxValue::ToString() Dict type not implemented");
 	}
 	default:
 	{

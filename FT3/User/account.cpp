@@ -49,7 +49,9 @@ Account::Account(std::string id, std::vector<std::shared_ptr<AuthDescriptor>> au
 {
 	this->id_ = id;
 	this->auth_descriptors_ = auth_descriptors;
+	std::string rid = session->blockchain_->connection_->blockchain_rid_;
 	this->session_ = session;
+	rid = this->session_->blockchain_->connection_->blockchain_rid_;
 }
 
 std::string Account::GetID()
@@ -89,21 +91,26 @@ void Account::GetByAuthDescriptorId(std::string id, std::shared_ptr<BlockchainSe
 void Account::Register(std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<BlockchainSession> session,
 	std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
 {
-	std::shared_ptr<Account> account = nullptr;
+	std::string rid = session->blockchain_->connection_->blockchain_rid_;
+
+	bool call_ok = false;
 	session->Call(
 		AccountDevOperations::Register(auth_descriptor), 
-		[&account, auth_descriptor, session] (){
-		account = std::make_shared<Account>(
-			PostchainUtil::ByteVectorToHexString(auth_descriptor->Hash()),
-				std::vector<std::shared_ptr<AuthDescriptor>> { auth_descriptor },
-				session);
-	}
+		[&call_ok] (){
+			call_ok = true;
+		}
 	, on_error);
 
-	if (account != nullptr)
-	{
-		account->Sync([on_success, account]() { on_success(account); }, on_error);
-	}
+	if (!call_ok) return;
+
+	std::shared_ptr<Account> account = std::make_shared<Account>(
+		PostchainUtil::ByteVectorToHexString(auth_descriptor->Hash()),
+		std::vector<std::shared_ptr<AuthDescriptor>> { auth_descriptor },
+		session);
+
+	rid = account->session_->blockchain_->connection_->blockchain_rid_;
+
+	account->Sync([on_success, account]() { on_success(account); }, on_error);
 }
 
 
@@ -238,6 +245,7 @@ void Account::DeleteAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descript
 
 void Account::Sync(std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
+	std::string rid = this->session_->blockchain_->connection_->blockchain_rid_;
 	SyncAssets([]() {}, on_error);
 	SyncAuthDescriptors([]() {}, on_error);
 	SyncRateLimit([]() {}, on_error);
@@ -246,6 +254,8 @@ void Account::Sync(std::function<void()> on_success, std::function<void(std::str
 
 void Account::SyncAssets(std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
+	std::string rid = this->session_->blockchain_->connection_->blockchain_rid_;
+
 	AssetBalance::GetByAccountId(this->id_, this->session_->blockchain_,
 		[&] (std::vector<std::shared_ptr<AssetBalance>> balances) {
 		this->assets_ = balances;
@@ -257,10 +267,22 @@ void Account::SyncAuthDescriptors(std::function<void()> on_success, std::functio
 {
 	std::vector<std::shared_ptr<AuthDescriptorFactory::AuthDescriptorQuery>> auth_descriptors;
 
+	std::function<void(std::string)> on_success_wrapper = [&auth_descriptors, on_success, on_error](std::string content) {
+		//TO-DO json parsing && auth_descriptors->push_back();
+		nlohmann::json json_content = nlohmann::json::parse(content);
+		if (json_content.contains("key"))
+		{
+			//TO-DO complete this
+			on_success();
+		}
+		else
+		{
+			on_error("Account::SyncAuthDescriptors corrupted json response.");
+		}
+	};
+
 	this->session_->Query("ft3.get_account_auth_descriptors", { QueryObject("id", this->id_) },
-		[&auth_descriptors] (std::string) {
-			//TO-DO auth_descriptors->push_back();
-		}, on_error);
+		on_success_wrapper, on_error);
 
 	std::shared_ptr<AuthDescriptorFactory> auth_descriptor_factory = std::make_shared<AuthDescriptorFactory>();
 	std::vector<std::shared_ptr<AuthDescriptor>> auth_list;

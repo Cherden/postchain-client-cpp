@@ -22,7 +22,7 @@ Asset::Asset(std::string id, std::string name, std::string issuing_chain_rid)
 	this->issuing_chain_rid_ = issuing_chain_rid;
 }
 
-void Asset::Register(std::string name, std::string chain_id, Blockchain* blockchain,
+void Asset::Register(std::string name, std::string chain_id, std::shared_ptr<Blockchain> blockchain,
 	std::function<void(std::shared_ptr<Asset>)> on_success,
 	std::function<void(string)> on_error)
 {
@@ -42,7 +42,7 @@ void Asset::Register(std::string name, std::string chain_id, Blockchain* blockch
 	tx->PostAndWait(on_success_wrapper);
 }
 
-void Asset::GetByName(std::string name, Blockchain* blockchain,
+void Asset::GetByName(std::string name, std::shared_ptr<Blockchain> blockchain,
 	std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error)
 {
 	std::vector<QueryObject> query_objects;
@@ -67,7 +67,7 @@ void Asset::GetByName(std::string name, Blockchain* blockchain,
 	blockchain->Query("ft3.get_asset_by_name", query_objects, on_success_wrapper, on_error);
 }
 
-void Asset::GetById(string id, Blockchain* blockchain,
+void Asset::GetById(string id, std::shared_ptr<Blockchain> blockchain,
 	std::function<void(std::shared_ptr<Asset>)> on_success, std::function<void(string)> on_error)
 {
 	std::vector<QueryObject> query_objects;
@@ -90,7 +90,7 @@ void Asset::GetById(string id, Blockchain* blockchain,
 	blockchain->Query("ft3.get_asset_by_id", query_objects, on_success_wrapper, on_error);
 }
 
-void Asset::GetAssets(Blockchain* blockchain,
+void Asset::GetAssets(std::shared_ptr<Blockchain> blockchain,
 	std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error)
 {
 	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {

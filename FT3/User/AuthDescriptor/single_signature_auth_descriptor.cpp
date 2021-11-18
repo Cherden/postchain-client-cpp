@@ -43,7 +43,7 @@ std::shared_ptr<gtv::ArrayValue> SingleSignatureAuthDescriptor::ToGTV()
 
 std::vector<byte> SingleSignatureAuthDescriptor::Hash()
 {
-	std::shared_ptr<gtv::ArrayValue> gtv;
+	std::shared_ptr<gtv::ArrayValue> gtv = AbstractValueFactory::EmptyArray();
 
 	gtv->Add(AbstractValueFactory::Build(FT3Util::AuthTypeToString(AuthType::eSingleSig)));
 

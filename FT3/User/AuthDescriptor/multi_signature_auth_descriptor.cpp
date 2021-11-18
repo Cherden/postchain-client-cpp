@@ -61,7 +61,7 @@ std::vector<byte> MultiSignatureAuthDescriptor::Hash()
 		hexpubs.push_back(PostchainUtil::ByteVectorToHexString(pubkey));
 	}
 
-	std::shared_ptr<gtv::ArrayValue> gtv;
+	std::shared_ptr<gtv::ArrayValue> gtv = AbstractValueFactory::EmptyArray();
 
 	gtv->Add(AbstractValueFactory::Build(FT3Util::AuthTypeToString(AuthType::eMultiSig)));
 	gtv->Add(AbstractValueFactory::Build(this->pubkeys_));

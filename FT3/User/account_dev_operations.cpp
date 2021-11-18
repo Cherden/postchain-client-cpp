@@ -20,7 +20,7 @@ std::shared_ptr<ft3::Operation> AccountDevOperations::Register(std::shared_ptr<A
 
 std::shared_ptr<ft3::Operation> AccountDevOperations::FreeOp(std::string account_id)
 {
-	std::shared_ptr<ArrayValue> args;
+	std::shared_ptr<ArrayValue> args = AbstractValueFactory::EmptyArray();
 	args->Add(AbstractValueFactory::Build(account_id));
 	return std::make_shared<ft3::Operation>("ft3.dev_free_op", args);
 }
@@ -28,7 +28,7 @@ std::shared_ptr<ft3::Operation> AccountDevOperations::FreeOp(std::string account
 std::shared_ptr<ft3::Operation> AccountDevOperations::GivePoints(std::string account_id, int points)
 {
 	// TO-DO
-	std::shared_ptr<ArrayValue> args;
+	std::shared_ptr<ArrayValue> args = AbstractValueFactory::EmptyArray();
 	args->Add(AbstractValueFactory::Build(account_id));
 	args->Add(AbstractValueFactory::Build(points));
 	return std::make_shared<ft3::Operation>("ft3.dev_give_points", args);

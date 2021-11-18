@@ -45,14 +45,13 @@ void Blockchain::Initialize(string blockchain_rid, std::shared_ptr<DirectoryServ
 
 std::shared_ptr<TransactionBuilder> Blockchain::NewTransactionBuilder()
 {
-	std::shared_ptr<Blockchain> self_ptr(this);
-	return std::make_shared<ft3::TransactionBuilder>(self_ptr);
+	return std::make_shared<ft3::TransactionBuilder>(shared_from_this());
 }
 
 
 std::shared_ptr<BlockchainSession> Blockchain::NewSession(std::shared_ptr<User> user)
 {
-	return std::make_shared<BlockchainSession>(user, std::shared_ptr<Blockchain>(this));
+	return std::make_shared<BlockchainSession>(user, shared_from_this());
 }
 
 void Blockchain::GetAccountsByParticipantId(string id, std::shared_ptr<User> user,
@@ -75,17 +74,17 @@ void Blockchain::RegisterAccount(std::shared_ptr<AuthDescriptor> auth_descriptor
 
 void Blockchain::GetAssetsByName(string name, std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(std::string)> on_error)
 {
-	Asset::GetByName(name, std::shared_ptr<Blockchain>(this), on_success, on_error);
+	Asset::GetByName(name, shared_from_this(), on_success, on_error);
 }
 
 void Blockchain::GetAssetById(string id, std::function<void(std::shared_ptr<Asset>)> on_success, std::function<void(std::string)> on_error)
 {
-	Asset::GetById(id, std::shared_ptr<Blockchain>(this), on_success, on_error);
+	Asset::GetById(id, shared_from_this(), on_success, on_error);
 }
 
 void Blockchain::GetAllAssets(std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(std::string)> on_error)
 {
-	Asset::GetAssets(std::shared_ptr<Blockchain>(this), on_success, on_error);
+	Asset::GetAssets(shared_from_this(), on_success, on_error);
 }
 
 void Blockchain::LinkChain(string chain_id, std::function<void()> on_success, std::function<void(std::string)> on_error) 
@@ -147,12 +146,16 @@ void Blockchain::Query(string query_name, std::vector<QueryObject> query_objects
 void Blockchain::Call(std::shared_ptr<ft3::Operation> operation, std::shared_ptr<User> user,
 	std::function<void()> on_success, std::function<void(string)> on_error)
 {
+	std::string rid = this->connection_->blockchain_rid_;
+
 	auto tx_builder = this->NewTransactionBuilder();
 	tx_builder->Add(operation);
 	tx_builder->Add(AccountOperations::Nop());
 	auto tx = tx_builder->Build(user->auth_descriptor_->Signers(), on_error);
 	tx->Sign(user->key_pair_);
 	tx->PostAndWait(on_success);
+
+	rid = this->connection_->blockchain_rid_;
 }
 
 } // namespace ft3

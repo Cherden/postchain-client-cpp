@@ -31,12 +31,17 @@ public:
 	static void SendPostRequest(std::string url, std::string payload,
 		std::function<void(std::string)> success_callback, 
 		std::function<void(std::string)> error_callback);
+
+	static void SendGetRequestSync(std::string url, std::string &content, std::string &error);
 private:
 	static bool response_success;
 	static std::string response_content;
 
-	/* Called when the server has responded to http request */
-	static void OnSyncResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	/* Called when the server has responded to http post request */
+	static void OnSyncPostResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	/* Called when the server has responded to http get request */
+	static void OnSyncGetResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 };
 
 //} // namespace http

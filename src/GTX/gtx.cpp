@@ -93,10 +93,10 @@ Gtx* Gtx::AddOperationToGtx(std::string op_name, std::shared_ptr<ArrayValue> arg
 void Gtx::Sign(std::vector<byte> private_key, std::vector<byte> public_key)
 {
 	std::string private_key_str = PostchainUtil::ByteVectorToHexString(private_key);
-	UE_LOG(LogTemp, Display, TEXT("CHROMA:: Gtx Sign() private key: %s"), *(ChromaUtils::STDStringToFString(private_key_str)));
+	//UE_LOG(LogTemp, Display, TEXT("CHROMA:: Gtx Sign() private key: %s"), *(ChromaUtils::STDStringToFString(private_key_str)));
 
 	std::string public_key_str = PostchainUtil::ByteVectorToHexString(public_key);
-	UE_LOG(LogTemp, Display, TEXT("CHROMA:: Gtx Sign() public key: %s"), *(ChromaUtils::STDStringToFString(public_key_str)));
+	//UE_LOG(LogTemp, Display, TEXT("CHROMA:: Gtx Sign() public key: %s"), *(ChromaUtils::STDStringToFString(public_key_str)));
 
 	std::vector<byte> buffer_to_sign = this->GetBufferToSign();
 
@@ -113,12 +113,12 @@ std::vector<byte> Gtx::GetBufferToSign()
 
 	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(body);
 	std::string gtx_str = gtx_value->ToString();
-	UE_LOG(LogTemp, Display, TEXT("CHROMA:: GetBufferToSign() GTX body: %d  %s"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
+	//UE_LOG(LogTemp, Display, TEXT("CHROMA:: GetBufferToSign() GTX body: %d  %s"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
 
 	std::vector<byte> encoded_buffer = AbstractValue::Hash(body);
 
 	std::string buffer_str = PostchainUtil::ByteVectorToHexString(encoded_buffer);
-	UE_LOG(LogTemp, Display, TEXT("CHROMA:: Gtx Sign() Encoded Buffer: %s"), *(ChromaUtils::STDStringToFString(buffer_str)));
+	//UE_LOG(LogTemp, Display, TEXT("CHROMA:: Gtx Sign() Encoded Buffer: %s"), *(ChromaUtils::STDStringToFString(buffer_str)));
 
 	this->signatures_ = old_signatures;
 	return encoded_buffer;
@@ -228,7 +228,7 @@ std::vector<byte> Gtx::Encode()
 	std::vector<byte> encoded = gtx_value->Encode();
 
 	std::string encoded_str = PostchainUtil::ByteVectorToHexString(encoded);
-	UE_LOG(LogTemp, Warning, TEXT("CHROMA::encoded_str: [%d] [%s]"), encoded_str.size(), *(ChromaUtils::STDStringToFString(encoded_str)));
+	//UE_LOG(LogTemp, Warning, TEXT("CHROMA::encoded_str: [%d] [%s]"), encoded_str.size(), *(ChromaUtils::STDStringToFString(encoded_str)));
 
 	return encoded;
 }

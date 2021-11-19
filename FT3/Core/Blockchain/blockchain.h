@@ -46,7 +46,7 @@ public:
 
 	void GetAllAssets(std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(std::string)> on_error);
 
-	void LinkChain(string chain_id, std::function<void()> on_success, std::function<void(std::string)> on_error);
+	void LinkChain(string chain_id, std::function<void(std::string)> on_success, std::function<void(std::string)> on_error);
 
 	void IsLinkedWithChain(string chain_id, std::function<void(bool)> on_success, std::function<void(std::string)> on_error);
 
@@ -57,7 +57,7 @@ public:
 	void Query(string query_name, std::vector<QueryObject> query_objects, std::function<void(std::string)> on_success, std::function<void(std::string)> on_error);
 
 	void Call(std::shared_ptr<ft3::Operation> operation, std::shared_ptr<User> user,
-		std::function<void()> on_success, std::function<void(string)> on_error);
+		std::function<void(std::string)> on_success, std::function<void(std::string)> on_error);
 	
 private:
 	std::shared_ptr<DirectoryService> directory_service_;

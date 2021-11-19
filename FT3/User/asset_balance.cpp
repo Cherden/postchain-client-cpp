@@ -41,7 +41,7 @@ void AssetBalance::GetByAccountId(std::string id, std::shared_ptr<Blockchain> bl
 		}
 		else
 		{
-			on_error("Assrt::GetById failed, corrupted resposne");
+			on_error("Asset::GetById failed, corrupted resposne");
 		}
 	};
 
@@ -89,7 +89,7 @@ void AssetBalance::GiveBalance(std::string account_id, std::string asset_id, int
 
 	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
 
-	std::function<void()> on_success_wrapper = [on_success]() {
+	std::function<void(std::string)> on_success_wrapper = [on_success](std::string) {
 		on_success();
 	};
 

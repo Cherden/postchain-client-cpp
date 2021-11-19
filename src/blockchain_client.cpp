@@ -1,6 +1,7 @@
 #include "blockchain_client.h"
 #include "../../nlohmann/json.hpp"
 #include "CoreMinimal.h"
+#include "../../ChromaUnreal/Utils.h"
 
 namespace chromia {
 namespace postchain {
@@ -34,6 +35,9 @@ void BlockchainClient::Query(std::string query_name, std::vector<QueryObject> qu
 {
 	std::string payload = PostchainUtil::QueryToJSONString(query_name, query_objects);
 	std::string url = this->base_url_ + "/query/" + this->blockchain_rid_;
+
+	UE_LOG(LogTemp, Display, TEXT("CHROMA::Query url:  [%s]"), *(ChromaUtils::STDStringToFString(url)));
+	UE_LOG(LogTemp, Display, TEXT("CHROMA::Query payload:  [%s]"), *(ChromaUtils::STDStringToFString(payload)));
 
 	UHttpRequest::SendPostRequest(url, payload, on_success, on_error);
 }

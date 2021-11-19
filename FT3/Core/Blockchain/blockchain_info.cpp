@@ -33,7 +33,7 @@ BlockchainInfo::BlockchainInfo(std::string name, std::string website, std::strin
 void BlockchainInfo::GetInfo(std::shared_ptr<BlockchainClient> connection, std::function<void(std::shared_ptr<BlockchainInfo>)> on_success, std::function<void(std::string)> on_error)
 {
 	std::function<void(std::string)> on_success_wrapper = [&on_success](std::string content) {
-		UE_LOG(LogTemp, Error, TEXT("CHROMA::BlockchainInfo::GetInfo callback wrapper: %s"),  *(ChromaUtils::STDStringToFString(content)));
+		//UE_LOG(LogTemp, Error, TEXT("CHROMA::BlockchainInfo::GetInfo callback wrapper: %s"),  *(ChromaUtils::STDStringToFString(content)));
 		nlohmann::json json_content = nlohmann::json::parse(content);
 
 		std::string name = PostchainUtil::GetSafeJSONString(json_content, std::string("name"));

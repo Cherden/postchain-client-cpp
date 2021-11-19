@@ -27,7 +27,6 @@ std::shared_ptr<ft3::Operation> AccountDevOperations::FreeOp(std::string account
 
 std::shared_ptr<ft3::Operation> AccountDevOperations::GivePoints(std::string account_id, int points)
 {
-	// TO-DO
 	std::shared_ptr<ArrayValue> args = AbstractValueFactory::EmptyArray();
 	args->Add(AbstractValueFactory::Build(account_id));
 	args->Add(AbstractValueFactory::Build(points));

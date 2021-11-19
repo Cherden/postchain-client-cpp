@@ -40,7 +40,7 @@ void BlockchainSession::Query(string query_name, std::vector<QueryObject> query_
 void BlockchainSession::Call(std::shared_ptr<Operation> operation,
 	std::function<void()> on_success, std::function<void(string)> on_error)
 {
-	this->blockchain_->Call(operation, this->user_, on_success, on_error);
+	this->blockchain_->Call(operation, this->user_, [on_success](std::string cont) { on_success(); }, on_error);
 }
 
 } // namespace ft3

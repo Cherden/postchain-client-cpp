@@ -196,8 +196,6 @@ void Account::GetById(std::string id, std::shared_ptr<BlockchainSession> session
 
 void Account::AddAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-	// TO-DO validate sync call;
-
 	this->session_->Call(AccountOperations::AddAuthDescriptor(
 		this->id_, this->session_->user_->auth_descriptor_->ID(), auth_descriptor
 	), [&]() {

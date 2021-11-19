@@ -87,7 +87,7 @@ void Blockchain::GetAllAssets(std::function<void(std::vector<std::shared_ptr<Ass
 	Asset::GetAssets(shared_from_this(), on_success, on_error);
 }
 
-void Blockchain::LinkChain(string chain_id, std::function<void()> on_success, std::function<void(std::string)> on_error) 
+void Blockchain::LinkChain(string chain_id, std::function<void(std::string)> on_success, std::function<void(std::string)> on_error) 
 {
 	std::shared_ptr<ArrayValue> op_args = AbstractValueFactory::EmptyArray();
 	op_args->Add(AbstractValueFactory::Build(chain_id));
@@ -144,7 +144,7 @@ void Blockchain::Query(string query_name, std::vector<QueryObject> query_objects
 
 
 void Blockchain::Call(std::shared_ptr<ft3::Operation> operation, std::shared_ptr<User> user,
-	std::function<void()> on_success, std::function<void(string)> on_error)
+	std::function<void(std::string)> on_success, std::function<void(string)> on_error)
 {
 	std::string rid = this->connection_->blockchain_rid_;
 

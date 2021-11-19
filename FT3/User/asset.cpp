@@ -35,7 +35,7 @@ void Asset::Register(std::string name, std::string chain_id, std::shared_ptr<Blo
 
 	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
 
-	std::function<void()> on_success_wrapper = [on_success, name, chain_id]() {
+	std::function<void(std::string)> on_success_wrapper = [on_success, name, chain_id](std::string content) {
 		on_success(std::make_shared<Asset>(name, chain_id));
 	};
 
@@ -83,7 +83,7 @@ void Asset::GetById(string id, std::shared_ptr<Blockchain> blockchain,
 		}
 		else
 		{
-			on_error("Assrt::GetById failed, corrupted resposne");
+			on_error("Asset::GetById failed, corrupted resposne");
 		}
 	};
 

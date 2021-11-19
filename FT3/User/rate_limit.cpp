@@ -30,7 +30,7 @@ void RateLimit::ExecFreeOperation(std::string account_id, std::shared_ptr<Blockc
 
 	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
 
-	std::function<void()> on_success_wrapper = [on_success]() {
+	std::function<void(std::string)> on_success_wrapper = [on_success](std::string content) {
 		on_success();
 	};
 
@@ -55,7 +55,7 @@ void RateLimit::GetByAccountRateLimit(std::string id, std::shared_ptr<Blockchain
 		}
 		else
 		{
-			on_error("Assrt::GetById failed, corrupted resposne");
+			on_error("Asset::GetByAccountRateLimit failed, corrupted resposne");
 		}
 	};
 
@@ -71,7 +71,11 @@ void RateLimit::GivePoints(std::string account_id, int points, std::shared_ptr<B
 
 	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
 
-	tx->PostAndWait(on_success);
+	std::function<void(std::string)> on_success_wrapper = [on_success](std::string content) {
+		on_success();
+	};
+
+	tx->PostAndWait(on_success_wrapper);
 }
 
 void RateLimit::GetLastTimestamp(std::shared_ptr<Blockchain> blockchain, std::function<void(long)> on_success, std::function<void(std::string)> on_error)

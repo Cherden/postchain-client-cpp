@@ -5,7 +5,7 @@
 
 void AccountTest::DefaultErrorHandler(std::string error) 
 {
-	UE_LOG(LogTemp, Error, TEXT("CHROMA::FT3 [%s]"), *(ChromaUtils::STDStringToFString(error)));
+	UE_LOG(LogTemp, Error, TEXT("CHROMA::Error [%s]"), *(ChromaUtils::STDStringToFString(error)));
 };
 
 
@@ -37,34 +37,35 @@ void AccountTest::AddAuthDescriptorTo(std::shared_ptr<Account> account, std::sha
 	auto tx = tx_builder->Build(signers, this->DefaultErrorHandler);
 	tx->Sign(admin_user->key_pair_);
 	tx->Sign(user->key_pair_);
-	tx->PostAndWait(on_success);
+
+	std::function<void(std::string)> on_success_wrapper = [on_success](std::string content) {
+		on_success();
+	};
+
+	tx->PostAndWait(on_success_wrapper);
 }
 
-
+// Correctly creates keypair
 bool AccountTest::AccountTest1()
 {
-	bool pass = true;
-
 	std::vector<unsigned char> private_key;
 	std::vector<unsigned char> public_key;
 	if (!PostchainUtil::GenerateKeyPair(private_key, public_key))
 	{
-		pass = false;
+		return false;
 	}
 
 	auto user = new KeyPair(PostchainUtil::ByteVectorToHexString(private_key));
 
-	pass = pass && TestOperators::Equals(user->priv_key_, private_key);
-	pass = pass && TestOperators::Equals(user->pub_key_, public_key);
+	if (!TestOperators::Equals(user->priv_key_, private_key)) return false;
+	if (!TestOperators::Equals(user->pub_key_, public_key)) return false;
 
-	return pass;
+	return true;
 }
 
-
+// Register account on blockchain
 bool AccountTest::AccountTest2()
 {
-	bool pass = true;
-
 	SetupBlockchain();
 	if (blockchain_ == nullptr)
 	{
@@ -77,14 +78,13 @@ bool AccountTest::AccountTest2()
 		account = _account;
 	}, this->DefaultErrorHandler);
 
-	pass = pass && TestOperators::NotNull(account);
-	return pass;
+	if(!account) return false;
+	return true;
 }
 
-
+// Can add new auth descriptor if has account edit rights
 bool AccountTest::AccountTest3()
 {
-	bool pass = true;
 
 	SetupBlockchain();
 	if (this->blockchain_ == nullptr)
@@ -100,7 +100,7 @@ bool AccountTest::AccountTest3()
 	std::shared_ptr<Account> account = nullptr;
 	account_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; }, this->DefaultErrorHandler);
 
-	pass = pass && TestOperators::NotNull(account);
+	if (!account) return false;
 
 	std::vector<FlagsType> flags = { FlagsType::eTransfer };
 
@@ -114,16 +114,13 @@ bool AccountTest::AccountTest3()
 		this->DefaultErrorHandler
 	);
 
-	pass = pass && TestOperators::Equals(2, account->auth_descriptors_.size());
-
-	return pass;
+	if (!TestOperators::Equals(2, account->auth_descriptors_.size())) return false;
+	return true;
 }
 
-
+// Cannot add new auth descriptor if account doesn't have account edit rights
 bool AccountTest::AccountTest4()
 {
-	bool pass = true;
-
 	this->SetupBlockchain();
 	if (this->blockchain_ == nullptr)
 	{
@@ -139,19 +136,19 @@ bool AccountTest::AccountTest4()
 		[&account](std::shared_ptr<Account> _account) { account = _account; },
 		this->DefaultErrorHandler);
 
-	pass = pass && TestOperators::NotNull(account);
+	if(account == nullptr) return false;
 
 	account->AddAuthDescriptor(
 		std::make_shared<SingleSignatureAuthDescriptor>(user->key_pair_->pub_key_, std::vector<FlagsType>{ FlagsType::eTransfer }),
 		this->EmptyCallback, this->DefaultErrorHandler);
 
-	pass = pass && TestOperators::Equals(1, account->auth_descriptors_.size());
+	if (!TestOperators::Equals(1, account->auth_descriptors_.size())) return false;
 
-	return pass;
+	return true;
 }
 
 
-// should create new multisig account
+// Should create new multisig account
 bool AccountTest::AccountTest5()
 {
 	SetupBlockchain();

@@ -17,12 +17,12 @@ std::shared_ptr<Transaction> Transaction::Sign(std::shared_ptr<KeyPair> keyPair)
 	return shared_from_this();
 }
 
-void Transaction::Post()
+void Transaction::Post(std::function<void(std::string)> on_success)
 {
-	//return this->_tx->Post();
+	this->_tx->Post(on_success);
 }
 
-void Transaction::PostAndWait(std::function<void()> on_success)
+void Transaction::PostAndWait(std::function<void(std::string)> on_success)
 {
 	this->_tx->PostAndWait(on_success);
 }

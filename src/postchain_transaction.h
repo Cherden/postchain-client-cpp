@@ -39,7 +39,9 @@ public:
 
 	std::string GetTxRID();
 
-	void PostAndWait(std::function<void()> callback);
+	void Post(std::function<void(std::string)> on_success);
+
+	void PostAndWait(std::function<void(std::string)> on_success);
 
 	std::vector<byte> Encode();
 
@@ -52,6 +54,9 @@ private:
 	bool error_;
 
 	std::function<void(std::string)> on_error_ = nullptr;
+
+	void WaitConfirmation(std::function<void(std::string)> on_success);
+
 };
 }  // namespace postchain
 }  // namespace chromia

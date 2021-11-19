@@ -3,6 +3,7 @@
 #include "postchain_util.h"
 #include "../HTTP/httprequest.h"
 #include "CoreMinimal.h"
+#include "../../ChromaUnreal/Utils.h"
 
 namespace chromia {
 namespace postchain {
@@ -41,7 +42,7 @@ std::string PostchainTransaction::GetTxRID()
 	return PostchainUtil::ByteVectorToHexString(buffer_to_sign);
 }
 
-void PostchainTransaction::PostAndWait(std::function<void()> callback)
+void PostchainTransaction::Post(std::function<void(std::string)> on_success)
 {
 	if (this->sent_)
 	{
@@ -49,12 +50,21 @@ void PostchainTransaction::PostAndWait(std::function<void()> callback)
 	}
 	else
 	{
-		std::string payload = "{\"tx\": \"" + Serialize() + "\"}";
-
 		std::string url = this->base_url_ + "/tx/" + this->brid_;
-		UHttpRequest::SendPostRequest(url, payload, [callback](std::string content) { callback(); }, on_error_);
+		std::string payload = "{\"tx\": \"" + Serialize() + "\"}";
+		UHttpRequest::SendPostRequest(url, payload, on_success, on_error_);
 		this->sent_ = true;
 	}
+}
+
+void PostchainTransaction::PostAndWait(std::function<void(std::string)> on_success)
+{
+	UE_LOG(LogTemp, Warning, TEXT("CHROMA::PostchainTransaction::PostAndWait()"));
+
+	this->Post([] (std::string content) {
+		content;
+	});
+	this->WaitConfirmation(on_success);
 }
 
 std::string PostchainTransaction::Serialize()
@@ -66,6 +76,42 @@ std::vector<byte> PostchainTransaction::Encode()
 {
 	//TO-DO
 	return {};
+}
+
+void PostchainTransaction::WaitConfirmation(std::function<void(std::string)> on_success)
+{
+	std::string url = this->base_url_ + "/tx/" + this->brid_ + "/" + GetTxRID() + "/status";
+
+	std::string req_content = "";
+	std::string req_error = "";
+
+	UHttpRequest::SendGetRequestSync(url, req_content, req_error);	
+	UE_LOG(LogTemp, Display, TEXT("CHROMA::WaitConfirmation uresposne  [%s] [%s]"), *ChromaUtils::STDStringToFString(req_content), *ChromaUtils::STDStringToFString(req_error));
+
+	this->error_ = true;
+
+	if (req_error.size() > 0) {
+		
+		this->on_error_(req_error);
+	}
+
+	nlohmann::json json_content = nlohmann::json::parse(req_content);
+	std::string status = PostchainUtil::GetSafeJSONString(json_content, "status");
+
+	if (status.compare("confirmed") == 0) 
+	{
+		this->error_ = false;
+		on_success(""); // TO-DO make something with this return string
+	}
+	else if (status.compare("waiting") == 0) 
+	{
+		FPlatformProcess::Sleep(0.5);
+		WaitConfirmation(on_success);
+	}
+	else
+	{
+		this->on_error_("WaitConfirmation failed: " + status);
+	}
 }
 
 }  // namespace postchain

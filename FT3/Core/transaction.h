@@ -23,9 +23,9 @@ public:
 
 	std::shared_ptr<Transaction> Sign(std::shared_ptr<KeyPair> keyPair);
 
-	void Post();
+	void Post(std::function<void(std::string)> on_success);
 
-	void PostAndWait(std::function<void()> on_success);
+	void PostAndWait(std::function<void(std::string)> on_success);
 
 	std::vector<byte> Raw();
 };

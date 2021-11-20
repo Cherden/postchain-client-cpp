@@ -182,9 +182,15 @@ void Account::GetById(std::string id, std::shared_ptr<BlockchainSession> session
 {
 	// TO-DO sure that Account::GetById(...) is sync call;
 	shared_ptr<Account> account;
-	session->Query("ft3.get_account_by_id", { QueryObject("id", id) }, [&account, session](std::string lambda_id) {
-		if (lambda_id.size() > 0) {
+	session->Query("ft3.get_account_by_id", { QueryObject("id", id) }, [&account, &on_error, session](std::string lambda_id) {
+		if (lambda_id.size() > 0) 
+		{
+			lambda_id = lambda_id.substr(1, lambda_id.size() - 2);
 			account = std::make_shared<Account>(lambda_id, std::vector<std::shared_ptr<AuthDescriptor>>(), session);
+		}
+		else 
+		{
+			on_error("Account::GetById failed. Received corrupted or missing account id");
 		}
 	}, on_error);
 

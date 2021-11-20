@@ -179,7 +179,52 @@ bool AccountTest::AccountTest5()
 
 bool AccountTest::AccountTest6()
 {
-	return true;
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	auto user1 = TestUser::SingleSig();
+	auto user2 = TestUser::SingleSig();
+
+	auto multi_sig = std::make_shared<MultiSignatureAuthDescriptor>(
+		std::vector<std::vector<byte>> {user1->key_pair_->pub_key_, user2->key_pair_->pub_key_},
+		2,
+		std::vector<FlagsType> { FlagsType::eAccount, FlagsType::eTransfer });
+
+	std::shared_ptr<TransactionBuilder> tx_builder = blockchain_->NewTransactionBuilder();
+	tx_builder->Add(AccountDevOperations::Register(multi_sig));
+	std::shared_ptr<Transaction> tx = tx_builder->Build(multi_sig->Signers(), DefaultErrorHandler);
+	tx->Sign(user1->key_pair_);
+	tx->Sign(user2->key_pair_);
+	bool successfully = false;
+	tx->PostAndWait([&successfully](std::string content) { successfully = true; });
+	if (!successfully) return false;
+
+	std::shared_ptr<Account> account = nullptr;
+	Account::GetById(multi_sig->ID(), blockchain_->NewSession(user1), [&account](std::shared_ptr<Account> _account) {
+		account = _account;
+	}, DefaultErrorHandler);
+	if (account == nullptr) return false;
+
+	auto auth_descriptor = std::make_shared<SingleSignatureAuthDescriptor>(
+		user1->key_pair_->pub_key_,
+		std::vector<FlagsType>{ FlagsType::eTransfer });
+
+	successfully = false;
+	blockchain_->NewTransactionBuilder()
+		->Add(AccountOperations::AddAuthDescriptor(account->id_, account->auth_descriptors_[0]->ID(), auth_descriptor))
+		->Build(account->auth_descriptors_[0]->Signers(), DefaultErrorHandler)
+		->Sign(user1->key_pair_)
+		->Sign(user2->key_pair_)
+		->PostAndWait([&successfully](std::string content) { successfully = true; });
+	if (account == nullptr) return false;
+
+	account->Sync(EmptyCallback, DefaultErrorHandler);
+
+	if (account->auth_descriptors_.size() == 2) return true;
+	return false;
 }
 
 bool AccountTest::AccountTest7()

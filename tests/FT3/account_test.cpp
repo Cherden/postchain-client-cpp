@@ -2,6 +2,7 @@
 #include "../../FT3/User/account_dev_operations.h"
 #include "../../FT3/Core/operation.h"
 #include "../../FT3/Core/Blockchain/blockchain_session.h"
+#include <algorithm>
 #include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
 
 void AccountTest::DefaultErrorHandler(std::string error) 
@@ -314,12 +315,74 @@ bool AccountTest::AccountTest8()
 
 bool AccountTest::AccountTest9()
 {
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	auto user_1 = TestUser::SingleSig();
+	auto user_2 = TestUser::SingleSig();
+
+	std::shared_ptr<AccountBuilder> account_builder_1 = AccountBuilder::CreateAccountBuilder(blockchain_, user_1);
+	account_builder_1->WithParticipants(std::vector<std::shared_ptr<KeyPair>> { user_1->key_pair_ });
+	std::shared_ptr<Account> account_1 = nullptr;
+	account_builder_1->Build([&account_1](std::shared_ptr<Account> _account) { account_1 = _account; }, this->DefaultErrorHandler);
+
+	std::shared_ptr<AccountBuilder> account_builder_2 = AccountBuilder::CreateAccountBuilder(blockchain_, user_2);
+	account_builder_2->WithParticipants(std::vector<std::shared_ptr<KeyPair>> { user_2->key_pair_ });
+	std::shared_ptr<Account> account_2 = nullptr;
+	account_builder_2->Build([&account_2](std::shared_ptr<Account> _account) { account_2 = _account; }, this->DefaultErrorHandler);
+
+	AddAuthDescriptorTo(account_2, user_2, user_1, EmptyCallback);
+
+	std::vector<std::shared_ptr<Account>> accounts;
+	Account::GetByParticipantId(
+		PostchainUtil::ByteVectorToHexString(user_1->key_pair_->pub_key_),
+		blockchain_->NewSession(user_1),
+		[&accounts](std::vector<std::shared_ptr<Account>> _accounts) {
+			for (auto &acc : _accounts)
+			{
+				accounts.push_back(acc);
+			}
+		},
+		DefaultErrorHandler
+	);
+
+	if (accounts.size() != 2) return false;
+
 	return true;
 }
 
 bool AccountTest::AccountTest10()
 {
-	return true;
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	auto user = TestUser::SingleSig();
+
+	std::shared_ptr<AccountBuilder> account_builder_1 = AccountBuilder::CreateAccountBuilder(blockchain_, user);\
+	std::shared_ptr<Account> account = nullptr;
+	account_builder_1->Build([&account](std::shared_ptr<Account> _account) { account = _account; }, this->DefaultErrorHandler);
+
+	bool success = false;
+	Account::GetById(account->id_, blockchain_->NewSession(user), [&account, &success] (std::shared_ptr<Account> _account) {
+		std::string account_0 = account->id_;
+		std::string account_1 = _account->id_;
+
+		std::transform(account_0.begin(), account_0.end(), account_0.begin(), ::toupper);
+		std::transform(account_1.begin(), account_1.end(), account_1.begin(), ::toupper);
+
+		if (account_0.compare(account_1) == 0)
+		{
+			success = true;
+		}
+	}, DefaultErrorHandler);
+
+	return success;
 }
 
 bool AccountTest::AccountTest11()

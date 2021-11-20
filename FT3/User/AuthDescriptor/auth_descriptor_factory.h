@@ -15,9 +15,16 @@ public:
 	class AuthDescriptorQuery
 	{
 	public:
-		std::string id;
-		std::string type;
-		std::string args;
+		std::string id_;
+		std::string type_;
+		std::string args_;
+
+		AuthDescriptorQuery(std::string id, std::string type, std::string args)
+		{
+			this->id_ = id;
+			this->type_ = type;
+			this->args_ = args;
+		}
 	};
 
 	std::shared_ptr<AuthDescriptor> Create(AuthType type, std::vector<byte> args);

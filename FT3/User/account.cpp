@@ -266,16 +266,14 @@ void Account::SyncAuthDescriptors(std::function<void()> on_success, std::functio
 	std::vector<std::shared_ptr<AuthDescriptorFactory::AuthDescriptorQuery>> auth_descriptors;
 
 	std::function<void(std::string)> on_success_wrapper = [&auth_descriptors, on_success, on_error](std::string content) {
-		//TO-DO json parsing && auth_descriptors->push_back();
-		nlohmann::json json_content = nlohmann::json::parse(content);
-		if (json_content.contains("key"))
+		nlohmann::json json_obj = nlohmann::json::parse(content);
+		for (auto & json_item : json_obj)
 		{
-			//TO-DO complete this
-			on_success();
-		}
-		else
-		{
-			on_error("Account::SyncAuthDescriptors corrupted json response.");
+			std::string id = PostchainUtil::GetSafeJSONString(json_item, "id");
+			std::string type = PostchainUtil::GetSafeJSONString(json_item, "type");
+			std::string args = PostchainUtil::GetSafeJSONString(json_item, "args");
+			std::shared_ptr<AuthDescriptorFactory::AuthDescriptorQuery> new_query = std::make_shared<AuthDescriptorFactory::AuthDescriptorQuery>(id, type, args);
+			auth_descriptors.push_back(new_query);
 		}
 	};
 
@@ -289,8 +287,8 @@ void Account::SyncAuthDescriptors(std::function<void()> on_success, std::functio
 	{
 		auth_list.push_back(
 			auth_descriptor_factory->Create(
-				FT3Util::StringToAuthType((string) auth_descriptor->type),
-				PostchainUtil::HexStringToByteVector((string) auth_descriptor->args)
+				FT3Util::StringToAuthType((string) auth_descriptor->type_),
+				PostchainUtil::HexStringToByteVector((string) auth_descriptor->args_)
 			)
 		);
 	}

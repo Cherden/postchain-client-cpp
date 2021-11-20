@@ -16,13 +16,13 @@ class GTXValue;
 class DictPair {
 public:
 	std::string name_;
-	GTXValue* value_;
+	std::shared_ptr<GTXValue> value_;
 
-	DictPair(std::string name = "", GTXValue *value = nullptr);
+	DictPair(std::string name = "", std::shared_ptr<GTXValue> value = nullptr);
 	
 	std::vector<unsigned char> Encode();
 
-	static DictPair Decode(Reader *sequence);
+	static std::shared_ptr<DictPair> Decode(Reader* sequence);
 };
 }  // namespace client
 }  // namespace postchain

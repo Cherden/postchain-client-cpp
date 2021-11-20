@@ -1,5 +1,9 @@
 #include "single_signature_auth_descriptor.h"
 #include "../account.h"
+#include "CoreMinimal.h"
+#include "../../../../ChromaUnreal/Utils.h"
+#include "../../../src/GTX/gtx.h"
+#include "../../../src/GTX/gtx_value.h"
 
 namespace chromia {
 namespace postchain {
@@ -48,7 +52,7 @@ std::vector<byte> SingleSignatureAuthDescriptor::Hash()
 	gtv->Add(AbstractValueFactory::Build(FT3Util::AuthTypeToString(AuthType::eSingleSig)));
 
 	std::shared_ptr<gtv::ArrayValue> arr_0 = AbstractValueFactory::EmptyArray();
-	arr_0->Add(AbstractValueFactory::Build(PostchainUtil::ByteVectorToHexString(this->pubkey_)));
+	arr_0->Add(AbstractValueFactory::Build(this->pubkey_));
 	gtv->Add(arr_0);
 
 	std::shared_ptr<gtv::ArrayValue> arr_1 = AbstractValueFactory::EmptyArray();
@@ -64,6 +68,11 @@ std::vector<byte> SingleSignatureAuthDescriptor::Hash()
 	{
 		gtv->Add(AbstractValueFactory::Build(nullptr));
 	}
+
+
+	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(gtv);
+	std::string gtx_str = gtx_value->ToString();
+	UE_LOG(LogTemp, Warning, TEXT("SingleSignatureAuthDescriptor::Hash(): [%d] [%s]"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
 
 	std::vector<byte> hashed = AbstractValue::Hash(gtv);
 	return hashed;

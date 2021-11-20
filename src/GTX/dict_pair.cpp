@@ -5,13 +5,13 @@
 namespace chromia {
 namespace postchain {
 namespace client {
-	DictPair::DictPair(std::string name, GTXValue *value)
+	DictPair::DictPair(std::string name, std::shared_ptr<GTXValue> value)
 	{
 		this->name_ = name;
 
 		if (value == nullptr)
 		{
-			this->value_ = new GTXValue();
+			this->value_ = std::make_shared<GTXValue>();
 		}
 		else
 		{
@@ -26,20 +26,18 @@ namespace client {
 
 		messageWriter->PushSequence();
 		messageWriter->WriteUTF8String(this->name_);
-		//TO-DO messageWriter->WriteEncodedValue(this->value_->Encode());
+		messageWriter->WriteEncodedValue(this->value_->Encode());
 		messageWriter->PopSequence();
 
 		return messageWriter->Encode();
 	}
 
-	DictPair DictPair::Decode(Reader *sequence)
+	std::shared_ptr<DictPair> DictPair::Decode(Reader* sequence)
 	{
-		DictPair dict = DictPair();
-		Reader dictSequence = sequence->ReadSequence();
-
-		dict.name_ = dictSequence.ReadUTF8String();
-		//TO-DO dict->value_ = GTXValue.Decode(dictSequence);
-
+		std::shared_ptr<DictPair> dict = std::make_shared<DictPair>();
+		Reader dict_sequence = sequence->ReadSequence();
+		dict->name_ = dict_sequence.ReadUTF8String();
+		dict->value_ = GTXValue::Decode(&dict_sequence);
 		return dict;
 	}
 }  // namespace client

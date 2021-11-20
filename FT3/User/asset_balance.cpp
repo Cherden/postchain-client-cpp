@@ -68,7 +68,7 @@ void AssetBalance::GetByAccountAndAssetId(std::string account_id, std::string as
 		}
 		else
 		{
-			on_error("Assrt::GetById failed, corrupted resposne");
+			on_error("Asset::GetByAccountAndAssetId failed, corrupted resposne");
 		}
 	};
 

@@ -44,8 +44,6 @@ void BlockchainInfo::GetInfo(std::shared_ptr<BlockchainClient> connection, std::
 		int rate_limit_recovery_time = PostchainUtil::GetSafeJSONInt(json_content, std::string("rate_limit_recovery_time"));
 		int rate_limit_points_at_account_creation = PostchainUtil::GetSafeJSONInt(json_content, std::string("rate_limit_points_at_account_creation"));
 
-		std::string missing = PostchainUtil::GetSafeJSONString(json_content, std::string("nadsfsdfsdme"));
-
 		std::shared_ptr<BlockchainInfo> info = std::make_shared<BlockchainInfo>(
 			name, website, description, rate_limit_active, rate_limit_max_points, rate_limit_recovery_time, rate_limit_points_at_account_creation);
 		on_success(info);

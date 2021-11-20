@@ -1,7 +1,10 @@
 #include "gtx_value.h"
 #include "dict_pair.h"
 #include "../ASN1/writer.h"
+#include "../ASN1/asn_util.h"
 #include "../postchain_util.h"
+#include "CoreMinimal.h"
+#include "../../../ChromaUnreal/Utils.h"
 
 namespace chromia {
 namespace postchain {
@@ -113,64 +116,65 @@ std::vector<unsigned char> GTXValue::Encode()
 }
 
 
-std::shared_ptr<GTXValue> GTXValue::Decode(std::shared_ptr<asn1::Reader> sequence)
+std::shared_ptr<GTXValue> GTXValue::Decode(asn1::Reader* sequence)
 {
-	std::shared_ptr<GTXValue> val;
+	std::shared_ptr<GTXValue> val = std::make_shared<GTXValue>();
 
 	byte choice = sequence->ReadChoice();
 	sequence->ReadLength();
+
+	std::string choice_hex = PostchainUtil::ByteVectorToHexString({ choice });
+	UE_LOG(LogTemp, Warning, TEXT("GTXValue::Decode: %s"), *ChromaUtils::STDStringToFString(choice_hex));
+
 	switch (choice)
 	{
-	case asn1::tag::kNull:
+	case asn1::AsnUtil::TAG_NULL:
 	{
 		val->choice_ = GTXValueChoice::Null;
 		sequence->ReadChoice();
 		sequence->ReadChoice();
 		break;
 	}
-	case asn1::tag::kOctetString:
+	case asn1::AsnUtil::TAG_BYTE_ARRAY:
 	{
 		val->choice_ = GTXValueChoice::ByteArray;
 		val->byte_array_ = sequence->ReadOctetString();
 		break;
 	}
-	case asn1::tag::kUTF8String:
+	case asn1::AsnUtil::TAG_STRING:
 	{
 		val->choice_ = GTXValueChoice::String;
 		val->string_ = sequence->ReadUTF8String();
 		break;
 	}
-	case asn1::tag::kInteger:
+	case asn1::AsnUtil::TAG_INTEGER:
 	{
 		val->choice_ = GTXValueChoice::Integer;
 		val->integer_ = sequence->ReadInteger();
 		break;
 	}
-	// TO-DO
-	//case asn1::tag::kArray:
-	//{
-	//	val->choice_ = GTXValueChoice::Array;
-	//	std::shared_ptr<Reader> inner_sequence = std::make_shared<Reader>(sequence->ReadSequence());
-	//	while (inner_sequence->RemainingBytes() > 0)
-	//	{
-	//		val->array_.push_back(GTXValue::Decode(inner_sequence));
-	//	}
-	//	break;
-	//}
-	//case asn1::tag::kDict:
-	//{
-	//	throw std::exception("GTXValue::Decode() asn1::tag::kDict not implemented");
-	//	/*
-	//	TO-DO
-	//	val.Choice = GTXValueChoice.Dict;
-	//	val.Dict = new List<DictPair>();
-	//	var innerSequence = sequence.ReadSequence();
-	//	while (innerSequence.RemainingBytes > 0)
-	//	{
-	//		val.Dict.Add(DictPair.Decode(innerSequence));
-	//	}*/
-	//	break;
-	//}
+	case asn1::AsnUtil::TAG_ARRAY:
+	{
+		val->choice_ = GTXValueChoice::Array;
+		Reader inner_sequence =sequence->ReadSequence();
+		while (inner_sequence.RemainingBytes() > 0)
+		{
+			val->array_.push_back(GTXValue::Decode(&inner_sequence));
+		}
+		break;
+	}
+	case asn1::AsnUtil::TAG_DICT:
+	{
+		throw std::exception("GTXValue::Decode() asn1::tag::kDict not implemented");
+		
+		val->choice_ = GTXValueChoice::Dict;
+		Reader inner_sequence = sequence->ReadSequence();
+		while (inner_sequence.RemainingBytes() > 0)
+		{
+			val->dict_.push_back(DictPair::Decode(&inner_sequence));
+		}
+		break;
+	}
 	default:
 	{
 		throw std::exception("GTXValue::Decode() Unknown choice tag");

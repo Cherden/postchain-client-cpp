@@ -39,7 +39,7 @@ public:
 
 	std::vector<unsigned char> Encode();
 
-	static std::shared_ptr<GTXValue> Decode(std::shared_ptr<asn1::Reader> sequence);
+	static std::shared_ptr<GTXValue> Decode(asn1::Reader* sequence);
 
 	static std::vector<unsigned char> TrimByteList(char* byteList, int length);
 

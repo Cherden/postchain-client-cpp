@@ -27,8 +27,8 @@ std::shared_ptr<AuthDescriptor> AuthDescriptorFactory::Create(AuthType type, std
 
 std::shared_ptr<SingleSignatureAuthDescriptor> AuthDescriptorFactory::CreateSingleSig(std::vector<byte> args)
 {
-	std::shared_ptr<asn1::Reader> gtx_transaction = std::make_shared<asn1::Reader>(args);
-	std::shared_ptr<client::GTXValue> gtx_value = GTXValue::Decode(gtx_transaction);
+	Reader gtx_transaction(args);
+	std::shared_ptr<client::GTXValue> gtx_value = GTXValue::Decode(&gtx_transaction);
 	std::vector<FlagsType> flags;
 
 	if (gtx_value->array_.size() < 2)
@@ -50,8 +50,8 @@ std::shared_ptr<SingleSignatureAuthDescriptor> AuthDescriptorFactory::CreateSing
 
 std::shared_ptr<MultiSignatureAuthDescriptor> AuthDescriptorFactory::CreateMultiSig(std::vector<byte> args)
 {
-	std::shared_ptr<asn1::Reader> gtx_transaction = std::make_shared<asn1::Reader>(args);
-	std::shared_ptr<client::GTXValue> gtx_value = GTXValue::Decode(gtx_transaction);
+	Reader gtx_transaction(args);
+	std::shared_ptr<client::GTXValue> gtx_value = GTXValue::Decode(&gtx_transaction);
 	std::vector<FlagsType> flags;
 	std::vector<std::vector<byte>> pubkeys;
 

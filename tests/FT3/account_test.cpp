@@ -57,7 +57,7 @@ bool AccountTest::AccountTest1()
 		return false;
 	}
 
-	auto user = new KeyPair(PostchainUtil::ByteVectorToHexString(private_key));
+	auto user = std::make_shared<KeyPair>(PostchainUtil::ByteVectorToHexString(private_key));
 
 	if (!TestOperators::Equals(user->priv_key_, private_key)) return false;
 	if (!TestOperators::Equals(user->pub_key_, public_key)) return false;
@@ -102,8 +102,6 @@ bool AccountTest::AccountTest3()
 	account_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; }, this->DefaultErrorHandler);
 
 	if (!account) return false;
-
-	std::vector<FlagsType> flags = { FlagsType::eTransfer };
 
 	auto single_sig = std::make_shared<SingleSignatureAuthDescriptor>(
 		user->key_pair_->pub_key_,
@@ -275,6 +273,7 @@ bool AccountTest::AccountTest7()
 	return true;
 }
 
+// Should be returned when queried by participant id
 bool AccountTest::AccountTest8()
 {
 	SetupBlockchain();
@@ -313,6 +312,7 @@ bool AccountTest::AccountTest8()
 	return true;
 }
 
+// Should return two accounts when account is participant of two accounts
 bool AccountTest::AccountTest9()
 {
 	SetupBlockchain();
@@ -354,6 +354,7 @@ bool AccountTest::AccountTest9()
 	return true;
 }
 
+// Should return account by id
 bool AccountTest::AccountTest10()
 {
 	SetupBlockchain();
@@ -385,22 +386,123 @@ bool AccountTest::AccountTest10()
 	return success;
 }
 
+// Should have only one auth descriptor after calling deleteAllAuthDescriptorsExclude
 bool AccountTest::AccountTest11()
 {
-	return true;
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	auto user1 = TestUser::SingleSig();
+	auto user2 = TestUser::SingleSig();
+	auto user3 = TestUser::SingleSig();
+
+	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user1);
+	account_builder->WithParticipants(std::vector<std::shared_ptr<KeyPair>> { user1->key_pair_ });
+	account_builder->WithPoints(4);
+
+	std::shared_ptr<Account> account;
+	account_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; }, this->DefaultErrorHandler);
+	if (account == nullptr) return false;
+
+	AddAuthDescriptorTo(account, user1, user2, EmptyCallback);
+	AddAuthDescriptorTo(account, user1, user3, EmptyCallback);
+
+	account->DeleteAllAuthDescriptorsExclude(user1->auth_descriptor_, EmptyCallback, DefaultErrorHandler);
+	blockchain_->NewSession(user1)->GetAccountById(
+		account->id_,
+		[&account](std::shared_ptr<Account> _account) { account = _account; },
+		this->DefaultErrorHandler
+	);
+
+	return (1 == account->auth_descriptors_.size());
 }
 
+// Should be able to register account by directly calling \'register_account\' operation
 bool AccountTest::AccountTest12()
 {
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	auto user = TestUser::SingleSig();
+
+	std::shared_ptr<ArrayValue> gtv_wrapper = AbstractValueFactory::EmptyArray();
+	gtv_wrapper->Add(user->auth_descriptor_->ToGTV());
+	bool success = false;
+	blockchain_->Call(
+		AccountOperations::Op("ft3.dev_register_account", gtv_wrapper),
+		user, 
+		[&success](std::string content) { success = true; },
+		DefaultErrorHandler
+	);
+
+	std::shared_ptr<BlockchainSession> session = blockchain_->NewSession(user);
+
+	std::shared_ptr<Account> account;
+	session->GetAccountById(
+		user->auth_descriptor_->ID(), 
+		[&account](std::shared_ptr<Account> _account) { account = _account; }, 
+		DefaultErrorHandler);
+
+	if (account == nullptr) return false;
 	return true;
 }
 
+// should be possible for auth descriptor to delete itself without admin flag
 bool AccountTest::AccountTest13()
 {
-	return true;
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	auto user1 = TestUser::SingleSig();
+
+	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user1);
+	account_builder->WithParticipants(std::vector<std::shared_ptr<KeyPair>> { user1->key_pair_ });
+	account_builder->WithPoints(4);
+
+	std::shared_ptr<Account> account = nullptr;
+	account_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; }, this->DefaultErrorHandler);
+	if (account == nullptr) return false;
+
+	auto key_pair = std::make_shared<KeyPair>();
+	auto user2 = std::make_shared<User>(
+		key_pair,
+		std::make_shared<SingleSignatureAuthDescriptor>(
+		key_pair->pub_key_,
+		std::vector<FlagsType>{ FlagsType::eTransfer }));
+
+	AddAuthDescriptorTo(account, user1, user2, EmptyCallback);
+
+	std::shared_ptr<Account> account2 = nullptr;
+	blockchain_->NewSession(user2)->GetAccountById(account->id_, [&account2](std::shared_ptr<Account> _account) {
+		account2 = _account;
+	}, DefaultErrorHandler);
+	if (account2 == nullptr) return false;
+
+	bool successfull = false;
+	account2->DeleteAuthDescriptor(user2->auth_descriptor_, [&successfull]() { successfull = true; }, DefaultErrorHandler);
+	if (!successfull) return false;
+
+	account2->Sync(EmptyCallback, DefaultErrorHandler);
+	if (1 == account2->auth_descriptors_.size()) return true;
+	return false;
 }
 
 bool AccountTest::AccountTest14()
 {
-	return true;
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	auto user1 = TestUser::SingleSig();
 }

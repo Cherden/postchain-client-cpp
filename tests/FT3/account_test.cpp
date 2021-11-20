@@ -86,7 +86,6 @@ bool AccountTest::AccountTest2()
 // Can add new auth descriptor if has account edit rights
 bool AccountTest::AccountTest3()
 {
-
 	SetupBlockchain();
 	if (this->blockchain_ == nullptr)
 	{
@@ -277,6 +276,39 @@ bool AccountTest::AccountTest7()
 
 bool AccountTest::AccountTest8()
 {
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	auto user = TestUser::SingleSig();
+	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
+	account_builder->WithParticipants(std::vector<std::shared_ptr<KeyPair>> { user->key_pair_ });
+
+	std::shared_ptr<Account> account = nullptr;
+	account_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; }, this->DefaultErrorHandler);
+	if (!account) return false;
+
+	std::vector<std::shared_ptr<Account>> accounts;
+
+	Account::GetByParticipantId(
+		PostchainUtil::ByteVectorToHexString(user->key_pair_->pub_key_),
+		blockchain_->NewSession(user),
+		[&accounts](std::vector<std::shared_ptr<Account>> _accounts) {
+			for (auto &acc : _accounts)
+			{
+				accounts.push_back(acc);
+			}
+		},
+		DefaultErrorHandler
+	);
+
+	if (accounts.size() != 1) return false;
+	std::string pub_key_str = PostchainUtil::ByteVectorToHexString(user->key_pair_->pub_key_);
+	std::string signer_str = PostchainUtil::ByteVectorToHexString(accounts[0]->auth_descriptors_[0]->Signers()[0]);
+	if (pub_key_str.compare(signer_str) != 0) return false;
+
 	return true;
 }
 

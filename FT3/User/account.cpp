@@ -68,8 +68,13 @@ void Account::GetByParticipantId(std::string id, std::shared_ptr<BlockchainSessi
 	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error)
 {
 	std::function<void(std::string)> on_success_wrapper = [session, on_success, on_error](std::string content) {
+		nlohmann::json json_obj = nlohmann::json::parse(content);
 		std::vector<std::string> account_ids;
-		// TO-DO
+		for (std::string id : json_obj)
+		{
+			//id = id.substr(1, id.size() - 2);
+			account_ids.push_back(id);
+		}
 		Account::GetByIds(account_ids, session, on_success, on_error);
 	};
 
@@ -164,7 +169,6 @@ std::vector<byte> Account::RawTransactionAddAuthDescriptor(std::string account_i
 void Account::GetByIds(std::vector<std::string> ids, std::shared_ptr<BlockchainSession> session,
 	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error)
 {
-	// TO-DO sure that Account::GetById(...) is sync call;
 	std::vector<std::shared_ptr<Account>> accounts;
 	std::function<void(std::shared_ptr<Account>)> on_success_wrapper = [&accounts](std::shared_ptr<Account> account) {
 		accounts.push_back(account);

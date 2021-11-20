@@ -163,12 +163,16 @@ int Gtx::GetSignerIndex(std::vector<byte> &public_key)
 
 		if (signer.size() != public_key.size()) continue;
 
+		bool equal = true;
 		for (int i = 0; i < public_key.size(); i++)
 		{
-			if (public_key[i] != signer[i]) continue;
+			if (public_key[i] != signer[i])
+			{
+				equal = false;
+				break;
+			}
 		}
-
-		return index;
+		if (equal) return index;
 	}
 
 	return -1;
@@ -185,6 +189,10 @@ void Gtx::AddSignature(std::vector<byte> public_key, std::vector<byte> signature
 	}
 
 	int signer_index = GetSignerIndex(public_key);
+	UE_LOG(LogTemp, Warning, TEXT("Gtx::AddSignature: [%d] [%s] [%s]"), signer_index, 
+		*(ChromaUtils::STDStringToFString(PostchainUtil::ByteVectorToHexString(public_key))),
+		*(ChromaUtils::STDStringToFString(PostchainUtil::ByteVectorToHexString(signature)))
+	);
 
 	//int signer_index = this->signers_.FindIndex(signer = > signer.SequenceEqual(pubKeyBuffer));
 

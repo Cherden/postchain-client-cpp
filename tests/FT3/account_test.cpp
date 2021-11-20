@@ -1,7 +1,7 @@
 #include "account_test.h"
-
+#include "../../FT3/User/account_dev_operations.h"
+#include "../../FT3/Core/operation.h"
 #include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
-
 
 void AccountTest::DefaultErrorHandler(std::string error) 
 {
@@ -166,17 +166,15 @@ bool AccountTest::AccountTest5()
 		std::vector<FlagsType> { FlagsType::eAccount, FlagsType::eTransfer });
 
 	auto tx = blockchain_->connection_->NewTransaction(multi_sig->Signers(), this->DefaultErrorHandler);
-
-	/*var op = AccountDevOperations.Register(multiSig);
-	tx.AddOperation(op.Name, op.Args);
-	tx.Sign(user1.KeyPair.PrivKey, user1.KeyPair.PubKey);
-	tx.Sign(user2.KeyPair.PrivKey, user2.KeyPair.PubKey);
+	auto op = AccountDevOperations::Register(multi_sig);
+	tx->AddOperation(op->name_, op->args_);
+	tx->Sign(user1->key_pair_->priv_key_, user1->key_pair_->pub_key_);
+	tx->Sign(user2->key_pair_->priv_key_, user2->key_pair_->pub_key_);
 
 	bool successfully = false;
-	yield return tx.PostAndWait(() = > successfully = true);
-	Assert.True(successfully);*/
-
-	return true;
+	tx->PostAndWait([&successfully](std::string content) { successfully = true; });
+	
+	return successfully;
 }
 
 bool AccountTest::AccountTest6()

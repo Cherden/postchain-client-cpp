@@ -3,7 +3,11 @@
 #include "multi_signature_auth_descriptor.h"
 #include "../account.h"
 
-using namespace chromia::postchain::gtv;
+#include "../../../../ChromaUnreal/Utils.h"
+#include "../../../src/GTX/gtx.h"
+#include "../../../src/GTX/gtx_value.h"
+
+using namespace chromia::postchain::client;
 
 namespace chromia {
 namespace postchain {
@@ -49,6 +53,11 @@ std::shared_ptr<gtv::ArrayValue> MultiSignatureAuthDescriptor::ToGTV()
 	{
 		gtv->Add(AbstractValueFactory::Build(nullptr));
 	}
+
+	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(gtv);
+	std::string gtx_str = gtx_value->ToString();
+	UE_LOG(LogTemp, Warning, TEXT("SingleSignatureAuthDescriptor::MultiSignatureAuthDescriptor::ToGTV(): [%d] [%s]"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
+
 
 	return gtv;
 }

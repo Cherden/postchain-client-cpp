@@ -5,6 +5,8 @@
 #include "../../../src/GTX/gtx.h"
 #include "../../../src/GTX/gtx_value.h"
 
+using namespace chromia::postchain::client;
+
 namespace chromia {
 namespace postchain {
 namespace ft3 {

@@ -43,20 +43,11 @@ void RateLimit::GetByAccountRateLimit(std::string id, std::shared_ptr<Blockchain
 	std::vector<QueryObject> query_objects;
 	query_objects.push_back(QueryObject("account_id", AbstractValueFactory::Build(id)));
 	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {
-		// TO-DO check parsing
-		nlohmann::json json_content = nlohmann::json::parse(content);
-		if (json_content.contains("id") && json_content.contains("name") && json_content.contains("chain_id") && json_content.contains("amount"))
-		{
-			std::string amount_str = json_content["amount"];
-			int points = atoi(std::string(json_content["amount"]).c_str());
-			int last_update = atoi(std::string(json_content["last_updates"]).c_str());
-			std::shared_ptr<RateLimit> rate_limit = std::make_shared<RateLimit>(points, last_update);
-			on_success(rate_limit);
-		}
-		else
-		{
-			on_error("Asset::GetByAccountRateLimit failed, corrupted resposne");
-		}
+		nlohmann::json json_obj = nlohmann::json::parse(content);
+		int points = PostchainUtil::GetSafeJSONInt(json_obj, "points");
+		long last_update = PostchainUtil::GetSafeJSONLong(json_obj, "last_update");
+		std::shared_ptr<RateLimit> rate_limit = std::make_shared<RateLimit>(points, last_update);
+		on_success(rate_limit);
 	};
 
 	blockchain->Query("ft3.get_account_rate_limit_last_update", query_objects, on_success_wrapper, on_error);

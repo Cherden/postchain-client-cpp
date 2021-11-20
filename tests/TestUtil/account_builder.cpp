@@ -89,7 +89,6 @@ void AccountBuilder::Build(std::function<void(std::shared_ptr<Account>)> on_succ
 		this->AddPointsIfNeeded(account, [&account](std::shared_ptr<RateLimit> rate_limit) {
 			account->rate_limit_ = rate_limit;
 		}, on_error);
-
 		on_success(account);
 	}
 }

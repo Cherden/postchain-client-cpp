@@ -3,8 +3,6 @@
 #include "../ASN1/writer.h"
 #include "../ASN1/asn_util.h"
 #include "../postchain_util.h"
-#include "CoreMinimal.h"
-#include "../../../ChromaUnreal/Utils.h"
 
 namespace chromia {
 namespace postchain {
@@ -122,9 +120,6 @@ std::shared_ptr<GTXValue> GTXValue::Decode(asn1::Reader* sequence)
 
 	byte choice = sequence->ReadChoice();
 	sequence->ReadLength();
-
-	std::string choice_hex = PostchainUtil::ByteVectorToHexString({ choice });
-	UE_LOG(LogTemp, Warning, TEXT("GTXValue::Decode: %s"), *ChromaUtils::STDStringToFString(choice_hex));
 
 	switch (choice)
 	{

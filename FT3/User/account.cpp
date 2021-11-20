@@ -293,7 +293,7 @@ void Account::SyncAuthDescriptors(std::function<void()> on_success, std::functio
 		);
 	}
 
-	this->auth_descriptors_.empty();
+	this->auth_descriptors_.clear();
 	this->auth_descriptors_.insert(this->auth_descriptors_.begin(), auth_list.begin(), auth_list.end());
 
 	on_success();

@@ -103,6 +103,12 @@ class PostchainUtil {
 	*/
 	static int GetSafeJSONInt(const nlohmann::json & value, std::string key, int default_value = 0);
 
+	/**
+	* Try to get long from json object by key.
+	* Return nefault value, if key not found.
+	*/
+	static long GetSafeJSONLong(const nlohmann::json & value, std::string key, long default_value = 0);
+
 private:
 	static secp256k1_context *secp_context_;
 

@@ -151,7 +151,7 @@ bool PostchainUtil::GeneratePrivateKey(std::vector<unsigned char> &private_key)
 	if (PostchainUtil::secp_context_ == nullptr) return false;
 
 	// Init private key
-	private_key.empty();
+	private_key.clear();
 	for (int i = 0; i < 32; i++)
 	{
 		//private_key.push_back(33 + i);
@@ -360,6 +360,18 @@ int PostchainUtil::GetSafeJSONInt(const nlohmann::json & value, std::string key,
 	}
 }
 
+
+long PostchainUtil::GetSafeJSONLong(const nlohmann::json & value, std::string key, long default_value)
+{
+	if (value.contains(key))
+	{
+		return value[key];
+	}
+	else
+	{
+		return default_value;
+	}
+}
 
 }  // namespace postchain
 }  // namespace chromia

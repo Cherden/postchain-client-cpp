@@ -504,5 +504,44 @@ bool AccountTest::AccountTest14()
 		return false;
 	}
 
-	auto user1 = TestUser::SingleSig();
+	auto user_1 = TestUser::SingleSig();
+
+	std::shared_ptr<Account> account = nullptr;
+	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user_1);
+	account_builder->WithParticipants(std::vector<std::shared_ptr<KeyPair>> { user_1->key_pair_ });
+	account_builder->WithPoints(4);
+	account_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; }, this->DefaultErrorHandler);
+	if (account == nullptr) return false;
+
+	auto key_pair_2 = std::make_shared<KeyPair>();
+	auto user_2 = std::make_shared<User>(
+		key_pair_2,
+		std::make_shared<SingleSignatureAuthDescriptor>(
+			key_pair_2->pub_key_,
+			std::vector<FlagsType>{ FlagsType::eTransfer }));
+
+	auto key_pair_3 = std::make_shared<KeyPair>();
+	auto user_3 = std::make_shared<User>(
+		key_pair_3,
+		std::make_shared<SingleSignatureAuthDescriptor>(
+			key_pair_3->pub_key_,
+			std::vector<FlagsType>{ FlagsType::eTransfer }));
+
+	bool successfully = false;
+	AddAuthDescriptorTo(account, user_1, user_2, [&successfully]() { successfully = true; });
+	if (!successfully) return false;
+	successfully = false;
+	AddAuthDescriptorTo(account, user_1, user_3, [&successfully]() { successfully = true; });
+	if (!successfully) return false;
+
+	std::shared_ptr<Account> account_2 = nullptr;
+	blockchain_->NewSession(user_3)->GetAccountById(
+		account->id_,
+		[&account_2](std::shared_ptr<Account> _account) { account_2 = _account; },
+		DefaultErrorHandler
+	);
+
+	successfully = false;
+	account_2->DeleteAuthDescriptor(user_2->auth_descriptor_, [&successfully]() { successfully = true; }, DefaultErrorHandler);
+	return successfully;
 }

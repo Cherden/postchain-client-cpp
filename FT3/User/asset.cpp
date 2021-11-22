@@ -28,7 +28,7 @@ void Asset::Register(std::string name, std::string chain_id, std::shared_ptr<Blo
 {
 	std::shared_ptr<TransactionBuilder> tx_builder = blockchain->NewTransactionBuilder();
 
-	std::shared_ptr<ArrayValue> op_args;
+	std::shared_ptr<ArrayValue> op_args = AbstractValueFactory::EmptyArray();
 	op_args->Add(AbstractValueFactory::Build(name));
 	op_args->Add(AbstractValueFactory::Build(chain_id));
 	tx_builder->Add(ft3::Operation::Op("ft3.dev_register_asset", op_args));

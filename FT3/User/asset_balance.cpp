@@ -29,20 +29,19 @@ void AssetBalance::GetByAccountId(std::string id, std::shared_ptr<Blockchain> bl
 	query_objects.push_back(QueryObject("account_id", AbstractValueFactory::Build(id)));
 
 	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {
-		// TO-DO check parsing
-		nlohmann::json json_content = nlohmann::json::parse(content);
-		if (json_content.contains("id") && json_content.contains("name") && json_content.contains("chain_id") && json_content.contains("amount"))
+		std::vector<std::shared_ptr<AssetBalance>> balances;
+		nlohmann::json json_obj = nlohmann::json::parse(content);
+		for (auto & item : json_obj)
 		{
-			std::string amount_str = json_content["amount"];
-			long amount = atoi(amount_str.c_str());
+			std::string id = PostchainUtil::GetSafeJSONString(item, "id");
+			std::string name = PostchainUtil::GetSafeJSONString(item, "name");
+			long amount = PostchainUtil::GetSafeJSONLong(item, "amount");
+			std::string chain_id = PostchainUtil::GetSafeJSONString(item, "chain_id");
+			std::shared_ptr<AssetBalance> asset = std::make_shared<AssetBalance>(id, name, amount, chain_id);
+			balances.push_back(asset);
+		}
 
-			std::shared_ptr<AssetBalance> asset = std::make_shared<AssetBalance>(json_content["id"], json_content["name"], amount, json_content["chain_id"]);
-			on_success({ asset });
-		}
-		else
-		{
-			on_error("Asset::GetById failed, corrupted resposne");
-		}
+		on_success(balances);
 	};
 
 	blockchain->Query("ft3.get_asset_balances", query_objects, on_success_wrapper, on_error);
@@ -80,7 +79,7 @@ void AssetBalance::GiveBalance(std::string account_id, std::string asset_id, int
 {
 	std::shared_ptr<TransactionBuilder> tx_builder = blockchain->NewTransactionBuilder();
 
-	std::shared_ptr<ArrayValue> op_args;
+	std::shared_ptr<ArrayValue> op_args = AbstractValueFactory::EmptyArray();
 	op_args->Add(AbstractValueFactory::Build(asset_id));
 	op_args->Add(AbstractValueFactory::Build(account_id));
 	op_args->Add(AbstractValueFactory::Build(amount));

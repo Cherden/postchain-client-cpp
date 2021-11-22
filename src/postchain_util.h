@@ -31,6 +31,8 @@ class PostchainUtil {
 
     static std::string Sha256(std::vector<unsigned char> buffer);
 
+	static std::vector<byte> IntegerToBinary(int x);
+
     static bool IsLittleEndian();
 
 	/**

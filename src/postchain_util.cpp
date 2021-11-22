@@ -130,6 +130,19 @@ std::string PostchainUtil::Sha256(std::vector<unsigned char> buffer) {
 }
 
 
+std::vector<byte> PostchainUtil::IntegerToBinary(int x)
+{
+	// Transfrom int to byte array
+	std::vector<byte> as_byte;
+	byte* raw_cast = static_cast<byte*>(static_cast<void*>(&x));
+	for (int i = 0; i < 4; i++)
+	{
+		as_byte.push_back(raw_cast[i]);
+	}
+	return as_byte;
+}
+
+
 bool PostchainUtil::IsLittleEndian() {
     int n = 1;
     return *(char*)&n == 1;

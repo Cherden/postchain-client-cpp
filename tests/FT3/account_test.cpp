@@ -2,7 +2,6 @@
 #include "../../FT3/User/account_dev_operations.h"
 #include "../../FT3/Core/operation.h"
 #include "../../FT3/Core/Blockchain/blockchain_session.h"
-#include <algorithm>
 #include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
 
 void AccountTest::DefaultErrorHandler(std::string error) 
@@ -374,8 +373,8 @@ bool AccountTest::AccountTest10()
 		std::string account_0 = account->id_;
 		std::string account_1 = _account->id_;
 
-		std::transform(account_0.begin(), account_0.end(), account_0.begin(), ::toupper);
-		std::transform(account_1.begin(), account_1.end(), account_1.begin(), ::toupper);
+		account_0 = PostchainUtil::ToUpper(account_0);
+		account_1 = PostchainUtil::ToUpper(account_1);
 
 		if (account_0.compare(account_1) == 0)
 		{

@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <ios>
 #include <sstream>
+#include <algorithm>
 #include "SECP256K/include/secp256k1_recovery.h"
 
 namespace chromia {
@@ -385,6 +386,15 @@ long PostchainUtil::GetSafeJSONLong(const nlohmann::json & value, std::string ke
 		return default_value;
 	}
 }
+
+
+std::string PostchainUtil::ToUpper(std::string str)
+{
+	std::string clone = str;
+	std::transform(clone.begin(), clone.end(), clone.begin(), ::toupper);
+	return clone;
+}
+
 
 }  // namespace postchain
 }  // namespace chromia

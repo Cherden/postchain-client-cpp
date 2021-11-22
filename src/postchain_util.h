@@ -111,6 +111,11 @@ class PostchainUtil {
 	*/
 	static long GetSafeJSONLong(const nlohmann::json & value, std::string key, long default_value = 0);
 
+	/**
+	* Transform string to upper string
+	*/
+	static std::string ToUpper(std::string str);
+
 private:
 	static secp256k1_context *secp_context_;
 

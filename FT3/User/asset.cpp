@@ -49,19 +49,14 @@ void Asset::GetByName(std::string name, std::shared_ptr<Blockchain> blockchain,
 	query_objects.push_back(QueryObject("name", AbstractValueFactory::Build(name)));
 
 	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {
-		// TO-DO check parsing
 		nlohmann::json json_content = nlohmann::json::parse(content);
-		if (json_content.contains("id") && json_content.contains("name") && json_content.contains("issuing_chain_rid"))
+		std::vector<std::shared_ptr<Asset>> assets;
+		for (auto &item : json_content)
 		{
-			std::shared_ptr<Asset> asset = std::make_shared<Asset>(json_content["id"], json_content["name"], json_content["issuing_chain_rid"]);
-			std::vector<std::shared_ptr<Asset>> assets;
+			std::shared_ptr<Asset> asset = std::make_shared<Asset>(item["id"], item["name"], item["issuing_chain_rid"]);
 			assets.push_back(asset);
-			on_success(assets);
 		}
-		else
-		{
-			on_error("Asset::GetByName failed, corrupted resposne");
-		}
+		on_success(assets);
 	};
 
 	blockchain->Query("ft3.get_asset_by_name", query_objects, on_success_wrapper, on_error);
@@ -74,7 +69,6 @@ void Asset::GetById(string id, std::shared_ptr<Blockchain> blockchain,
 	query_objects.push_back(QueryObject("asset_id", AbstractValueFactory::Build(id)));
 
 	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {
-		// TO-DO check parsing
 		nlohmann::json json_content = nlohmann::json::parse(content);
 		if (json_content.contains("id") && json_content.contains("name") && json_content.contains("issuing_chain_rid"))
 		{
@@ -94,19 +88,14 @@ void Asset::GetAssets(std::shared_ptr<Blockchain> blockchain,
 	std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error)
 {
 	std::function<void(std::string)> on_success_wrapper = [on_success, on_error](std::string content) {
-		// TO-DO check parsing
 		nlohmann::json json_content = nlohmann::json::parse(content);
-		if (json_content.contains("id") && json_content.contains("name") && json_content.contains("issuing_chain_rid"))
+		std::vector<std::shared_ptr<Asset>> assets;
+		for (auto &item : json_content)
 		{
-			std::shared_ptr<Asset> asset = std::make_shared<Asset>(json_content["id"], json_content["name"], json_content["issuing_chain_rid"]);
-			std::vector<std::shared_ptr<Asset>> assets;
+			std::shared_ptr<Asset> asset = std::make_shared<Asset>(item["id"], item["name"], item["issuing_chain_rid"]);
 			assets.push_back(asset);
-			on_success(assets);
 		}
-		else
-		{
-			on_error("Assrt::GetAssets failed, corrupted resposne");
-		}
+		on_success(assets);
 	};
 
 	blockchain->Query("ft3.get_all_assets", {}, on_success_wrapper, on_error);

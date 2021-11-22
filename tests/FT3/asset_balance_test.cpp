@@ -1,13 +1,10 @@
 #include "asset_balance_test.h"
-#include "../../FT3/User/account_dev_operations.h"
-#include "../../FT3/Core/operation.h"
-#include "../../FT3/Core/Blockchain/blockchain_session.h"
-#include <algorithm>
-#include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
-
 #include "../TestUtil/test_util.h"
 #include "../../FT3/User/asset.h"
+#include "../../FT3/User/account.h"
 #include "../../FT3/User/asset_balance.h"
+
+#include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
 
 void AssetBalanceTest::DefaultErrorHandler(std::string error)
 {

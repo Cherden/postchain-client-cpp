@@ -4,6 +4,9 @@
 #include "../Core/transaction.h"
 #include "../Core/operation.h"
 
+#include "../../src/GTX/gtx_value.h"
+#include "../../../ChromaUnreal/Utils.h"
+
 namespace chromia {
 namespace postchain {
 namespace ft3 {
@@ -106,6 +109,10 @@ std::string Asset::HashId()
 	std::shared_ptr<ArrayValue> body = AbstractValueFactory::EmptyArray();
 	body->Add(AbstractValueFactory::Build(this->name_));
 	body->Add(AbstractValueFactory::Build(PostchainUtil::HexStringToByteVector(this->issuing_chain_rid_)));
+
+	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(body);
+	std::string gtx_str = gtx_value->ToString();
+	UE_LOG(LogTemp, Warning, TEXT("Asset::HashId(): [%d] [%s]"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
 
 	std::vector<byte> hash = AbstractValue::Hash(body);
 	std::string hash_hex = PostchainUtil::ByteVectorToHexString(hash);

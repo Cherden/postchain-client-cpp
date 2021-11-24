@@ -62,9 +62,9 @@ RuleExpression::RuleExpression() {}
 
 RuleExpression::RuleExpression(std::string name, std::string op, long value)
 {
-	name = name;
+	name_ = name;
 	operator_ = op;
-	value = value;
+	value_ = value;
 }
 
 RuleCompositeExpressionOperator RuleExpression::And()

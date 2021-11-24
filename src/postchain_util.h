@@ -5,6 +5,7 @@
 #include <vector>
 #include "SECP256K/include/secp256k1.h"
 #include "query.h"
+#include "common.h"
 #include "../../nlohmann/json.hpp"
 
 namespace chromia {
@@ -17,6 +18,11 @@ class PostchainUtil {
 
     static long long ByteVectorToLong(std::vector<unsigned char> bytes,
                                       bool mind_sign = false);
+
+	static std::vector<byte> GetByteList(long integer);
+
+	static std::vector<byte> IntegerToBytes(long integer, bool as_length = false);
+
 
 	/**
 	  * Converts hex string to Buffer
@@ -115,6 +121,11 @@ class PostchainUtil {
 	* Transform string to upper string
 	*/
 	static std::string ToUpper(std::string str);
+
+	/**
+	* Get current UNIX time in milliseconds
+	*/
+	static long long GetCurrentTimeMillils();
 
 private:
 	static secp256k1_context *secp_context_;

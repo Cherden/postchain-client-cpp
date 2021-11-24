@@ -400,7 +400,7 @@ bool AccountTest::AccountTest11()
 
 	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user1);
 	account_builder->WithParticipants(std::vector<std::shared_ptr<KeyPair>> { user1->key_pair_ });
-	account_builder->WithPoints(4);
+	account_builder->WithPoints(200);
 
 	std::shared_ptr<Account> account;
 	account_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; }, this->DefaultErrorHandler);

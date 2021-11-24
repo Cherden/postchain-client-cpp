@@ -96,9 +96,8 @@ void Account::GetByAuthDescriptorId(std::string id, std::shared_ptr<BlockchainSe
 void Account::Register(std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<BlockchainSession> session,
 	std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
 {
-	std::string rid = session->blockchain_->connection_->blockchain_rid_;
-
 	bool call_ok = false;
+
 	session->Call(
 		AccountDevOperations::Register(auth_descriptor), 
 		[&call_ok] (){
@@ -112,8 +111,6 @@ void Account::Register(std::shared_ptr<AuthDescriptor> auth_descriptor, std::sha
 		PostchainUtil::ByteVectorToHexString(auth_descriptor->Hash()),
 		std::vector<std::shared_ptr<AuthDescriptor>> { auth_descriptor },
 		session);
-
-	rid = account->session_->blockchain_->connection_->blockchain_rid_;
 
 	account->Sync([on_success, account]() { on_success(account); }, on_error);
 }

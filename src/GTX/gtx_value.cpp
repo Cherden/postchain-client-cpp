@@ -214,11 +214,11 @@ std::string GTXValue::ToString()
 	}
 	case (GTXValueChoice::String):
 	{
-		return this->string_;
+		return std::string("s_") + this->string_;
 	}
 	case (GTXValueChoice::Integer):
 	{
-		return std::to_string(this->integer_);
+		return std::string("i_") + std::to_string(this->integer_);
 	}
 	case (GTXValueChoice::Array):
 	{

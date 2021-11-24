@@ -44,6 +44,10 @@ std::shared_ptr<gtv::ArrayValue> SingleSignatureAuthDescriptor::ToGTV()
 		gtv->Add(AbstractValueFactory::Build(nullptr));
 	}
 
+	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(gtv);
+	std::string gtx_str = gtx_value->ToString();
+	UE_LOG(LogTemp, Warning, TEXT("CHROMA::ToGTV() [%d] [%s]"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
+
 	return gtv;
 }
 

@@ -4,6 +4,7 @@
 
 #include "../postchain_util.h"
 #include "tag.h"
+#include "../GTX/gtx_value.h"
 
 namespace chromia {
 namespace postchain {
@@ -27,9 +28,24 @@ void Writer::WriteUTF8String(const std::string& character_string) {
 }
 
 void Writer::WriteInteger(long long number) {
-    std::vector<unsigned char> bytes = PostchainUtil::LongToByteVector(number);
+	std::vector<byte> bytes;
+	bytes = PostchainUtil::IntegerToBytes(number);
+	Write(tag::kInteger, bytes.begin(), bytes.end());
 
-    Write(tag::kInteger, bytes.begin(), bytes.end());
+	/*std::vector<byte>& buffer = GetOpenSequence()->buffer_;
+	std::vector<byte> content = PostchainUtil::IntegerToBytes(number);
+	buffer.push_back(tag::kInteger);
+
+	std::vector<byte> length_bytes = GetLengthBytes(content.size());
+	for (byte b : length_bytes)
+	{
+		buffer.push_back(b);
+	}
+
+	for (byte b : content)
+	{
+		buffer.push_back(b);
+	}*/
 }
 
 void Writer::WriteEncodedValue(const std::vector<unsigned char>& bytes) {

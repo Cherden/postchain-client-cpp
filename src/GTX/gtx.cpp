@@ -229,9 +229,8 @@ std::vector<byte> Gtx::Encode()
 	std::string gtx_hex = PostchainUtil::ByteVectorToHexString(AbstractValue::Hash(gtx_body));
 
 	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(gtx_body);
-
 	std::string gtx_str = gtx_value->ToString();
-	UE_LOG(LogTemp, Warning, TEXT("CHROMA::gtx string: [%d] [%s]"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
+	UE_LOG(LogTemp, Warning, TEXT("CHROMA::gtx string: [%d] %s"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
 
 	std::vector<byte> encoded = gtx_value->Encode();
 

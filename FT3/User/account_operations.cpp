@@ -58,6 +58,7 @@ std::shared_ptr<ft3::Operation> AccountOperations::Nop()
 	static int nonce = PostchainUtil::RandomIntInRange(0, 100000); //TO-DO check this static keyword
 	//static int nonce = 123;
 	op_args->Add(AbstractValueFactory::Build(std::to_string(nonce)));
+	//op_args->Add(AbstractValueFactory::Build(std::string("444444")));
 	return std::make_shared<ft3::Operation>("nop", op_args);
 }
 

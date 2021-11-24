@@ -83,6 +83,12 @@ void AccountBuilder::Build(std::function<void(std::shared_ptr<Account>)> on_succ
 		account = _account;
 	}, on_error);
 
+	if (account == nullptr) 
+	{
+		on_error("AccountBuilder::Build() Error. RegisterAccount(...) failed");
+		return;
+	}
+
 	if (account != nullptr)
 	{
 		this->AddBalanceIfNeeded(account, []() {}, on_error);

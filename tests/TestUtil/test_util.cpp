@@ -20,14 +20,14 @@ int TestUtil::GenerateNumber(int max)
 std::string TestUtil::GenerateAssetName(std::string prefix)
 {
 	return prefix + "_" + std::to_string(GenerateNumber());
+	//return prefix + "_" + std::to_string(123456);
 }
 
 std::string TestUtil::GenerateId()
 {
 	int random_number = GenerateNumber();
-	
+	//int random_number = 654321;
 	std::vector<byte> as_byte = PostchainUtil::IntegerToBinary(random_number);
-
 	std::string sha = PostchainUtil::Sha256(as_byte);
 	return sha;
 }

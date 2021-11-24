@@ -5,6 +5,7 @@
 #include <ios>
 #include <sstream>
 #include <algorithm>
+#include <chrono>
 #include "SECP256K/include/secp256k1_recovery.h"
 
 namespace chromia {
@@ -71,6 +72,78 @@ long long PostchainUtil::ByteVectorToLong(std::vector<unsigned char> bytes,
     }
 
     return number;
+}
+
+
+std::vector<byte> PostchainUtil::GetByteList(long integer)
+{
+	byte* byte_list = static_cast<byte*>(static_cast<void*>(&integer));
+	int length = sizeof(long);
+
+	std::vector<byte> trimmed_bytes;
+	if (integer >= 0)
+	{
+		for (int i = length - 1; i >= 0; i--)
+		{
+			if (byte_list[i] != 0)
+			{
+				for (int j = 0; j <= i; j++)
+				{
+					trimmed_bytes.push_back(byte_list[j]);
+				}
+				break;
+			}
+		}
+	}
+	else 
+	{
+		// TO-DO check this branch
+		for (int i = length - 1; i >= 0; i--)
+		{
+			if (byte_list[i] != 0xff)
+			{
+				for (int j = 0; j <= i; j++)
+				{
+					trimmed_bytes.push_back(byte_list[j]);
+				}
+
+				break;
+			}
+		}
+
+		if (trimmed_bytes.size() == 0 || trimmed_bytes[trimmed_bytes.size() - 1] < 128)
+		{
+			trimmed_bytes.insert(trimmed_bytes.begin(), 0xff);
+			if (integer < 0)
+			{
+				std::reverse(trimmed_bytes.begin(), trimmed_bytes.end());
+			}
+		}
+	}
+
+	return trimmed_bytes;
+}
+
+
+std::vector<byte> PostchainUtil::IntegerToBytes(long integer, bool as_length)
+{
+	std::vector<byte> size_in_bytes = GetByteList(integer);
+
+	if (IsLittleEndian())
+	{
+		std::reverse(size_in_bytes.begin(), size_in_bytes.end());
+	}
+
+	if (size_in_bytes.size() == 0)
+	{
+		size_in_bytes.push_back(0x00);
+	}
+	else if (!as_length && integer >= 0 && size_in_bytes[0] >= 128)
+	{
+		size_in_bytes.insert(size_in_bytes.begin(), 0x00);
+	}
+
+	return size_in_bytes;
 }
 
 
@@ -395,6 +468,15 @@ std::string PostchainUtil::ToUpper(std::string str)
 	return clone;
 }
 
+long long PostchainUtil::GetCurrentTimeMillils()
+{
+	//using namespace std::chrono;
+	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::system_clock::now().time_since_epoch()
+	);
+
+	return ms.count();
+}
 
 }  // namespace postchain
 }  // namespace chromia

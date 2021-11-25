@@ -26,32 +26,32 @@ RuleVariable::RuleVariable(std::string variable)
 	this->variable_ = variable;
 }
 
-RuleExpression RuleVariable::LessThan(long value)
+RuleExpression RuleVariable::LessThan(long long value)
 {
 	return this->Expression("lt", value);
 }
 
-RuleExpression RuleVariable::LessOrEqual(long value)
+RuleExpression RuleVariable::LessOrEqual(long long value)
 {
 	return this->Expression("le", value);
 }
 
-RuleExpression RuleVariable::Equal(long value)
+RuleExpression RuleVariable::Equal(long long value)
 {
 	return this->Expression("eq", value);
 }
 
-RuleExpression RuleVariable::GreaterThan(long value)
+RuleExpression RuleVariable::GreaterThan(long long value)
 {
 	return this->Expression("gt", value);
 }
 
-RuleExpression RuleVariable::GreaterOrEqual(long value)
+RuleExpression RuleVariable::GreaterOrEqual(long long value)
 {
 	return this->Expression("ge", value);
 }
 
-RuleExpression RuleVariable::Expression(std::string op, long value)
+RuleExpression RuleVariable::Expression(std::string op, long long value)
 {
 	return RuleExpression(this->variable_, op, value);
 }
@@ -60,7 +60,7 @@ RuleExpression RuleVariable::Expression(std::string op, long value)
 
 RuleExpression::RuleExpression() {}
 
-RuleExpression::RuleExpression(std::string name, std::string op, long value)
+RuleExpression::RuleExpression(std::string name, std::string op, long long value)
 {
 	name_ = name;
 	operator_ = op;
@@ -119,32 +119,32 @@ RuleCompositeExpressionVariable::RuleCompositeExpressionVariable(std::shared_ptr
 	operator_ = op;
 }
 
-std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::LessThan(long value)
+std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::LessThan(long long value)
 {
 	return this->CompositeExpression("lt", value);
 }
 
-std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::LessOrEqual(long value)
+std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::LessOrEqual(long long value)
 {
 	return this->CompositeExpression("le", value);
 }
 
-std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::Equal(long value)
+std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::Equal(long long value)
 {
 	return this->CompositeExpression("eq", value);
 }
 
-std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::GreaterThan(long value)
+std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::GreaterThan(long long value)
 {
 	return this->CompositeExpression("gt", value);
 }
 
-std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::GreaterOrEqual(long value)
+std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::GreaterOrEqual(long long value)
 {
 	return CompositeExpression("ge", value);
 }
 
-std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::CompositeExpression(std::string op, long value)
+std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::CompositeExpression(std::string op, long long value)
 {
 	return std::make_shared<RuleCompositeExpression>(this->operator_, this->expression_, std::make_shared<RuleExpression>(this->name_, op, value));
 }

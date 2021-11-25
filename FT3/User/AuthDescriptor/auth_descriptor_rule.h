@@ -26,20 +26,20 @@ class RuleVariable
 public:
 	RuleVariable(std::string variable);
 
-	RuleExpression LessThan(long value);
+	RuleExpression LessThan(long long value);
 
-	RuleExpression LessOrEqual(long value);
+	RuleExpression LessOrEqual(long long value);
 
-	RuleExpression Equal(long value);
+	RuleExpression Equal(long long value);
 
-	RuleExpression GreaterThan(long value);
+	RuleExpression GreaterThan(long long value);
 
-	RuleExpression GreaterOrEqual(long value);
+	RuleExpression GreaterOrEqual(long long value);
 
 private:
 	std::string variable_;
 
-	RuleExpression Expression(std::string op, long value);
+	RuleExpression Expression(std::string op, long long value);
 };
 
 class RuleExpression : public IAuthdescriptorRule
@@ -47,11 +47,11 @@ class RuleExpression : public IAuthdescriptorRule
 public:
 	std::string name_;
     std::string operator_;
-	long value_;
+	long long value_;
 
 	RuleExpression();
 
-	RuleExpression(std::string name, std::string op, long value);
+	RuleExpression(std::string name, std::string op, long long value);
 
 	RuleCompositeExpressionOperator And();
 
@@ -82,17 +82,17 @@ public:
 
 	RuleCompositeExpressionVariable(std::shared_ptr<IAuthdescriptorRule> expression, std::string name, std::string op);
 
-	std::shared_ptr<RuleCompositeExpression> LessThan(long value);
+	std::shared_ptr<RuleCompositeExpression> LessThan(long long value);
 
-	std::shared_ptr<RuleCompositeExpression> LessOrEqual(long value);
+	std::shared_ptr<RuleCompositeExpression> LessOrEqual(long long value);
 
-	std::shared_ptr<RuleCompositeExpression> Equal(long value);
+	std::shared_ptr<RuleCompositeExpression> Equal(long long value);
 
-	std::shared_ptr<RuleCompositeExpression> GreaterThan(long value);
+	std::shared_ptr<RuleCompositeExpression> GreaterThan(long long value);
 
-	std::shared_ptr<RuleCompositeExpression> GreaterOrEqual(long value);
+	std::shared_ptr<RuleCompositeExpression> GreaterOrEqual(long long value);
 
-	std::shared_ptr<RuleCompositeExpression> CompositeExpression(std::string op, long value);
+	std::shared_ptr<RuleCompositeExpression> CompositeExpression(std::string op, long long value);
 };
 
 class RuleCompositeExpression : public IAuthdescriptorRule

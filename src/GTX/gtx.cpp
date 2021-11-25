@@ -37,7 +37,7 @@ std::shared_ptr<GTXValue> Gtx::ArgToGTXValue(std::shared_ptr<gtv::AbstractValue>
 	else if (std::dynamic_pointer_cast<gtv::IntegerValue>(arg))
 	{
 		gtx_value->choice_ = GTXValueChoice::Integer;
-		gtx_value->integer_ = (long) (std::dynamic_pointer_cast<gtv::IntegerValue>(arg))->GetValue();
+		gtx_value->integer_ = (std::dynamic_pointer_cast<gtv::IntegerValue>(arg))->GetValue();
 	}
 	else if (std::dynamic_pointer_cast<gtv::OctetStringValue>(arg))
 	{

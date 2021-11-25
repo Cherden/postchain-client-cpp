@@ -71,6 +71,22 @@ public:
 
 	// should succeed when current block height is less than value defined by 'less than' block height rule
 	bool AuthDescriptorRuleTestRun5();
+
+	// should fail when current block height is greater than value defined by 'less than' block height rule
+	bool AuthDescriptorRuleTestRun6();
+
+	// should fail if operation is executed before timestamp defined by 'greater than' block time rule
+	bool AuthDescriptorRuleTestRun7();
+
+	// should succeed if operation is executed after timestamp defined by 'greater than' block time rule
+	bool AuthDescriptorRuleTestRun8();
+
+	// should fail if operation is executed before block defined by 'greater than' block height rule
+	bool AuthDescriptorRuleTestRun9();
+
+	// should succeed if operation is executed after block defined by 'greater than' block height rule
+	bool AuthDescriptorRuleTestRun10();
+
 };
 
 //#endif // FT3_TESTS

@@ -74,31 +74,12 @@ bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun1()
 	CreateAsset(blockchain_, [&asset](std::shared_ptr<Asset> _asset) { asset = _asset; });
 	if (asset == nullptr) return false;
 
-	UE_LOG(LogTemp, Warning, TEXT("CHROMA::CreateAsset id:  [%s]  issuing chain id: [%s]"), *(ChromaUtils::STDStringToFString(asset->id_)), *(ChromaUtils::STDStringToFString(asset->issuing_chain_rid_)));
-
-	//auto op_count = Rules::OperationCount();
-	//auto rule = op_count.LessOrEqual(2);
-	//std::shared_ptr<RuleExpression> rule_ptr(&rule);
-	//std::shared_ptr<IAuthdescriptorRule> irule_ptr = std::shared_ptr<RuleExpression>(rule_ptr);
+	auto op_count = Rules::OperationCount();
+	auto rule = op_count.LessOrEqual(2);
+	std::shared_ptr<RuleExpression> rule_ptr(&rule);
+	std::shared_ptr<IAuthdescriptorRule> irule_ptr = std::shared_ptr<RuleExpression>(rule_ptr);
 	
-	std::shared_ptr<User> user = TestUser::SingleSig();
-
-	//auto gtv = user->auth_descriptor_->ToGTV();
-
-	//std::shared_ptr<Account> account = nullptr;
-	//blockchain_->RegisterAccount(user->auth_descriptor_, user, [&account](std::shared_ptr<Account> _account) {
-	//	account = _account;
-	//}, this->DefaultErrorHandler);
-
-
-	//if (account == nullptr)
-	//{
-	//	return false;
-	//}
-
-	//bool success = false;
-	//AssetBalance::GiveBalance(account->id_, asset->id_, 200, this->blockchain_, [&success]() {success = true; }, DefaultErrorHandler);
-	// -----------------------------------------------------------------------------
+	std::shared_ptr<User> user = TestUser::SingleSig(irule_ptr);
 
 	std::shared_ptr<Account> account1 = nullptr;
 	SourceAccount(blockchain_, user, asset, [&account1](std::shared_ptr<Account> _account) { account1 = _account; });
@@ -146,7 +127,7 @@ bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun2()
 
 	successful = false;
 	account1->Transfer(account2->GetID(), asset->id_, 20, [&successful]() { successful = true; }, DefaultErrorHandler);
-	if (!successful) return false;
+	if (successful) return false;
 
 	return true;
 }
@@ -164,9 +145,8 @@ bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun3()
 	CreateAsset(blockchain_, [&asset](std::shared_ptr<Asset> _asset) { asset = _asset; });
 	if (asset == nullptr) return false;
 
-	auto op_count = Rules::OperationCount();
-	long long time = PostchainUtil::GetCurrentTimeMillils();
-	auto rule = op_count.LessThan(time - 10000);
+	long long time = PostchainUtil::GetCurrentTimeMillis();
+	auto rule = Rules::BlockTime().LessThan(time - 10000);
 	std::shared_ptr<User> user = TestUser::SingleSig(std::dynamic_pointer_cast<IAuthdescriptorRule>(std::shared_ptr<RuleExpression>(&rule)));
 
 	std::shared_ptr<Account> account1 = nullptr;
@@ -177,7 +157,7 @@ bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun3()
 
 	bool successful = false;
 	account1->Transfer(account2->GetID(), asset->id_, 10, [&successful]() { successful = true; }, DefaultErrorHandler);
-	if (!successful) return false;
+	if (successful) return false;
 
 	return true;
 }
@@ -195,14 +175,189 @@ bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun4()
 	CreateAsset(blockchain_, [&asset](std::shared_ptr<Asset> _asset) { asset = _asset; });
 	if (asset == nullptr) return false;
 
-	auto op_count = Rules::OperationCount();
-	long long time = PostchainUtil::GetCurrentTimeMillils();
-	auto rule = op_count.LessThan(time + 10000);
+	long long time = PostchainUtil::GetCurrentTimeMillis();
+	auto rule = Rules::BlockTime().LessThan(time + 10000);
 	std::shared_ptr<User> user = TestUser::SingleSig(std::dynamic_pointer_cast<IAuthdescriptorRule>(std::shared_ptr<RuleExpression>(&rule)));
 
 	std::shared_ptr<Account> account1 = nullptr;
 	SourceAccount(blockchain_, user, asset, [&account1](std::shared_ptr<Account> _account) { account1 = _account; });
 	
+	std::shared_ptr<Account> account2 = nullptr;
+	DestinationAccount(blockchain_, [&account2](std::shared_ptr<Account> _account) { account2 = _account; });
+
+	bool successful = false;
+	account1->Transfer(account2->GetID(), asset->id_, 10, [&successful]() { successful = true; }, DefaultErrorHandler);
+	if (!successful) return false;
+
+	return true;
+}
+
+
+bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun5()
+{
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	CreateAsset(blockchain_, [&asset](std::shared_ptr<Asset> _asset) { asset = _asset; });
+	if (asset == nullptr) return false;
+
+	auto rule = Rules::BlockHeight().LessThan(10000000);
+	std::shared_ptr<User> user = TestUser::SingleSig(std::dynamic_pointer_cast<IAuthdescriptorRule>(std::shared_ptr<RuleExpression>(&rule)));
+
+	std::shared_ptr<Account> account1 = nullptr;
+	SourceAccount(blockchain_, user, asset, [&account1](std::shared_ptr<Account> _account) { account1 = _account; });
+
+	std::shared_ptr<Account> account2 = nullptr;
+	DestinationAccount(blockchain_, [&account2](std::shared_ptr<Account> _account) { account2 = _account; });
+
+	bool successful = false;
+	account1->Transfer(account2->GetID(), asset->id_, 10, [&successful]() { successful = true; }, DefaultErrorHandler);
+	if (!successful) return false;
+
+	return true;
+}
+
+
+bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun6()
+{
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	CreateAsset(blockchain_, [&asset](std::shared_ptr<Asset> _asset) { asset = _asset; });
+	if (asset == nullptr) return false;
+
+	auto rule = Rules::BlockHeight().LessThan(1);
+	std::shared_ptr<User> user = TestUser::SingleSig(std::dynamic_pointer_cast<IAuthdescriptorRule>(std::shared_ptr<RuleExpression>(&rule)));
+
+	std::shared_ptr<Account> account1 = nullptr;
+	SourceAccount(blockchain_, user, asset, [&account1](std::shared_ptr<Account> _account) { account1 = _account; });
+
+	std::shared_ptr<Account> account2 = nullptr;
+	DestinationAccount(blockchain_, [&account2](std::shared_ptr<Account> _account) { account2 = _account; });
+
+	bool successful = false;
+	account1->Transfer(account2->GetID(), asset->id_, 10, [&successful]() { successful = true; }, DefaultErrorHandler);
+	if (successful) return false;
+
+	return true;
+}
+
+
+bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun7()
+{
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	CreateAsset(blockchain_, [&asset](std::shared_ptr<Asset> _asset) { asset = _asset; });
+	if (asset == nullptr) return false;
+
+	long long time = PostchainUtil::GetCurrentTimeMillis();
+	auto rule = Rules::BlockTime().GreaterThan(time + 10000);
+	std::shared_ptr<User> user = TestUser::SingleSig(std::dynamic_pointer_cast<IAuthdescriptorRule>(std::shared_ptr<RuleExpression>(&rule)));
+
+	std::shared_ptr<Account> account1 = nullptr;
+	SourceAccount(blockchain_, user, asset, [&account1](std::shared_ptr<Account> _account) { account1 = _account; });
+
+	std::shared_ptr<Account> account2 = nullptr;
+	DestinationAccount(blockchain_, [&account2](std::shared_ptr<Account> _account) { account2 = _account; });
+
+	bool successful = false;
+	account1->Transfer(account2->GetID(), asset->id_, 10, [&successful]() { successful = true; }, DefaultErrorHandler);
+	if (successful) return false;
+
+	return true;
+}
+
+
+bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun8()
+{
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	CreateAsset(blockchain_, [&asset](std::shared_ptr<Asset> _asset) { asset = _asset; });
+	if (asset == nullptr) return false;
+
+	long long time = PostchainUtil::GetCurrentTimeMillis();
+	auto rule = Rules::BlockTime().GreaterThan(time - 10000);
+	std::shared_ptr<User> user = TestUser::SingleSig(std::dynamic_pointer_cast<IAuthdescriptorRule>(std::shared_ptr<RuleExpression>(&rule)));
+
+	std::shared_ptr<Account> account1 = nullptr;
+	SourceAccount(blockchain_, user, asset, [&account1](std::shared_ptr<Account> _account) { account1 = _account; });
+
+	std::shared_ptr<Account> account2 = nullptr;
+	DestinationAccount(blockchain_, [&account2](std::shared_ptr<Account> _account) { account2 = _account; });
+
+	bool successful = false;
+	account1->Transfer(account2->GetID(), asset->id_, 10, [&successful]() { successful = true; }, DefaultErrorHandler);
+	if (!successful) return false;
+
+	return true;
+}
+
+
+bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun9()
+{
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	CreateAsset(blockchain_, [&asset](std::shared_ptr<Asset> _asset) { asset = _asset; });
+	if (asset == nullptr) return false;
+
+	auto rule = Rules::BlockHeight().GreaterThan(1000000);
+	std::shared_ptr<User> user = TestUser::SingleSig(std::dynamic_pointer_cast<IAuthdescriptorRule>(std::shared_ptr<RuleExpression>(&rule)));
+
+	std::shared_ptr<Account> account1 = nullptr;
+	SourceAccount(blockchain_, user, asset, [&account1](std::shared_ptr<Account> _account) { account1 = _account; });
+
+	std::shared_ptr<Account> account2 = nullptr;
+	DestinationAccount(blockchain_, [&account2](std::shared_ptr<Account> _account) { account2 = _account; });
+
+	bool successful = false;
+	account1->Transfer(account2->GetID(), asset->id_, 10, [&successful]() { successful = true; }, DefaultErrorHandler);
+	if (successful) return false;
+
+	return true;
+}
+
+
+bool AuthDescriptorRuleTest::AuthDescriptorRuleTestRun10()
+{
+	SetupBlockchain();
+	if (this->blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	CreateAsset(blockchain_, [&asset](std::shared_ptr<Asset> _asset) { asset = _asset; });
+	if (asset == nullptr) return false;
+
+	auto rule = Rules::BlockHeight().GreaterThan(1);
+	std::shared_ptr<User> user = TestUser::SingleSig(std::dynamic_pointer_cast<IAuthdescriptorRule>(std::shared_ptr<RuleExpression>(&rule)));
+
+	std::shared_ptr<Account> account1 = nullptr;
+	SourceAccount(blockchain_, user, asset, [&account1](std::shared_ptr<Account> _account) { account1 = _account; });
+
 	std::shared_ptr<Account> account2 = nullptr;
 	DestinationAccount(blockchain_, [&account2](std::shared_ptr<Account> _account) { account2 = _account; });
 

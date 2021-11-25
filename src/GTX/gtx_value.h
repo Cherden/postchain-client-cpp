@@ -31,7 +31,7 @@ public:
 	GTXValueChoice choice_;
 	std::vector<unsigned char> byte_array_;
 	std::string string_;
-	long integer_;
+	long long integer_;
 	std::vector<std::shared_ptr<DictPair>> dict_;
 	std::vector<std::shared_ptr<GTXValue>> array_;
 

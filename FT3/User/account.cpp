@@ -357,10 +357,10 @@ void Account::Transfer(std::string account_id, std::string asset_id, long amount
 	input->Add(AbstractValueFactory::EmptyArray());
 
 	std::shared_ptr<ArrayValue> output = AbstractValueFactory::EmptyArray();
-	input->Add(AbstractValueFactory::Build(account_id));
-	input->Add(AbstractValueFactory::Build(asset_id));
-	input->Add(AbstractValueFactory::Build(amount));
-	input->Add(AbstractValueFactory::EmptyArray());
+	output->Add(AbstractValueFactory::Build(account_id));
+	output->Add(AbstractValueFactory::Build(asset_id));
+	output->Add(AbstractValueFactory::Build(amount));
+	output->Add(AbstractValueFactory::EmptyArray());
 
 	this->TransferInputsToOutputs(
 		AbstractValueFactory::Build({ input }),

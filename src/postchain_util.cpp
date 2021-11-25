@@ -75,10 +75,10 @@ long long PostchainUtil::ByteVectorToLong(std::vector<unsigned char> bytes,
 }
 
 
-std::vector<byte> PostchainUtil::GetByteList(long integer)
+std::vector<byte> PostchainUtil::GetByteList(long long integer)
 {
 	byte* byte_list = static_cast<byte*>(static_cast<void*>(&integer));
-	int length = sizeof(long);
+	int length = sizeof(long long);
 
 	std::vector<byte> trimmed_bytes;
 	if (integer >= 0)
@@ -125,7 +125,7 @@ std::vector<byte> PostchainUtil::GetByteList(long integer)
 }
 
 
-std::vector<byte> PostchainUtil::IntegerToBytes(long integer, bool as_length)
+std::vector<byte> PostchainUtil::IntegerToBytes(long long integer, bool as_length)
 {
 	std::vector<byte> size_in_bytes = GetByteList(integer);
 
@@ -468,9 +468,9 @@ std::string PostchainUtil::ToUpper(std::string str)
 	return clone;
 }
 
-long long PostchainUtil::GetCurrentTimeMillils()
+long long PostchainUtil::GetCurrentTimeMillis()
 {
-	//using namespace std::chrono;
+	// TO-DO replace * 1000 multiplication with precise millis
 	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
 		std::chrono::system_clock::now().time_since_epoch()
 	);

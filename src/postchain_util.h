@@ -19,9 +19,9 @@ class PostchainUtil {
     static long long ByteVectorToLong(std::vector<unsigned char> bytes,
                                       bool mind_sign = false);
 
-	static std::vector<byte> GetByteList(long integer);
+	static std::vector<byte> GetByteList(long long integer);
 
-	static std::vector<byte> IntegerToBytes(long integer, bool as_length = false);
+	static std::vector<byte> IntegerToBytes(long long integer, bool as_length = false);
 
 
 	/**
@@ -125,7 +125,7 @@ class PostchainUtil {
 	/**
 	* Get current UNIX time in milliseconds
 	*/
-	static long long GetCurrentTimeMillils();
+	static long long GetCurrentTimeMillis();
 
 private:
 	static secp256k1_context *secp_context_;

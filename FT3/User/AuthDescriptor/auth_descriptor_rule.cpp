@@ -4,19 +4,19 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 	
-RuleVariable Rules::BlockHeight()
+std::shared_ptr<RuleVariable> Rules::BlockHeight()
 {
-	return RuleVariable("block_height");
+	return std::make_shared<RuleVariable>("block_height");
 }
 
-RuleVariable Rules::BlockTime()
+std::shared_ptr<RuleVariable> Rules::BlockTime()
 {
-	return RuleVariable("block_time");
+	return std::make_shared<RuleVariable>("block_time");
 }
 
-RuleVariable Rules::OperationCount()
+std::shared_ptr<RuleVariable> Rules::OperationCount()
 {
-	return RuleVariable("op_count");
+	return std::make_shared<RuleVariable>("op_count");
 }
 
 //-----------------------------------------------------------------------------------
@@ -26,34 +26,34 @@ RuleVariable::RuleVariable(std::string variable)
 	this->variable_ = variable;
 }
 
-RuleExpression RuleVariable::LessThan(long long value)
+std::shared_ptr<RuleExpression> RuleVariable::LessThan(long long value)
 {
 	return this->Expression("lt", value);
 }
 
-RuleExpression RuleVariable::LessOrEqual(long long value)
+std::shared_ptr<RuleExpression> RuleVariable::LessOrEqual(long long value)
 {
 	return this->Expression("le", value);
 }
 
-RuleExpression RuleVariable::Equal(long long value)
+std::shared_ptr<RuleExpression> RuleVariable::Equal(long long value)
 {
 	return this->Expression("eq", value);
 }
 
-RuleExpression RuleVariable::GreaterThan(long long value)
+std::shared_ptr<RuleExpression> RuleVariable::GreaterThan(long long value)
 {
 	return this->Expression("gt", value);
 }
 
-RuleExpression RuleVariable::GreaterOrEqual(long long value)
+std::shared_ptr<RuleExpression> RuleVariable::GreaterOrEqual(long long value)
 {
 	return this->Expression("ge", value);
 }
 
-RuleExpression RuleVariable::Expression(std::string op, long long value)
+std::shared_ptr<RuleExpression> RuleVariable::Expression(std::string op, long long value)
 {
-	return RuleExpression(this->variable_, op, value);
+	return std::make_shared<RuleExpression>(this->variable_, op, value);
 }
 
 //-----------------------------------------------------------------------------------
@@ -67,15 +67,9 @@ RuleExpression::RuleExpression(std::string name, std::string op, long long value
 	value_ = value;
 }
 
-RuleCompositeExpressionOperator RuleExpression::And()
+std::shared_ptr<RuleCompositeExpressionOperator> RuleExpression::And()
 {
-	std::shared_ptr<RuleExpression> this_shared(this);
-	std::shared_ptr<IAuthdescriptorRule> casted = std::dynamic_pointer_cast<IAuthdescriptorRule>(this_shared);
-	/*if (!casted)
-	{
-		throw new std::exception("RuleExpression::And() cast to IAuthdescriptorRule failed");
-	}*/
-	return RuleCompositeExpressionOperator(casted, "and");
+	return std::make_shared<RuleCompositeExpressionOperator>(shared_from_this(), "and");
 }
 
 std::shared_ptr<ArrayValue> RuleExpression::ToGTV()
@@ -95,19 +89,19 @@ RuleCompositeExpressionOperator::RuleCompositeExpressionOperator(std::shared_ptr
 	operator_ = op;
 }
 
-RuleCompositeExpressionVariable RuleCompositeExpressionOperator::BlockHeight()
+std::shared_ptr<RuleCompositeExpressionVariable> RuleCompositeExpressionOperator::BlockHeight()
 {
-	return RuleCompositeExpressionVariable(this->expression_, "block_height", this->operator_);
+	return std::make_shared<RuleCompositeExpressionVariable>(this->expression_, "block_height", this->operator_);
 }
 
-RuleCompositeExpressionVariable RuleCompositeExpressionOperator::BlockTime()
+std::shared_ptr<RuleCompositeExpressionVariable> RuleCompositeExpressionOperator::BlockTime()
 {
-	return RuleCompositeExpressionVariable(this->expression_, "block_time", this->operator_);
+	return std::make_shared<RuleCompositeExpressionVariable>(this->expression_, "block_time", this->operator_);
 }
 
-RuleCompositeExpressionVariable RuleCompositeExpressionOperator::OperationCount()
+std::shared_ptr<RuleCompositeExpressionVariable> RuleCompositeExpressionOperator::OperationCount()
 {
-	return RuleCompositeExpressionVariable(this->expression_, "op_count", this->operator_);
+	return std::make_shared<RuleCompositeExpressionVariable>(this->expression_, "op_count", this->operator_);
 }
 
 //-----------------------------------------------------------------------------------
@@ -141,7 +135,7 @@ std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::Greate
 
 std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::GreaterOrEqual(long long value)
 {
-	return CompositeExpression("ge", value);
+	return this->CompositeExpression("ge", value);
 }
 
 std::shared_ptr<RuleCompositeExpression> RuleCompositeExpressionVariable::CompositeExpression(std::string op, long long value)
@@ -158,10 +152,9 @@ RuleCompositeExpression::RuleCompositeExpression(std::string op, std::shared_ptr
 	right_ = right;
 }
 
-RuleCompositeExpressionOperator RuleCompositeExpression::And()
+std::shared_ptr<RuleCompositeExpressionOperator> RuleCompositeExpression::And()
 {
-	std::shared_ptr<RuleCompositeExpression> this_shared(this);
-	return RuleCompositeExpressionOperator(std::dynamic_pointer_cast<IAuthdescriptorRule>(this_shared), "and");
+	return std::make_shared<RuleCompositeExpressionOperator>(shared_from_this(), "and");
 }
 
 std::shared_ptr<ArrayValue> RuleCompositeExpression::ToGTV()

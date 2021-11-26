@@ -14,11 +14,11 @@ namespace ft3 {
 class Rules
 {
 public:
-	static RuleVariable BlockHeight();
+	static std::shared_ptr<RuleVariable> BlockHeight();
 
-	static RuleVariable BlockTime();
+	static std::shared_ptr<RuleVariable> BlockTime();
 
-	static RuleVariable OperationCount();
+	static std::shared_ptr<RuleVariable> OperationCount();
 };
 
 class RuleVariable
@@ -26,20 +26,20 @@ class RuleVariable
 public:
 	RuleVariable(std::string variable);
 
-	RuleExpression LessThan(long long value);
+	std::shared_ptr<RuleExpression> LessThan(long long value);
 
-	RuleExpression LessOrEqual(long long value);
+	std::shared_ptr<RuleExpression> LessOrEqual(long long value);
 
-	RuleExpression Equal(long long value);
+	std::shared_ptr<RuleExpression> Equal(long long value);
 
-	RuleExpression GreaterThan(long long value);
+	std::shared_ptr<RuleExpression> GreaterThan(long long value);
 
-	RuleExpression GreaterOrEqual(long long value);
+	std::shared_ptr<RuleExpression> GreaterOrEqual(long long value);
 
 private:
 	std::string variable_;
 
-	RuleExpression Expression(std::string op, long long value);
+	std::shared_ptr<RuleExpression> Expression(std::string op, long long value);
 };
 
 class RuleExpression : public IAuthdescriptorRule
@@ -53,7 +53,7 @@ public:
 
 	RuleExpression(std::string name, std::string op, long long value);
 
-	RuleCompositeExpressionOperator And();
+	std::shared_ptr<RuleCompositeExpressionOperator> And();
 
 	std::shared_ptr<ArrayValue> ToGTV();
 };
@@ -66,11 +66,11 @@ public:
 
 	RuleCompositeExpressionOperator(std::shared_ptr<IAuthdescriptorRule> expression, std::string op);
 
-	RuleCompositeExpressionVariable BlockHeight();
+	std::shared_ptr<RuleCompositeExpressionVariable> BlockHeight();
 
-	RuleCompositeExpressionVariable BlockTime();
+	std::shared_ptr<RuleCompositeExpressionVariable> BlockTime();
 
-	RuleCompositeExpressionVariable OperationCount();
+	std::shared_ptr<RuleCompositeExpressionVariable> OperationCount();
 };
 
 class RuleCompositeExpressionVariable
@@ -104,7 +104,7 @@ public:
 
 	RuleCompositeExpression(std::string op, std::shared_ptr<IAuthdescriptorRule> left, std::shared_ptr<RuleExpression> right);
 
-	RuleCompositeExpressionOperator And();
+	std::shared_ptr<RuleCompositeExpressionOperator> And();
 
 	std::shared_ptr<ArrayValue> ToGTV();
 

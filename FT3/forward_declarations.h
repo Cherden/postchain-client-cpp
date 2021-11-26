@@ -42,7 +42,7 @@ public:
 	virtual ~GtvSerializable() = default;
 };
 
-class IAuthdescriptorRule
+class IAuthdescriptorRule : public std::enable_shared_from_this<IAuthdescriptorRule>
 {
 public:
 	virtual std::shared_ptr<ArrayValue> ToGTV() = 0;

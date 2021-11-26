@@ -8,6 +8,7 @@
 #include "../../FT3/forward_declarations.h"
 #include "../../FT3/User/AuthDescriptor/auth_descriptor_rule.h"
 #include "../../FT3/User/asset.h"
+#include "../../FT3/Core/Blockchain/blockchain_session.h"
 #include "../../src/postchain_util.h"
 #include "../TestUtil/blockchain_util.h"
 #include "../TestUtil/test_user.h"
@@ -87,6 +88,44 @@ public:
 	// should succeed if operation is executed after block defined by 'greater than' block height rule
 	bool AuthDescriptorRuleTestRun10();
 
+	// should be able to create complex rules
+	bool AuthDescriptorRuleTestRun11();
+
+	// should fail if block heights defined by 'greater than' and 'less than' block height rules are less than current block height
+	bool AuthDescriptorRuleTestRun12();
+
+	// should fail if block times defined by 'greater than' and 'less than' block time rules are in the past
+	bool AuthDescriptorRuleTestRun13();
+
+	// should succeed if current time is within period defined by 'greater than' and 'less than' block time rules
+	bool AuthDescriptorRuleTestRun14();
+
+	// should succeed if current time is within period defined by 'greater than' and 'less than' block time rules
+	bool AuthDescriptorRuleTestRun15();
+
+	// shouldn't delete non-expired auth descriptor
+	bool AuthDescriptorRuleTestRun16();
+
+	// should delete only expired auth descriptor if multiple expiring descriptors exist
+	bool AuthDescriptorRuleTestRun17();
+
+	// should add auth descriptors
+	bool AuthDescriptorRuleTestRun18();
+
+	// should delete auth descriptors
+	bool AuthDescriptorRuleTestRun19();
+
+	// should fail when deleting an auth descriptor which is not owned by the account
+	bool AuthDescriptorRuleTestRun20();
+
+	// should delete auth descriptor
+	bool AuthDescriptorRuleTestRun21();
+
+	// Should be able to create same rules with different value
+	bool AuthDescriptorRuleTestRun22();
+
+	// shouldn't be able to create too many rules
+	bool AuthDescriptorRuleTestRun23();
 };
 
 //#endif // FT3_TESTS

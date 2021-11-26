@@ -94,7 +94,7 @@ void Blockchain::LinkChain(string chain_id, std::function<void(std::string)> on_
 
 	std::shared_ptr<ft3::TransactionBuilder> tx_builder = this->NewTransactionBuilder();
 	tx_builder->Add(ft3::Operation::Op("ft3.xc.link_chain", op_args));
-	auto tx = tx_builder->Build({ {} }, on_error);
+	auto tx = tx_builder->Build({}, on_error);
 	tx->PostAndWait(on_success);
 }
 
@@ -110,8 +110,13 @@ void Blockchain::GetLinkedChainsIds(std::function<void(std::vector<std::string>)
 {
 	this->Query("ft3.xc.get_linked_chains", {},
 		[on_success](std::string content) {
-			//TO-DO
-			on_success({ "" });
+			nlohmann::json json_obj = nlohmann::json::parse(content);
+			std::vector<std::string> chain_ids;
+			for (std::string id : json_obj)
+			{
+				chain_ids.push_back(id);
+			}
+			on_success(chain_ids);
 		}, on_error);
 }
 

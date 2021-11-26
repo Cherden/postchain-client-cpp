@@ -542,5 +542,7 @@ bool AccountTest::AccountTest14()
 
 	successfully = false;
 	account_2->DeleteAuthDescriptor(user_2->auth_descriptor_, [&successfully]() { successfully = true; }, DefaultErrorHandler);
-	return successfully;
+	if (successfully) return false;
+
+	return true;
 }

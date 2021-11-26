@@ -72,7 +72,6 @@ void Account::GetByParticipantId(std::string id, std::shared_ptr<BlockchainSessi
 		std::vector<std::string> account_ids;
 		for (std::string id : json_obj)
 		{
-			//id = id.substr(1, id.size() - 2);
 			account_ids.push_back(id);
 		}
 		Account::GetByIds(account_ids, session, on_success, on_error);
@@ -85,8 +84,12 @@ void Account::GetByAuthDescriptorId(std::string id, std::shared_ptr<BlockchainSe
 	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error)
 {
 	std::function<void(std::string)> on_success_wrapper = [session, on_success, on_error](std::string content) {
+		nlohmann::json json_obj = nlohmann::json::parse(content);
 		std::vector<std::string> account_ids;
-		// TO-DO
+		for (std::string id : json_obj)
+		{
+			account_ids.push_back(id);
+		}
 		Account::GetByIds(account_ids, session, on_success, on_error);
 	};
 
@@ -181,7 +184,6 @@ void Account::GetByIds(std::vector<std::string> ids, std::shared_ptr<BlockchainS
 
 void Account::GetById(std::string id, std::shared_ptr<BlockchainSession> session, std::function<void(shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error)
 {
-	// TO-DO sure that Account::GetById(...) is sync call;
 	shared_ptr<Account> account;
 	session->Query("ft3.get_account_by_id", { QueryObject("id", id) }, [&account, &on_error, session](std::string lambda_id) {
 		if (lambda_id.size() > 0) 
@@ -214,7 +216,6 @@ void Account::AddAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor,
 
 void Account::IsAuthDescriptorValid(std::string id, std::function<void(bool)> on_success, std::function<void(std::string)> on_error)
 {
-	// TO-DO validate sync call;
 	this->session_->Query("ft3.is_auth_descriptor_valid",
 		{ QueryObject("account_id", this->id_), QueryObject("auth_descriptor_id", PostchainUtil::HexStringToByteVector(id)) },
 		[on_success](std::string content) {
@@ -225,7 +226,6 @@ void Account::IsAuthDescriptorValid(std::string id, std::function<void(bool)> on
 
 void Account::DeleteAllAuthDescriptorsExclude(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-	// TO-DO validate sync call;
 	this->session_->Call(AccountOperations::DeleteAllAuthDescriptorsExclude(this->id_, auth_descriptor->ID()),
 		[&]() {
 			this->auth_descriptors_.clear();
@@ -310,7 +310,7 @@ void Account::SyncRateLimit(std::function<void()> on_success, std::function<void
 {
 	RateLimit::GetByAccountRateLimit(this->id_, this->session_->blockchain_,
 		[&] (std::shared_ptr<RateLimit> rate_limit) {
-			this->rate_limit_ = rate_limit; // TO-DO check previous rate_limit deallocation, check if destructor is called
+			this->rate_limit_ = rate_limit;
 			on_success();
 		}, on_error
 	);
@@ -331,8 +331,6 @@ std::shared_ptr<AssetBalance> Account::GetAssetById(std::string id)
 void Account::TransferInputsToOutputs(std::shared_ptr<AbstractValue> inputs, std::shared_ptr<AbstractValue> outputs,
 	std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-	// TO-DO validate sync call;
-
 	bool is_transfer_completed = false;
 
 	this->session_->Call(AccountOperations::Transfer(inputs, outputs), 

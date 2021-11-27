@@ -85,7 +85,7 @@ Gtx* Gtx::AddOperationToGtx(std::string op_name, std::shared_ptr<ArrayValue> arg
 		throw new std::logic_error("Cannot add function calls to an already signed gtx");
 	}
 
-	this->operations_.push_back(new PostchainOperation(op_name, args));
+	this->operations_.push_back(std::make_shared<PostchainOperation>(op_name, args));
 	return this;
 }
 

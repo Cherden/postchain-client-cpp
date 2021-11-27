@@ -24,7 +24,7 @@ class GTXValue;
 class Gtx {
 public:
 	std::string blockchain_rid_;
-	std::vector<PostchainOperation*> operations_;
+	std::vector<std::shared_ptr<PostchainOperation>> operations_;
 	std::vector<std::vector<byte>> signers_;
 	std::vector<std::vector<byte>> signatures_;
 

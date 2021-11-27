@@ -127,6 +127,8 @@ class PostchainUtil {
 	*/
 	static long long GetCurrentTimeMillis();
 
+	static void SleepForMillis(long long millis);
+
 private:
 	static secp256k1_context *secp_context_;
 

@@ -6,6 +6,7 @@
 #include <sstream>
 #include <algorithm>
 #include <chrono>
+#include <thread>
 #include "SECP256K/include/secp256k1_recovery.h"
 
 namespace chromia {
@@ -476,6 +477,11 @@ long long PostchainUtil::GetCurrentTimeMillis()
 	);
 
 	return ms.count();
+}
+
+void PostchainUtil::SleepForMillis(long long millis)
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 }
 
 }  // namespace postchain

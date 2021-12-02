@@ -8,97 +8,42 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-class SSOStoreLocalStorage : SSOStore
+class SSOStoreLocalStorage : public SSOStore
 {
 
 
 public:
 	std::shared_ptr<SavedSSOData> sso_data_;
 
-    SSOStoreLocalStorage()
-    {
-        Load();
-    }
+	SSOStoreLocalStorage();
 
-    void Load()
-    {
-        std::string result;
-        FileManager::LoadFromFile(FILENAME, result);
-        if (result.size() > 0)
-        {
-            //SSOData = JsonConvert.DeserializeObject<SavedSSOData>(result);
-			// TO-DO
-			sso_data_ = std::make_shared<SavedSSOData>();
-		}
-        else
-        {
-			sso_data_ = std::make_shared<SavedSSOData>();
-        }
-    }
+	void Load();
 
-    void Save()
-    {
-		// TO-DO
-        //std::string data = JsonConvert.SerializeObject(SSOData, Formatting.Indented);
-		std::string data;
-		FileManager::WriteToFile(FILENAME, data);
-    }
+	void Save();
 
-    std::shared_ptr<KeyPair> GetTmpKeyPair() override
-    {
-		std::string priv_key_string = sso_data_->sso_tmp_priv_key_;
+	std::shared_ptr<KeyPair> GetTmpKeyPair() override;
 
-        if (priv_key_string.size() == 0) return nullptr;
+	std::string GetTmpTx() override;
 
-        return std::make_shared<KeyPair>(priv_key_string);
-    }
+	void SetTmpTx(std::string value) override;
 
-	std::string GetTmpTx() override
-	{
-		return sso_data_->tmp_tx_;
-	}
+	std::vector<byte> GetTmpPrivKey() override;
 
-	void SetTmpTx(std::string value) override
-	{
-		sso_data_->tmp_tx_ = value;
-	}
+	void SetTmpPrivKey(std::vector<byte> value) override;
 
-    std::vector<byte> GetTmpPrivKey() override
-    {
-		std::string priv_key_string = sso_data_->sso_tmp_priv_key_;
-		if (priv_key_string.size() == 0) return {};
-		return PostchainUtil::HexStringToByteVector(priv_key_string);
-    }
+	void ClearTmp() override;
 
-	void SetTmpPrivKey(std::vector<byte> value) override
-	{
-		sso_data_->sso_tmp_priv_key_ = PostchainUtil::ByteVectorToHexString(value);
-	}
+	void AddAccount(std::string account_Id, std::string priv_key);
 
-    void ClearTmp() override
-    {
-		sso_data_->sso_tmp_priv_key_ = "";
-        sso_data_->tmp_tx_ = "";
-    }
+	void RemoveAccount(std::string accountId);
 
-    void AddAccount(std::string account_Id, std::string priv_key)
-    {
-        sso_data_->AddAccountOrPrivKey(account_Id, priv_key);
-    }
+	std::vector<std::shared_ptr<SavedSSOAccount>> GetAccounts();
 
-    void RemoveAccount(std::string accountId)
-    {
-        sso_data_->RemoveAccount(accountId);
-    }
-
-    std::vector<std::shared_ptr<SavedSSOAccount>> GetAccounts()
-    {
-        return sso_data_->accounts_;
-    }
+	static std::string GetTempFileName();
 
 private:
-	const std::string STORAGEKEY = "SSO";
-	const std::string FILENAME = STORAGEKEY + ".dat";
+	static const std::string STORAGEKEY;
+	static const std::string FILENAME;
 };
 } // namespace ft3
 } // namespace postchain

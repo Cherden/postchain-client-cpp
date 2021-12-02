@@ -5,7 +5,7 @@
 namespace chromia {
 namespace postchain {
 namespace ft3 {
-class DirectoryServiceBase : DirectoryService
+class DirectoryServiceBase : public DirectoryService
 {
 public:
 	DirectoryServiceBase(std::vector<std::shared_ptr<ChainConnectionInfo>> chain_infos);

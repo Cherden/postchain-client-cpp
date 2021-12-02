@@ -67,6 +67,48 @@ std::shared_ptr<GTXValue> Gtx::ArgToGTXValue(std::shared_ptr<gtv::AbstractValue>
 }
 
 
+std::shared_ptr<AbstractValue> Gtx::GtxValueToAbstract(std::shared_ptr<GTXValue> arg)
+{
+	switch (arg->choice_)
+	{
+		case (GTXValueChoice::Null):
+		{
+			return AbstractValueFactory::Build(nullptr);
+		}
+		case (GTXValueChoice::ByteArray):
+		{
+			return AbstractValueFactory::Build(arg->byte_array_);
+		}
+		case (GTXValueChoice::String):
+		{
+			return AbstractValueFactory::Build(arg->string_);
+		}
+		case (GTXValueChoice::Integer):
+		{
+			return AbstractValueFactory::Build(arg->integer_);
+		}
+		case (GTXValueChoice::Array):
+		{
+			std::shared_ptr<ArrayValue> abs_array = AbstractValueFactory::EmptyArray();
+			for (auto &item : arg->array_)
+			{
+				abs_array->Add(GtxValueToAbstract(item));
+			}
+			return abs_array;
+		}
+		case (GTXValueChoice::Dict):
+		{
+			throw new std::exception("Chromia.PostchainClient.GTX.Messages GTX::GtxValueToAbstract() Dict type not implemented ");
+			break;
+		}
+		default:
+		{
+			throw new std::exception("Chromia.PostchainClient.GTX.Messages GTX::GtxValueToAbstract() Unknown choice ");
+		}
+	}
+}
+
+
 void Gtx::AddSignerToGtx(std::vector<byte> signer)
 {
 	if (this->signatures_.size() != 0)
@@ -93,15 +135,9 @@ Gtx* Gtx::AddOperationToGtx(std::string op_name, std::shared_ptr<ArrayValue> arg
 void Gtx::Sign(std::vector<byte> private_key, std::vector<byte> public_key)
 {
 	std::string private_key_str = PostchainUtil::ByteVectorToHexString(private_key);
-	//UE_LOG(LogTemp, Display, TEXT("CHROMA:: Gtx Sign() private key: %s"), *(ChromaUtils::STDStringToFString(private_key_str)));
-
 	std::string public_key_str = PostchainUtil::ByteVectorToHexString(public_key);
-	//UE_LOG(LogTemp, Display, TEXT("CHROMA:: Gtx Sign() public key: %s"), *(ChromaUtils::STDStringToFString(public_key_str)));
-
 	std::vector<byte> buffer_to_sign = this->GetBufferToSign();
-
 	std::vector<byte> signature = PostchainUtil::Sign(buffer_to_sign, private_key);
-
 	this->AddSignature(public_key, signature);
 }
 
@@ -234,10 +270,59 @@ std::vector<byte> Gtx::Encode()
 
 	std::vector<byte> encoded = gtx_value->Encode();
 
-	std::string encoded_str = PostchainUtil::ByteVectorToHexString(encoded);
+	//std::string encoded_str = PostchainUtil::ByteVectorToHexString(encoded);
 	//UE_LOG(LogTemp, Warning, TEXT("CHROMA::encoded_str: [%d] [%s]"), encoded_str.size(), *(ChromaUtils::STDStringToFString(encoded_str)));
 
 	return encoded;
+}
+
+
+std::shared_ptr<Gtx> Gtx::Decode(std::vector<byte> encoded_message)
+{
+	auto gtx = std::make_shared<Gtx>();
+
+	auto reader = new asn1::Reader(encoded_message);
+	auto gtx_value = GTXValue::Decode(reader);
+
+	std::string gtx_str = gtx_value->ToString();
+	UE_LOG(LogTemp, Warning, TEXT("CHROMA::Gtx::Decode: [%d] %s"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
+
+	if (gtx_value->array_.size() == 0)
+	{
+		throw std::exception("Gtx::Decode failed");
+	}
+
+	auto gtx_payload = gtx_value->array_[0];
+
+	if (gtx_payload->array_.size() < 3)
+	{
+		throw std::exception("Gtx::Decode failed");
+	}
+
+	gtx->blockchain_rid_ = PostchainUtil::ByteVectorToHexString(gtx_payload->array_[0]->byte_array_);
+
+	for(auto &op_arr : gtx_payload->array_[1]->array_)
+	{
+		if (op_arr->array_.size() < 2)
+		{
+			throw std::exception("Gtx::Decode failed");
+		}
+		std::string op_name = op_arr->array_[0]->string_;
+		std::shared_ptr<ArrayValue> op_args = std::dynamic_pointer_cast<ArrayValue>(Gtx::GtxValueToAbstract(op_arr->array_[1]));
+		gtx->AddOperationToGtx(op_name, op_args);
+	}
+
+	for(auto &signer : gtx_payload->array_[2]->array_)
+	{
+		gtx->AddSignerToGtx(signer->byte_array_);
+	}
+
+	for(auto sig : gtx_value->array_[1]->array_)
+	{
+		gtx->signatures_.push_back(sig->byte_array_);
+	}
+
+	return gtx;
 }
 
 }  // namespace client

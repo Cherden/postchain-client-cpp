@@ -484,5 +484,37 @@ void PostchainUtil::SleepForMillis(long long millis)
 	std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 }
 
+std::shared_ptr<client::Gtx> PostchainUtil::DeserializeGTX(std::vector<byte> encoded_message)
+{
+	return client::Gtx::Decode(encoded_message);
+}
+
+bool PostchainUtil::StringsAreEqual(std::string a, std::string b)
+{
+	return a.compare(b) == 0;
+}
+
+template <typename T>
+bool PostchainUtil::VectorsAreEqual(std::vector<T> a, std::vector<T> b)
+{
+	if (a.size() != b.size()) return false;
+	for (size_t i = 0; i < a.size(); i++)
+	{
+		if (a[i] != b[i]) return false;
+	}
+	return true;
+}
+
+template <typename T>
+bool PostchainUtil::VectorsAreEqual(std::vector<std::vector<T>> a, std::vector<std::vector<T>> b)
+{
+	if (a.size() != b.size()) return false;
+	for (size_t i = 0; i < a.size(); i++)
+	{
+		if (!VectorsAreEqual(a[i], b[i])) return false;
+	}
+	return true;
+};
+
 }  // namespace postchain
 }  // namespace chromia

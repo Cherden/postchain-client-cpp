@@ -11,21 +11,33 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
+std::string FileManager::GetPersistentRoot()
+{
+	FString root = FWindowsPlatformMisc::GetEnvironmentVariable(TEXT("CHROMIA_SSO_ROOT"));
+	return ChromaUtils::FStringToSTDString(root);
+
+	/*FString persistent_data_path = FPaths::ProjectUserDir();
+	persistent_data_path = FPaths::ConvertRelativePathToFull(persistent_data_path);
+	return ChromaUtils::FStringToSTDString(persistent_data_path);*/
+}
+
 bool FileManager::WriteToFile(std::string a_file_name, std::string a_file_contents)
 {
 	FString file_name = ChromaUtils::STDStringToFString(a_file_name);
 	FString file_contents = ChromaUtils::STDStringToFString(a_file_contents);
 
-	FString persistent_data_path = FPaths::ProjectUserDir();
+	FString persistent_data_path = ChromaUtils::STDStringToFString(FileManager::GetPersistentRoot());
 	FString full_path = FPaths::Combine(persistent_data_path, file_name);
 
-	if (!FFileHelper::SaveStringToFile(
+	bool write_res = FFileHelper::SaveStringToFile(
 		file_contents,
-		*file_name,
+		*full_path,
 		FFileHelper::EEncodingOptions::AutoDetect,
 		&IFileManager::Get(),
 		0
-	))
+	);
+
+	if (!write_res)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CHROMA::Failed to write to %s"), *full_path);
 		return false;
@@ -57,7 +69,7 @@ bool FileManager::LoadFromFile(std::string a_file_name, std::string &result)
 		0
 	))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CHROMA::Failed to read from %s"), *full_path);
+		//UE_LOG(LogTemp, Warning, TEXT("CHROMA::Failed to read from %s"), *full_path);
 		return false;
 	}
 

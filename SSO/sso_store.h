@@ -26,6 +26,10 @@ public:
 	void AddAccountOrPrivKey(std::string account_id, std::string priv_key);
 
 	void RemoveAccount(std::string account_id);
+
+	static std::string Serialize(std::shared_ptr<SavedSSOData> data);
+
+	static std::shared_ptr<SavedSSOData> Derialize(std::string data);
 };
 
 class SSOStore

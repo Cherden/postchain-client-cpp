@@ -1,4 +1,6 @@
 #include <string>
+#include <functional>
+#include "Blockchain/blockchain.h"
 
 namespace chromia {
 namespace postchain {
@@ -7,22 +9,12 @@ namespace ft3 {
 class Postchain
 {
 public:
-	Postchain(std::string url)
-    {
-        this->_url = url;
-    }
+	Postchain(std::string url);
 
-  /*  public IEnumerator Blockchain(string id, Action<Blockchain> onSuccess, Action<string> onError)
-    {
-        var directoryService = new DirectoryServiceBase(
-            new ChainConnectionInfo[] { new ChainConnectionInfo(id, _url) }
-        );
-
-        yield return Ft3.Blockchain.Initialize(id, directoryService, onSuccess, onError);
-    }*/
+	void Blockchain(std::string id, std::function<void(std::shared_ptr<ft3::Blockchain>)> on_success, std::function<void(std::string)> on_error);
 
 private:
-	std::string _url;
+	std::string url_;
 };
 
 } // namespace ft3

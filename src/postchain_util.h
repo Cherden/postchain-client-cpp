@@ -6,6 +6,7 @@
 #include "SECP256K/include/secp256k1.h"
 #include "query.h"
 #include "common.h"
+#include "GTX/gtx.h"
 #include "../../nlohmann/json.hpp"
 
 namespace chromia {
@@ -128,6 +129,16 @@ class PostchainUtil {
 	static long long GetCurrentTimeMillis();
 
 	static void SleepForMillis(long long millis);
+
+	static std::shared_ptr<client::Gtx> DeserializeGTX(std::vector<byte> encoded_message);
+
+	static bool StringsAreEqual(std::string a, std::string b);
+
+	template <typename T>
+	static bool VectorsAreEqual(std::vector<T> a, std::vector<T> b);
+
+	template <typename T>
+	static bool VectorsAreEqual(std::vector<std::vector<T>> a, std::vector<std::vector<T>> b);
 
 private:
 	static secp256k1_context *secp_context_;

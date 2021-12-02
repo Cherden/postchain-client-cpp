@@ -7,6 +7,7 @@
 
 #include "../common.h"
 #include "../GTV/abstract_value.h"
+#include "../ASN1/reader.h"
 
 using namespace chromia::postchain::gtv;
 
@@ -28,13 +29,19 @@ public:
 	std::vector<std::vector<byte>> signers_;
 	std::vector<std::vector<byte>> signatures_;
 
+	static std::shared_ptr<GTXValue> ArgToGTXValue(std::shared_ptr<AbstractValue> arg);
+	
+	static std::shared_ptr<AbstractValue> GtxValueToAbstract(std::shared_ptr<GTXValue> arg);
+
+	static std::shared_ptr<Gtx> Decode(std::vector<byte> encoded_message);
+
+	Gtx();
+
 	Gtx(const std::string& blockchain_rid);
 
 	void AddSignerToGtx(std::vector<byte> signer);
 
 	Gtx* AddOperationToGtx(std::string op_name, std::shared_ptr<ArrayValue> args);
-
-	static std::shared_ptr<GTXValue> ArgToGTXValue(std::shared_ptr<AbstractValue> arg);
 
 	void Sign(std::vector<byte> private_key, std::vector<byte> public_key);
 
@@ -48,10 +55,7 @@ public:
 
 	std::string Serialize();
 	
-	std::vector<byte> Encode();
-
-private:
-	Gtx();
+	std::vector<byte> Encode();	
 };
 }  // namespace client
 }  // namespace postchain

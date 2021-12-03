@@ -2,8 +2,6 @@
 #include "GTX/gtx.h"
 #include "postchain_util.h"
 #include "../HTTP/httprequest.h"
-#include "CoreMinimal.h"
-#include "../../ChromaUnreal/Utils.h"
 
 namespace chromia {
 namespace postchain {
@@ -59,8 +57,6 @@ void PostchainTransaction::Post(std::function<void(std::string)> on_success)
 
 void PostchainTransaction::PostAndWait(std::function<void(std::string)> on_success)
 {
-	UE_LOG(LogTemp, Warning, TEXT("CHROMA::PostchainTransaction::PostAndWait()"));
-
 	this->Post([] (std::string content) {
 		content;
 	});
@@ -74,8 +70,7 @@ std::string PostchainTransaction::Serialize()
 
 std::vector<byte> PostchainTransaction::Encode()
 {
-	//TO-DO
-	return {};
+	return this->gtx_object_->Encode();
 }
 
 void PostchainTransaction::WaitConfirmation(std::function<void(std::string)> on_success)
@@ -86,7 +81,6 @@ void PostchainTransaction::WaitConfirmation(std::function<void(std::string)> on_
 	std::string req_error = "";
 
 	UHttpRequest::SendGetRequestSync(url, req_content, req_error);	
-	UE_LOG(LogTemp, Display, TEXT("CHROMA::WaitConfirmation uresposne  [%s] [%s]"), *ChromaUtils::STDStringToFString(req_content), *ChromaUtils::STDStringToFString(req_error));
 
 	this->error_ = true;
 

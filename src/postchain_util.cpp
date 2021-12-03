@@ -242,7 +242,6 @@ bool PostchainUtil::GeneratePrivateKey(std::vector<unsigned char> &private_key)
 	private_key.clear();
 	for (int i = 0; i < 32; i++)
 	{
-		//private_key.push_back(33 + i);
 		private_key.push_back(RandomIntInRange(POSTCHAIN_BYTE_MIN, POSTCHAIN_BYTE_MAX));
 	}
 

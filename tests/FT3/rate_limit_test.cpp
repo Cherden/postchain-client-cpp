@@ -1,10 +1,27 @@
 #include "rate_limit_test.h"
-#include "CoreMinimal.h"
+#include "../../FT3/User/AuthDescriptor/auth_descriptor_rule.h"
+#include "../../FT3/User/asset.h"
+#include "../../FT3/User/user.h"
+#include "../../FT3/User/account.h"
+#include "../../FT3/User/account_operations.h"
+#include "../../FT3/Core/transaction_builder.h"
+#include "../../FT3/Core/transaction.h"
+#include "../../FT3/Core/Blockchain/blockchain_session.h"
+#include "../../FT3/Core/Blockchain/blockchain_info.h"
+#include "../../FT3/Core/Blockchain/rate_limit_info.h"
+#include "../../FT3/User/rate_limit.h"
+#include "../../FT3/Core/key_pair.h"
+#include "../../src/postchain_util.h"
+#include "../TestUtil/blockchain_util.h"
+#include "../TestUtil/test_user.h"
+#include "../TestUtil/test_util.h"
+#include "../TestUtil/account_builder.h"
+#include "../TestUtil/test_operators.h"
 
 
 void RateLimitTest::DefaultErrorHandler(std::string error)
 {
-	UE_LOG(LogTemp, Error, TEXT("CHROMA::Error [%s]"), *(ChromaUtils::STDStringToFString(error)));
+	throw std::exception(error.c_str());
 };
 
 

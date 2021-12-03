@@ -1,32 +1,9 @@
 #pragma once 
 
-//#ifdef FT3_TESTS
-
 #include <functional>
 #include <string>
 #include "../../src/common.h"
 #include "../../FT3/forward_declarations.h"
-#include "../../FT3/User/AuthDescriptor/auth_descriptor_rule.h"
-#include "../../FT3/User/asset.h"
-#include "../../FT3/User/user.h"
-#include "../../FT3/User/account.h"
-#include "../../FT3/User/account_operations.h"
-#include "../../FT3/Core/transaction_builder.h"
-#include "../../FT3/Core/transaction.h"
-#include "../../FT3/Core/Blockchain/blockchain_session.h"
-#include "../../FT3/Core/Blockchain/blockchain_info.h"
-#include "../../FT3/Core/Blockchain/rate_limit_info.h"
-#include "../../FT3/User/rate_limit.h"
-#include "../../FT3/Core/key_pair.h"
-#include "../../src/postchain_util.h"
-#include "../TestUtil/blockchain_util.h"
-#include "../TestUtil/test_user.h"
-#include "../TestUtil/test_util.h"
-#include "../TestUtil/account_builder.h"
-#include "../TestUtil/test_operators.h"
-
-//#include "GenericPlatform/GenericPlatformProcess.h"
-//#include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
 
 using namespace chromia;
 using namespace chromia::postchain;
@@ -66,5 +43,3 @@ public:
 	bool RateLimitTestRun5();
 
 };
-
-//#endif // FT3_TESTS

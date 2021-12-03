@@ -13,9 +13,6 @@
 #include "sso_store_local_storage.h"
 #include "sso_store.h"
 
-//#include "CoreMinimal.h"
-//#include "GenericPlatform/GenericPlatformProcess.h"
-
 namespace chromia {
 namespace postchain {
 namespace ft3 {

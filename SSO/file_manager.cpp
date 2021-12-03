@@ -15,10 +15,6 @@ std::string FileManager::GetPersistentRoot()
 {
 	FString root = FWindowsPlatformMisc::GetEnvironmentVariable(TEXT("CHROMIA_SSO_ROOT"));
 	return ChromaUtils::FStringToSTDString(root);
-
-	/*FString persistent_data_path = FPaths::ProjectUserDir();
-	persistent_data_path = FPaths::ConvertRelativePathToFull(persistent_data_path);
-	return ChromaUtils::FStringToSTDString(persistent_data_path);*/
 }
 
 bool FileManager::WriteToFile(std::string a_file_name, std::string a_file_contents)
@@ -69,7 +65,7 @@ bool FileManager::LoadFromFile(std::string a_file_name, std::string &result)
 		0
 	))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("CHROMA::Failed to read from %s"), *full_path);
+		UE_LOG(LogTemp, Warning, TEXT("CHROMA::Failed to read from %s"), *full_path);
 		return false;
 	}
 

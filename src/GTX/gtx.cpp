@@ -6,9 +6,7 @@
 #include "../operation.h"
 #include "../postchain_util.h"
 #include "../GTV/Merkle/Proof/merkle_proof.h"
-#include "CoreMinimal.h"
 #include "../postchain_util.h"
-#include "../../../ChromaUnreal/Utils.h"
 
 namespace chromia {
 namespace postchain {
@@ -146,16 +144,7 @@ std::vector<byte> Gtx::GetBufferToSign()
 {
 	std::vector<std::vector<byte>> old_signatures = this->signatures_;
 	std::shared_ptr<AbstractValue> body = GetGtvTxBody();
-
-	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(body);
-	std::string gtx_str = gtx_value->ToString();
-	//UE_LOG(LogTemp, Display, TEXT("CHROMA:: GetBufferToSign() GTX body: %d  %s"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
-
 	std::vector<byte> encoded_buffer = AbstractValue::Hash(body);
-
-	std::string buffer_str = PostchainUtil::ByteVectorToHexString(encoded_buffer);
-	//UE_LOG(LogTemp, Display, TEXT("CHROMA:: Gtx Sign() Encoded Buffer: %s"), *(ChromaUtils::STDStringToFString(buffer_str)));
-
 	this->signatures_ = old_signatures;
 	return encoded_buffer;
 }
@@ -225,13 +214,7 @@ void Gtx::AddSignature(std::vector<byte> public_key, std::vector<byte> signature
 	}
 
 	int signer_index = GetSignerIndex(public_key);
-	UE_LOG(LogTemp, Warning, TEXT("Gtx::AddSignature: [%d] [%s] [%s]"), signer_index, 
-		*(ChromaUtils::STDStringToFString(PostchainUtil::ByteVectorToHexString(public_key))),
-		*(ChromaUtils::STDStringToFString(PostchainUtil::ByteVectorToHexString(signature)))
-	);
-
-	//int signer_index = this->signers_.FindIndex(signer = > signer.SequenceEqual(pubKeyBuffer));
-
+	
 	if (signer_index == -1)
 	{
 		throw new std::logic_error("No such signer, remember to call addSignerToGtx() before adding a signature");
@@ -261,17 +244,8 @@ std::vector<byte> Gtx::Encode()
 	gtx_body->Add(gtv_body);
 	gtx_body->Add(abs_signatures);
 
-	std::string gtv_hex = PostchainUtil::ByteVectorToHexString(AbstractValue::Hash(gtv_body));
-	std::string gtx_hex = PostchainUtil::ByteVectorToHexString(AbstractValue::Hash(gtx_body));
-
 	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(gtx_body);
-	std::string gtx_str = gtx_value->ToString();
-	UE_LOG(LogTemp, Warning, TEXT("CHROMA::gtx string: [%d] %s"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
-
 	std::vector<byte> encoded = gtx_value->Encode();
-
-	//std::string encoded_str = PostchainUtil::ByteVectorToHexString(encoded);
-	//UE_LOG(LogTemp, Warning, TEXT("CHROMA::encoded_str: [%d] [%s]"), encoded_str.size(), *(ChromaUtils::STDStringToFString(encoded_str)));
 
 	return encoded;
 }
@@ -283,9 +257,6 @@ std::shared_ptr<Gtx> Gtx::Decode(std::vector<byte> encoded_message)
 
 	auto reader = new asn1::Reader(encoded_message);
 	auto gtx_value = GTXValue::Decode(reader);
-
-	std::string gtx_str = gtx_value->ToString();
-	UE_LOG(LogTemp, Warning, TEXT("CHROMA::Gtx::Decode: [%d] %s"), gtx_str.size(), *(ChromaUtils::STDStringToFString(gtx_str)));
 
 	if (gtx_value->array_.size() == 0)
 	{

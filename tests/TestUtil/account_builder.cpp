@@ -1,9 +1,4 @@
-//#ifdef FT3_TESTS
-
 #include "account_builder.h"
-
-#include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
-#include "../../../ChromaUnreal/Utils.h"
 #include "../../src/common.h"
 #include "../../FT3/User/account.h"
 #include "../../FT3/User/user.h"
@@ -13,6 +8,12 @@
 #include "../../FT3/User/account.h"
 #include "../../FT3/User/asset_balance.h"
 #include "../../FT3/Core/Blockchain/blockchain.h"
+
+
+void AccountBuilder::DefaultErrorHandler(std::string error)
+{
+	throw std::exception(error.c_str());
+}
 
 AccountBuilder::AccountBuilder(std::shared_ptr<Blockchain> blockchain, std::shared_ptr<User> user) :
 	flags_({ FlagsType::eAccount, FlagsType::eTransfer })
@@ -163,10 +164,3 @@ std::shared_ptr<AuthDescriptor> AccountBuilder::GetAuthDescriptor()
 		return std::dynamic_pointer_cast<AuthDescriptor>(multi);
 	}
 }
-
-void AccountBuilder::DefaultErrorHandler(std::string error)
-{
-	UE_LOG(LogTemp, Error, TEXT("FT3:: [%s]"), *(ChromaUtils::STDStringToFString(error)));
-}
-
-//#endif // FT3_TESTS

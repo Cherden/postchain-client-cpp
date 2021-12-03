@@ -2,11 +2,10 @@
 #include "../../FT3/User/account_dev_operations.h"
 #include "../../FT3/Core/operation.h"
 #include "../../FT3/Core/Blockchain/blockchain_session.h"
-#include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
 
 void AccountTest::DefaultErrorHandler(std::string error) 
 {
-	UE_LOG(LogTemp, Error, TEXT("CHROMA::Error [%s]"), *(ChromaUtils::STDStringToFString(error)));
+	throw std::exception(error.c_str());
 };
 
 

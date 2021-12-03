@@ -4,11 +4,10 @@
 #include "../../FT3/User/account.h"
 #include "../../FT3/User/asset_balance.h"
 
-#include "CoreMinimal.h" // TO-DO get rid of UE4 dependencies
 
 void AssetBalanceTest::DefaultErrorHandler(std::string error)
 {
-	UE_LOG(LogTemp, Error, TEXT("CHROMA::Error [%s]"), *(ChromaUtils::STDStringToFString(error)));
+	throw std::exception(error.c_str());
 };
 
 

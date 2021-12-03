@@ -12,9 +12,6 @@ void UHttpRequest::SendPostRequest(std::string url, std::string payload,
 	FString furl = ChromaUtils::STDStringToFString(url);
 	FString fcontent = ChromaUtils::STDStringToFString(payload);
 
-	//UE_LOG(LogTemp, Display, TEXT("CHROMA::POST SendPostRequest(): url:     [%s]"), *furl);
-	//UE_LOG(LogTemp, Display, TEXT("CHROMA::POST SendPostRequest(): payload: [%s]"), *fcontent);
-
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
 	Request->OnProcessRequestComplete().BindStatic(&UHttpRequest::OnSyncPostResponseReceived);
 	Request->SetURL(*furl);
@@ -34,8 +31,6 @@ void UHttpRequest::SendPostRequest(std::string url, std::string payload,
 	// Wait for request to finish
 	FHttpModule::Get().GetHttpManager().Flush(false);
 	Request->CancelRequest();
-
-	UE_LOG(LogTemp, Display, TEXT("CHROMA::POST resposne:  [%s]"), *(ChromaUtils::STDStringToFString(response_content)));
 
 	if (response_success)
 	{
@@ -61,8 +56,6 @@ void UHttpRequest::SendGetRequestSync(std::string url, std::string &content, std
 {
 	FString furl = ChromaUtils::STDStringToFString(url);
 
-	//UE_LOG(LogTemp, Display, TEXT("CHROMA:: GET url:     [%s]"), *furl);
-
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
 	Request->OnProcessRequestComplete().BindStatic(&UHttpRequest::OnSyncGetResponseReceived);
 	Request->SetURL(*furl);
@@ -81,8 +74,6 @@ void UHttpRequest::SendGetRequestSync(std::string url, std::string &content, std
 	// Wait for request to finish
 	FHttpModule::Get().GetHttpManager().Flush(false);
 	Request->CancelRequest();
-
-	//UE_LOG(LogTemp, Display, TEXT("CHROMA::GET resposne: status %d [%s]"), response_success, *(ChromaUtils::STDStringToFString(response_content)));
 
 	if (response_success)
 	{

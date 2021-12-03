@@ -55,10 +55,8 @@ std::shared_ptr<ft3::Operation> AccountOperations::DeleteAuthDescriptor(std::str
 std::shared_ptr<ft3::Operation> AccountOperations::Nop()
 {
 	std::shared_ptr<ArrayValue> op_args = AbstractValueFactory::EmptyArray();
-	static int nonce = PostchainUtil::RandomIntInRange(0, 100000); //TO-DO check this static keyword
-	//static int nonce = 123;
+	int nonce = PostchainUtil::RandomIntInRange(0, 100000);
 	op_args->Add(AbstractValueFactory::Build(std::to_string(nonce)));
-	//op_args->Add(AbstractValueFactory::Build(std::string("444444")));
 	return std::make_shared<ft3::Operation>("nop", op_args);
 }
 

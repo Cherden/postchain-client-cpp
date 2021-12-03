@@ -50,7 +50,7 @@ void PostchainTransaction::Post(std::function<void(std::string)> on_success)
 	{
 		std::string url = this->base_url_ + "/tx/" + this->brid_;
 		std::string payload = "{\"tx\": \"" + Serialize() + "\"}";
-		UHttpRequest::SendPostRequest(url, payload, on_success, on_error_);
+		postchain::http::HttpRequest::SendPostRequest(url, payload, on_success, on_error_);
 		this->sent_ = true;
 	}
 }
@@ -80,7 +80,7 @@ void PostchainTransaction::WaitConfirmation(std::function<void(std::string)> on_
 	std::string req_content = "";
 	std::string req_error = "";
 
-	UHttpRequest::SendGetRequestSync(url, req_content, req_error);	
+	postchain::http::HttpRequest::SendGetRequestSync(url, req_content, req_error);
 
 	this->error_ = true;
 
@@ -99,7 +99,7 @@ void PostchainTransaction::WaitConfirmation(std::function<void(std::string)> on_
 	}
 	else if (status.compare("waiting") == 0) 
 	{
-		FPlatformProcess::Sleep(0.5);
+		PostchainUtil::SleepForMillis(500);
 		WaitConfirmation(on_success);
 	}
 	else

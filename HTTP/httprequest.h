@@ -42,6 +42,8 @@ private:
 
 	/* Called when the server has responded to http get request */
 	static void OnSyncGetResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp);
 };
 
 //} // namespace http

@@ -1,8 +1,8 @@
 #include "asset_balance_test.h"
 #include "../TestUtil/test_util.h"
-#include "../../FT3/User/asset.h"
-#include "../../FT3/User/account.h"
-#include "../../FT3/User/asset_balance.h"
+#include "../../src/FT3/User/asset.h"
+#include "../../src/FT3/User/account.h"
+#include "../../src/FT3/User/asset_balance.h"
 
 
 void AssetBalanceTest::DefaultErrorHandler(std::string error)

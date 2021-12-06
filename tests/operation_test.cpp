@@ -1,6 +1,6 @@
 #ifdef POSTCHAIN_TESTS
 
-#include "../src/operation.h"
+#include "../src/PostchainClient/operation.h"
 
 #include <gtest/gtest.h>
 

@@ -1,7 +1,8 @@
 #include "account_test.h"
-#include "../../FT3/User/account_dev_operations.h"
-#include "../../FT3/Core/operation.h"
-#include "../../FT3/Core/Blockchain/blockchain_session.h"
+#include "../../src/FT3/User/account_dev_operations.h"
+#include "../../src/FT3/Core/operation.h"
+#include "../../src/FT3/Core/Blockchain/blockchain_session.h"
+#include <vector>
 
 void AccountTest::DefaultErrorHandler(std::string error) 
 {
@@ -57,8 +58,8 @@ bool AccountTest::AccountTest1()
 
 	auto user = std::make_shared<KeyPair>(PostchainUtil::ByteVectorToHexString(private_key));
 
-	if (!TestOperators::Equals(user->priv_key_, private_key)) return false;
-	if (!TestOperators::Equals(user->pub_key_, public_key)) return false;
+	if (!PostchainUtil::VectorsAreEqual(user->priv_key_, private_key)) return false;
+	if (!PostchainUtil::VectorsAreEqual(user->pub_key_, public_key)) return false;
 
 	return true;
 }
@@ -111,7 +112,7 @@ bool AccountTest::AccountTest3()
 		this->DefaultErrorHandler
 	);
 
-	if (!TestOperators::Equals(2, account->auth_descriptors_.size())) return false;
+	if (2 != account->auth_descriptors_.size()) return false;
 	return true;
 }
 
@@ -139,7 +140,7 @@ bool AccountTest::AccountTest4()
 		std::make_shared<SingleSignatureAuthDescriptor>(user->key_pair_->pub_key_, std::vector<FlagsType>{ FlagsType::eTransfer }),
 		this->EmptyCallback, this->DefaultErrorHandler);
 
-	if (!TestOperators::Equals(1, account->auth_descriptors_.size())) return false;
+	if (1 != account->auth_descriptors_.size()) return false;
 
 	return true;
 }

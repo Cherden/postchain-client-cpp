@@ -3,8 +3,8 @@
 //#ifdef FT3_TESTS
 
 #include "fake_directory_service_util.h"
-#include "../../FT3/Core/Blockchain/blockchain.h"
-#include "../../FT3/Core/chain_connection_info.h"
+#include "../../src/FT3/Core/Blockchain/blockchain.h"
+#include "../../src/FT3/Core/chain_connection_info.h"
 
 using namespace chromia::postchain::ft3;
 

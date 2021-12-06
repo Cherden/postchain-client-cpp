@@ -1,33 +1,22 @@
 #pragma once 
 
-//#ifdef FT3_TESTS
-
 //#include <gtest/gtest.h>
-
-//#include "GoogleTest/include/gtest/gtest.h"
-
 
 #include <functional>
 #include <string>
-
-#include "../../src/common.h"
-
+#include "../../src/PostchainClient/common.h"
+#include "../../src/PostchainClient/postchain_util.h"
 #include "../TestUtil/blockchain_util.h"
 #include "../TestUtil/test_user.h"
 #include "../TestUtil/account_builder.h"
-#include "../TestUtil/test_operators.h"
-
-#include "../../src/postchain_util.h"
-
-#include "../../FT3/User/account.h"
-#include "../../FT3/User/user.h"
-#include "../../FT3/User/account_operations.h"
-#include "../../FT3/Core/Blockchain/blockchain.h"
-#include "../../FT3/Core/transaction_builder.h"
-#include "../../FT3/Core/transaction.h"
-#include "../../FT3/User/AuthDescriptor/single_signature_auth_descriptor.h"
-#include "../../FT3/User/AuthDescriptor/multi_signature_auth_descriptor.h"
-#include "../../../ChromaUnreal/Utils.h"
+#include "../../src/FT3/User/account.h"
+#include "../../src/FT3/User/user.h"
+#include "../../src/FT3/User/account_operations.h"
+#include "../../src/FT3/Core/Blockchain/blockchain.h"
+#include "../../src/FT3/Core/transaction_builder.h"
+#include "../../src/FT3/Core/transaction.h"
+#include "../../src/FT3/User/AuthDescriptor/single_signature_auth_descriptor.h"
+#include "../../src/FT3/User/AuthDescriptor/multi_signature_auth_descriptor.h"
 
 
 using namespace chromia::postchain::ft3;
@@ -92,5 +81,3 @@ public:
 	// shouldn't be possible for auth descriptor to delete other auth descriptor without admin flag
 	bool AccountTest14();
 };
-
-//#endif // FT3_TESTS

@@ -3,15 +3,15 @@
 
 #include <limits>
 
-#include "../../src/GTV/abstract_value.h"
-#include "../../src/GTV/abstract_value_facotry.h"
-#include "../../src/GTV/array_value.h"
-#include "../../src/GTV/dict_value.h"
-#include "../../src/GTV/integer_value.h"
-#include "../../src/GTV/null_value.h"
-#include "../../src/GTV/octet_string_value.h"
-#include "../../src/GTV/utf8_string_value.h"
-#include "../../src/postchain_util.h"
+#include "../../src/PostchainClient/GTV/abstract_value.h"
+#include "../../src/PostchainClient/GTV/abstract_value_facotry.h"
+#include "../../src/PostchainClient/GTV/array_value.h"
+#include "../../src/PostchainClient/GTV/dict_value.h"
+#include "../../src/PostchainClient/GTV/integer_value.h"
+#include "../../src/PostchainClient/GTV/null_value.h"
+#include "../../src/PostchainClient/GTV/octet_string_value.h"
+#include "../../src/PostchainClient/GTV/utf8_string_value.h"
+#include "../../src/PostchainClient/postchain_util.h"
 
 using namespace chromia::postchain;
 

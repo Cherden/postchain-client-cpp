@@ -3,13 +3,13 @@
 #include <functional>
 #include <string>
 
-#include "../../src/common.h"
-#include "../../src/postchain_util.h"
-#include "../../src/GTX/gtx.h"
-#include "../../../ChromaUnreal/Utils.h"
+#include "../../src/PostchainClient/common.h"
+#include "../../src/PostchainClient/postchain_util.h"
+#include "../../src/PostchainClient/GTX/gtx.h"
 
 using namespace chromia::postchain::client;
 using namespace chromia::postchain;
+using namespace chromia;
 
 bool SSOTest::SSORegisterOperationTest()
 {

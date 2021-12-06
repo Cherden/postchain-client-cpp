@@ -3,12 +3,11 @@
 //#ifdef FT3_TESTS
 
 #include <string>
-#include "../../src/common.h"
+#include "../../src/PostchainClient/common.h"
 #include "../TestUtil/blockchain_util.h"
 #include "../TestUtil/test_user.h"
 #include "../TestUtil/account_builder.h"
-#include "../TestUtil/test_operators.h"
-#include "../../FT3/forward_declarations.h"
+#include "../../src/FT3/forward_declarations.h"
 
 
 using namespace chromia::postchain::ft3;

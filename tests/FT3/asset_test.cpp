@@ -1,6 +1,6 @@
 #include "asset_test.h"
 #include "../TestUtil/test_util.h"
-#include "../../FT3/User/asset.h"
+#include "../../src/FT3/User/asset.h"
 
 void AssetTest::DefaultErrorHandler(std::string error)
 {

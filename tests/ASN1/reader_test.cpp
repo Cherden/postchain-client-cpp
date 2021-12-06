@@ -1,12 +1,12 @@
 #ifdef POSTCHAIN_TESTS
-#include "../../src/ASN1/reader.h"
+#include "../../src/PostchainClient/ASN1/reader.h"
 
 #include <gtest/gtest.h>
 
 #include <limits>
 
-#include "../../src/ASN1/writer.h"
-#include "../../src/postchain_util.h"
+#include "../../src/PostchainClient/ASN1/writer.h"
+#include "../../src/PostchainClient/postchain_util.h"
 
 using namespace chromia::postchain;
 

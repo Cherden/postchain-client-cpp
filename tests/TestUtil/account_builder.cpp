@@ -1,13 +1,13 @@
 #include "account_builder.h"
-#include "../../src/common.h"
-#include "../../FT3/User/account.h"
-#include "../../FT3/User/user.h"
-#include "../../FT3/Core/key_pair.h"
-#include "../../FT3/User/rate_limit.h"
-#include "../../FT3/User/asset.h"
-#include "../../FT3/User/account.h"
-#include "../../FT3/User/asset_balance.h"
-#include "../../FT3/Core/Blockchain/blockchain.h"
+#include "../../src/PostchainClient/common.h"
+#include "../../src/FT3/User/account.h"
+#include "../../src/FT3/User/user.h"
+#include "../../src/FT3/Core/key_pair.h"
+#include "../../src/FT3/User/rate_limit.h"
+#include "../../src/FT3/User/asset.h"
+#include "../../src/FT3/User/account.h"
+#include "../../src/FT3/User/asset_balance.h"
+#include "../../src/FT3/Core/Blockchain/blockchain.h"
 
 
 void AccountBuilder::DefaultErrorHandler(std::string error)

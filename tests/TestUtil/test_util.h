@@ -1,10 +1,8 @@
 #pragma once 
 
-//#ifdef FT3_TESTS
-
 #include <string>
 #include <vector>
-#include "../../FT3/forward_declarations.h"
+#include "../../src/FT3/forward_declarations.h"
 
 using namespace chromia::postchain::ft3;
 
@@ -19,5 +17,3 @@ public:
 
 	static std::string BlockchainAccountId(std::string chainId);
 };
-
-//#endif // FT3_TESTS

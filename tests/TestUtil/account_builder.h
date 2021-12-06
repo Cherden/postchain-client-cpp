@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 #include "test_user.h"
-#include "../../FT3/forward_declarations.h"
-#include "../../FT3/forward_declarations.h"
+#include "../../src/FT3/forward_declarations.h"
+#include "../../src/FT3/forward_declarations.h"
 
 using namespace chromia;
 using namespace chromia::postchain::ft3;

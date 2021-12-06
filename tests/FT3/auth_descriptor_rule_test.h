@@ -4,17 +4,16 @@
 
 #include <functional>
 #include <string>
-#include "../../src/common.h"
-#include "../../FT3/forward_declarations.h"
-#include "../../FT3/User/AuthDescriptor/auth_descriptor_rule.h"
-#include "../../FT3/User/asset.h"
-#include "../../FT3/Core/Blockchain/blockchain_session.h"
-#include "../../src/postchain_util.h"
+#include "../../src/PostchainClient/common.h"
+#include "../../src/FT3/forward_declarations.h"
+#include "../../src/FT3/User/AuthDescriptor/auth_descriptor_rule.h"
+#include "../../src/FT3/User/asset.h"
+#include "../../src/FT3/Core/Blockchain/blockchain_session.h"
+#include "../../src/PostchainClient/postchain_util.h"
 #include "../TestUtil/blockchain_util.h"
 #include "../TestUtil/test_user.h"
 #include "../TestUtil/test_util.h"
 #include "../TestUtil/account_builder.h"
-#include "../TestUtil/test_operators.h"
 
 using namespace chromia::postchain::ft3;
 using namespace chromia::postchain;

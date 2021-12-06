@@ -8,5 +8,3 @@ public:
 
 	bool SSOAddAuthOperationTest();
 };
-
-//#endif // FT3_TESTS

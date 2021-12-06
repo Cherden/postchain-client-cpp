@@ -1,5 +1,3 @@
-//#ifdef FT3_TESTS
-
 #include "fake_directory_service_util.h"
 
 FakeDirectoryService::FakeDirectoryService(std::vector<std::shared_ptr<ChainConnectionInfo>> chain_infos)
@@ -19,5 +17,3 @@ std::shared_ptr<ChainConnectionInfo> FakeDirectoryService::GetChainConnectionInf
 	}
 	return nullptr;
 }
-
-//#endif // FT3_TESTS

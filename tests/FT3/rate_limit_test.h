@@ -2,8 +2,8 @@
 
 #include <functional>
 #include <string>
-#include "../../src/common.h"
-#include "../../FT3/forward_declarations.h"
+#include "../../src/PostchainClient/common.h"
+#include "../../src/FT3/forward_declarations.h"
 
 using namespace chromia;
 using namespace chromia::postchain;

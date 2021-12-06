@@ -1,12 +1,12 @@
 //#ifdef FT3_TESTS
 
 #include "test_user.h"
-#include "../../FT3/User/user.h"
-#include "../../FT3/User/account.h"
-#include "../../FT3/User/AuthDescriptor/single_signature_auth_descriptor.h"
-#include "../../FT3/User/AuthDescriptor/multi_signature_auth_descriptor.h"
-#include "../../FT3/Core/key_pair.h"
-#include "../../src/common.h"
+#include "../../src/FT3/User/user.h"
+#include "../../src/FT3/User/account.h"
+#include "../../src/FT3/User/AuthDescriptor/single_signature_auth_descriptor.h"
+#include "../../src/FT3/User/AuthDescriptor/multi_signature_auth_descriptor.h"
+#include "../../src/FT3/Core/key_pair.h"
+#include "../../src/PostchainClient/common.h"
 
 std::shared_ptr<User> TestUser::SingleSig(std::shared_ptr<IAuthdescriptorRule> rule)
 {

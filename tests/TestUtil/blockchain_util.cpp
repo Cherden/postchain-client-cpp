@@ -1,6 +1,5 @@
-//#ifdef FT3_TESTS
-
 #include "blockchain_util.h"
+
 
 void BlockchainUtil::GetDefaultBlockchain(std::function<void(std::shared_ptr<Blockchain>)> on_success, std::function<void(std::string)> on_error)
 {
@@ -11,5 +10,3 @@ void BlockchainUtil::GetDefaultBlockchain(std::function<void(std::shared_ptr<Blo
 		on_error
 	);
 }
-
-//#endif // FT3_TESTS

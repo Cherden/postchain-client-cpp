@@ -1,10 +1,8 @@
 #pragma once 
 
-//#ifdef FT3_TESTS
-
-#include "../../FT3/Core/Blockchain/blockchain.h"
-#include "../../FT3/Core/chain_connection_info.h"
-#include "../../FT3/Core/Blockchain/directory_service.h"
+#include "../../src/FT3/Core/Blockchain/blockchain.h"
+#include "../../src/FT3/Core/chain_connection_info.h"
+#include "../../src/FT3/Core/Blockchain/directory_service.h"
 
 using namespace chromia::postchain::ft3;
 
@@ -20,5 +18,3 @@ public:
 
 	std::shared_ptr<ChainConnectionInfo> GetChainConnectionInfo(std::string id);
 };
-
-//#endif // FT3_TESTS

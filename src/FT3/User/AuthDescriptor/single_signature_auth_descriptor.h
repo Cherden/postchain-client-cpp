@@ -2,6 +2,7 @@
 
 #include "../../../PostchainClient/GTV/abstract_value_factory.h"
 #include "../../../PostchainClient/GTV/array_value.h"
+#include "../../../PostchainClient/postchain_util.h"
 #include "../../forward_declarations.h"
 #include "../../Core/util.h"
 

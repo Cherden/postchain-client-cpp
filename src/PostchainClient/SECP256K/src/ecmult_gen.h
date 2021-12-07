@@ -7,6 +7,8 @@
 #ifndef SECP256K1_ECMULT_GEN_H
 #define SECP256K1_ECMULT_GEN_H
 
+#define ECMULT_GEN_PREC_BITS 4
+
 #include "scalar.h"
 #include "group.h"
 

@@ -7,6 +7,8 @@
 #ifndef SECP256K1_ECMULT_H
 #define SECP256K1_ECMULT_H
 
+#define ECMULT_WINDOW_SIZE 15
+
 #include "group.h"
 #include "scalar.h"
 #include "scratch.h"

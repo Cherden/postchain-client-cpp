@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "GTV/abstract_value.h"
 #include "GTV/abstract_value_factory.h"

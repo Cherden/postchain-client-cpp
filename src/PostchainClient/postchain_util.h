@@ -1,13 +1,16 @@
-#ifndef POSTCHAIN_CLIENT_POSTCHAINUTIL_H_
-#define POSTCHAIN_CLIENT_POSTCHAINUTIL_H_
+#pragma once
 
 #include <string>
 #include <vector>
-#include "SECP256K/include/secp256k1.h"
-#include "query.h"
+#include "../nlohmann/json.hpp"
 #include "common.h"
-#include "GTX/gtx.h"
-#include "../../nlohmann/json.hpp"
+#include "forward_declarations.h"
+#include "GTV/abstract_value.h"
+#include "GTV/abstract_value_factory.h"
+#include "SECP256K/include/secp256k1.h"
+#include "SECP256K/include/secp256k1_recovery.h"
+
+using namespace chromia::postchain::gtv;
 
 namespace chromia {
 namespace postchain {
@@ -152,5 +155,3 @@ private:
 
 }  // namespace postchain
 }  // namespace chromia
-
-#endif

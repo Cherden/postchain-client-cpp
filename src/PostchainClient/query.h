@@ -1,11 +1,12 @@
-#ifndef POSTCHAIN_CLIENT_QUERY_H_
-#define POSTCHAIN_CLIENT_QUERY_H_
+#pragma once
 
+#include "forward_declarations.h"
 #include "GTV/abstract_value.h" 
 #include "GTV/abstract_value_factory.h"
 #include <string>
 
 using namespace chromia::postchain::gtv;
+using namespace chromia;
 
 namespace chromia {
 namespace postchain {
@@ -33,7 +34,7 @@ struct QueryObject
 		this->content_ = AbstractValueFactory::Build(content);
 	}
 
-	QueryObject(std::string name, std::vector<byte> content)
+	QueryObject(std::string name, std::vector<unsigned char> content)
 	{
 		this->name_ = name;
 		this->content_ = AbstractValueFactory::Build(content);
@@ -42,5 +43,3 @@ struct QueryObject
 
 }  // namespace postchain
 }  // namespace chromia
-
-#endif //POSTCHAIN_CLIENT_QUERY_H_

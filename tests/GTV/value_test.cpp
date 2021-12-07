@@ -1,10 +1,9 @@
-#ifdef POSTCHAIN_TESTS
 #include <gtest/gtest.h>
 
 #include <limits>
 
 #include "../../src/PostchainClient/GTV/abstract_value.h"
-#include "../../src/PostchainClient/GTV/abstract_value_facotry.h"
+#include "../../src/PostchainClient/GTV/abstract_value_factory.h"
 #include "../../src/PostchainClient/GTV/array_value.h"
 #include "../../src/PostchainClient/GTV/dict_value.h"
 #include "../../src/PostchainClient/GTV/integer_value.h"
@@ -325,5 +324,3 @@ TEST(GTV, FullArrayHashTest) {
         "e74615c8e242ee865655b24a17b1454e0f14523520384903682cd31500907a2d";
     EXPECT_EQ(expected, PostchainUtil::ByteVectorToHexString(hash));
 }
-
-#endif // POSTCHAIN_TESTS

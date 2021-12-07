@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 #include "../../PostchainClient/common.h"
 #include "../../PostchainClient/GTV/abstract_value_factory.h"
 #include "../../PostchainClient/GTV/array_value.h"
@@ -57,10 +58,10 @@ public:
 	std::shared_ptr<Blockchain> GetBlockchain();
 
 	static void GetByParticipantId(std::string id, std::shared_ptr<BlockchainSession> session,
-		std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error);
+		std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error);
 
 	static void GetByAuthDescriptorId(std::string id, std::shared_ptr<BlockchainSession> session,
-		std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error);
+		std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error);
 
 	static void Register(std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<BlockchainSession> session,
 		std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
@@ -71,9 +72,9 @@ public:
 		std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain);
 
 	static void GetByIds(std::vector<std::string> ids, std::shared_ptr<BlockchainSession> session,
-		std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error);
+		std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error);
 
-	static void GetById(std::string id, std::shared_ptr<BlockchainSession> session, std::function<void(shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
+	static void GetById(std::string id, std::shared_ptr<BlockchainSession> session, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
 
 	void AddAuthDescriptor(std::shared_ptr<AuthDescriptor> auth_descriptor, std::function<void()> on_success, std::function<void(std::string)> on_error);
 

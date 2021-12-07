@@ -1,11 +1,19 @@
 #pragma once
 
+#include "../PostchainClient/GTV/array_value.h"
+#include "../PostchainClient/common.h"
+
+using namespace chromia::postchain::gtv;
+using namespace chromia;
+
 namespace chromia {
 namespace postchain {
 namespace ft3 {
 
 enum AuthType;
 enum FlagsType;
+
+class KeyPair;
 
 class Blockchain;
 class BlockchainInfo;
@@ -61,6 +69,6 @@ public:
 };
 
 
-} // namespace http
+} // namespace ft3
 } // namespace postchain
 } // namespace chromia

@@ -6,21 +6,16 @@
 #include <vector>
 
 #include "../common.h"
+#include "../forward_declarations.h"
 #include "../GTV/abstract_value.h"
+#include "../GTV/array_value.h"
 #include "../ASN1/reader.h"
 
 using namespace chromia::postchain::gtv;
 
 namespace chromia {
 namespace postchain {
-
-// Forward declaration
-class PostchainOperation;
-
 namespace client {
-
-// Forward declaration
-class GTXValue;
 
 class Gtx {
 public:

@@ -9,13 +9,12 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(
     postchain_client_test
-    postchain_util_test.cc
-    ASN1/writer_test.cc
-    ASN1/reader_test.cc
-    GTV/value_test.cc
-    operation_test.cc
-    ${CMAKE_CURRENT_LIST_DIR}/../src/ASN1/writer.h
-    ${CMAKE_CURRENT_LIST_DIR}/../src/ASN1/reader.h
+    TestUtil/test_util.cpp
+    ASN1/writer_test.cpp
+    ASN1/reader_test.cpp
+    GTV/value_test.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../src/PostchainClient/ASN1/writer.h
+    ${CMAKE_CURRENT_LIST_DIR}/../src/PostchainClient/ASN1/reader.h
 )
 
 target_link_libraries(

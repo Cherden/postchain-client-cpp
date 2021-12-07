@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "common.h"
+#include "forward_declarations.h"
 #include "GTV/abstract_value.h"
 #include "GTV/abstract_value_factory.h"
 
@@ -13,11 +14,6 @@ using namespace chromia::postchain::gtv;
 
 namespace chromia {
 namespace postchain {
-
-// Forward declaration
-namespace client {
-	class GTXValue;
-}
 
 class PostchainOperation {
   public:

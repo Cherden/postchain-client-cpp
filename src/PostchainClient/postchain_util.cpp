@@ -1,4 +1,6 @@
 #include "postchain_util.h"
+#include "query.h"
+#include "GTX/gtx.h"
 #include <openssl/evp.h>
 #include <algorithm>
 #include <iomanip>
@@ -7,7 +9,7 @@
 #include <algorithm>
 #include <chrono>
 #include <thread>
-#include "SECP256K/include/secp256k1_recovery.h"
+
 
 namespace chromia {
 namespace postchain {

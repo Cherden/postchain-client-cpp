@@ -3,6 +3,7 @@
 #include "user.h"
 #include "../Core/key_pair.h"
 #include "../User/AuthDescriptor/auth_descriptor_rule.h"
+#include "../User/AuthDescriptor/single_signature_auth_descriptor.h"
 #include "../User/account.h"
 
 namespace chromia {

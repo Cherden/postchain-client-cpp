@@ -70,7 +70,7 @@ bool SSOTest::SSOAddAuthOperationTest()
 	auto encode = gtx->Encode();
 	auto decoded = gtx->Decode(encode);
 
-	if(gtx->blockchain_rid_.compare(decoded->blockchain_rid_) == 0) return false;
+	if(gtx->blockchain_rid_.compare(decoded->blockchain_rid_) != 0) return false;
 	if (!PostchainUtil::VectorsAreEqual(gtx->signatures_, decoded->signatures_)) return false;
 	if (!PostchainUtil::VectorsAreEqual(gtx->signers_, decoded->signers_)) return false;
 

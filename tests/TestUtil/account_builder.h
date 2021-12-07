@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 #include "test_user.h"
 #include "../../src/FT3/forward_declarations.h"
 #include "../../src/FT3/forward_declarations.h"
@@ -47,7 +48,7 @@ private:
 
 	void RegisterAccount(std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
 
-	void AddBalanceIfNeeded(std::shared_ptr<Account> account, std::function<void()> on_success, std::function<void(string)> on_error);
+	void AddBalanceIfNeeded(std::shared_ptr<Account> account, std::function<void()> on_success, std::function<void(std::string)> on_error);
 
 	void AddPointsIfNeeded(std::shared_ptr<Account> account, std::function<void(std::shared_ptr<RateLimit>)> on_success, std::function<void(std::string)> on_error);
 

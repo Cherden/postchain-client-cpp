@@ -1,6 +1,9 @@
 #pragma once
 
 #include "../../forward_declarations.h"
+#include <functional>
+
+using namespace chromia::postchain;
 
 namespace chromia {
 namespace postchain {
@@ -17,17 +20,17 @@ public:
 
 	BlockchainSession(std::shared_ptr<User> user, std::shared_ptr<Blockchain> blockchain);
 
-	void GetAccountById(string id, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
+	void GetAccountById(std::string id, std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
 
 	void GetAccountsByParticipantId(std::string id, std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error);
 
-	void GetAccountsByAuthDescriptorId(string id, std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error);
+	void GetAccountsByAuthDescriptorId(std::string id, std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(std::string)> on_error);
 
-	void Query(string query_name, std::vector<QueryObject> query_objects,
-		std::function<void(std::string)> on_success, std::function<void(string)> on_error);
+	void Query(std::string query_name, std::vector<QueryObject> query_objects,
+		std::function<void(std::string)> on_success, std::function<void(std::string)> on_error);
 	
 	void Call(std::shared_ptr<Operation> operation,
-		std::function<void()> on_success, std::function<void(string)> on_error);
+		std::function<void()> on_success, std::function<void(std::string)> on_error);
 };
 
 } // namespace ft3

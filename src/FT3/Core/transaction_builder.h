@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <functional>
 #include "../../PostchainClient/common.h"
 #include "../forward_declarations.h"
 

@@ -1,5 +1,6 @@
 #include "rate_limit.h"
 #include "../Core/Blockchain/blockchain.h"
+#include "../Core/Blockchain/blockchain_info.h"
 #include "../User/account_dev_operations.h"
 #include "../Core/transaction_builder.h"
 #include "../Core/transaction.h"

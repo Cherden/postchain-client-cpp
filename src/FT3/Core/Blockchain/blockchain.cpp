@@ -2,6 +2,7 @@
 #include "blockchain_info.h"
 #include "directory_service.h"
 #include "../../Core/transaction_builder.h"
+#include "../../Core/Blockchain/blockchain_session.h"
 #include "../../Core/transaction.h"
 #include "../../User/account.h"
 #include "../../User/asset.h"

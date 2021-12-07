@@ -4,7 +4,7 @@
 
 void AssetTest::DefaultErrorHandler(std::string error)
 {
-	throw std::exception(error.c_str());
+	chromia::postchain::PostchainUtil::Log(error);
 };
 
 

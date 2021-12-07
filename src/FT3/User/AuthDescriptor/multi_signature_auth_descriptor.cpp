@@ -4,6 +4,7 @@
 #include "../account.h"
 #include "../../../PostchainClient/GTX/gtx.h"
 #include "../../../PostchainClient/GTX/gtx_value.h"
+#include "../../Core/util.h"
 
 using namespace chromia::postchain::client;
 

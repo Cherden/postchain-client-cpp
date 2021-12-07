@@ -27,8 +27,6 @@ class AccountTest
 private:
 	std::shared_ptr<Blockchain> blockchain_ = nullptr;
 
-	//std::function<void(std::string error)> default_error_handler_ptr = std::bind(&);
-
 	void SetupBlockchain();
 
 	static void EmptyCallback() {}

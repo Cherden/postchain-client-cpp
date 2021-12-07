@@ -31,20 +31,24 @@ void HttpRequest::SendPostRequest(std::string url, std::string payload,
 {
 	CURL *curl;
 	CURLcode res;
-	std::string readBuffer;
+	std::string read_buffer;
+
+	std::cout << "post url: " << url << "\n";
+	std::cout << "post payload: " << payload << "\n";
 
 	curl = curl_easy_init();
 	if (curl) {
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L); //0 disable messages
+
 		res = curl_easy_perform(curl);
 		
 		try
 		{
 			curl_easy_cleanup(curl);
-			std::cout << readBuffer << std::endl;
 		}
 		catch (std::exception e)
 		{
@@ -56,28 +60,32 @@ void HttpRequest::SendPostRequest(std::string url, std::string payload,
 		error_callback(std::string("SendPostRequest failed"));
 	}
 
-	success_callback(readBuffer);
+	std::cout << "post response: " << read_buffer << "\n";
+
+	success_callback(read_buffer);
 }
 
 
 void HttpRequest::SendGetRequestSync(std::string url, std::string &content, std::string &error)
 {
+	std::cout << "get url: " << url << "\n";
+
 	CURL *curl;
 	CURLcode res;
-	std::string readBuffer;
+	std::string read_buffer;
 
 	curl = curl_easy_init();
 	if (curl) 
 	{
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L); //0 disable messages
 		res = curl_easy_perform(curl);
 
 		try 
 		{
 			curl_easy_cleanup(curl);
-			std::cout << readBuffer << std::endl;
 		}
 		catch (std::exception e)
 		{
@@ -89,7 +97,8 @@ void HttpRequest::SendGetRequestSync(std::string url, std::string &content, std:
 		error = "SendGetRequestSync failed";
 	}
 
-	content = readBuffer;
+	std::cout << "get response: " << read_buffer << "\n";
+	content = read_buffer;
 }
 
 } // namespace http

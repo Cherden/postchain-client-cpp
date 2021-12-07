@@ -15,10 +15,33 @@ add_library(
     PostchainClient/operation.cpp
     PostchainClient/postchain_transaction.cpp
     PostchainClient/postchain_util.cpp
+    PostchainClient/SECP256K/src/secp256k1.c
 
     HTTP/httprequest.cpp
 
-    PostchainClient/SECP256K/src/secp256k1.c
+    FT3/Core/Blockchain/blockchain_info.cpp
+    FT3/Core/Blockchain/blockchain_session.cpp
+    FT3/Core/Blockchain/blockchain.cpp
+    FT3/Core/Blockchain/directory_service_base.cpp
+    FT3/Core/key_pair.cpp
+    FT3/Core/operation.cpp
+    FT3/Core/transaction_builder.cpp
+    FT3/Core/transaction.cpp
+    FT3/Core/util.cpp
+
+    FT3/User/AuthDescriptor/auth_descriptor_factory.cpp
+    FT3/User/AuthDescriptor/auth_descriptor_rule.cpp
+    FT3/User/AuthDescriptor/multi_signature_auth_descriptor.cpp
+    FT3/User/AuthDescriptor/single_signature_auth_descriptor.cpp
+
+    FT3/User/account_dev_operations.cpp
+    FT3/User/account_operations.cpp
+    FT3/User/asset_balance.cpp
+    FT3/User/account.cpp
+    FT3/User/asset.cpp
+    FT3/User/rate_limit.cpp
+    FT3/User/transfer.cpp
+    FT3/User/user.cpp
 )
 
 # file(GLOB TEMP_SRC

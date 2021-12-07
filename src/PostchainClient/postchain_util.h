@@ -137,11 +137,11 @@ class PostchainUtil {
 
 	static bool StringsAreEqual(std::string a, std::string b);
 
-	template <typename T>
-	static bool VectorsAreEqual(std::vector<T> a, std::vector<T> b);
+	static bool VectorsAreEqual(std::vector<byte> a, std::vector<byte> b);
 
-	template <typename T>
-	static bool VectorsAreEqual(std::vector<std::vector<T>> a, std::vector<std::vector<T>> b);
+	static bool VectorsAreEqual(std::vector<std::vector<byte>> a, std::vector<std::vector<byte>> b);
+
+	static void Log(std::string message);
 
 private:
 	static secp256k1_context *secp_context_;

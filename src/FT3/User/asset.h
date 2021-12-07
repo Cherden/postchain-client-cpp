@@ -25,16 +25,16 @@ public:
 
 	static void Register(std::string name, std::string chain_id, std::shared_ptr<Blockchain> blockchain,
 		std::function<void(std::shared_ptr<Asset>)> on_success,
-		std::function<void(string)> on_error);
+		std::function<void(std::string)> on_error);
 
 	static void GetByName(std::string name, std::shared_ptr<Blockchain> blockchain,
-		std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error);
+		std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(std::string)> on_error);
 
-	static void GetById(string id, std::shared_ptr<Blockchain> blockchain,
-		std::function<void(std::shared_ptr<Asset>)> on_success, std::function<void(string)> on_error);
+	static void GetById(std::string id, std::shared_ptr<Blockchain> blockchain,
+		std::function<void(std::shared_ptr<Asset>)> on_success, std::function<void(std::string)> on_error);
 
 	static void GetAssets(std::shared_ptr<Blockchain> blockchain,
-		std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(string)> on_error);
+		std::function<void(std::vector<std::shared_ptr<Asset>>)> on_success, std::function<void(std::string)> on_error);
 
 private:
 	std::string HashId();

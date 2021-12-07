@@ -19,18 +19,18 @@ public:
 	int GetRequestsLeft();
 
 	static void ExecFreeOperation(std::string account_id, std::shared_ptr<Blockchain>blockchain,
-		std::function<void()> on_success, std::function<void(string)> on_error);
+		std::function<void()> on_success, std::function<void(std::string)> on_error);
 
 	static void GetByAccountRateLimit(std::string id, std::shared_ptr<Blockchain> blockchain,
-		std::function<void(std::shared_ptr<RateLimit>)> on_success, std::function<void(string)> on_error);
+		std::function<void(std::shared_ptr<RateLimit>)> on_success, std::function<void(std::string)> on_error);
 
 	static void GivePoints(std::string account_id, int points, std::shared_ptr<Blockchain> blockchain,
-		std::function<void()> on_success, std::function<void(string)> on_error);
+		std::function<void()> on_success, std::function<void(std::string)> on_error);
 
 	static void GetLastTimestamp(std::shared_ptr<Blockchain> blockchain, std::function<void(long)> on_success, std::function<void(std::string)> on_error);
 
 	static void GetPointsAvailable(int points, long last_operation, std::shared_ptr<Blockchain> blockchain,
-		std::function<void(int)> on_success, std::function<void(string)> on_error);
+		std::function<void(int)> on_success, std::function<void(std::string)> on_error);
 };
 } // namespace ft3
 } // namespace postchain

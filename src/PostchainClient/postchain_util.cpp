@@ -10,6 +10,11 @@
 #include <chrono>
 #include <thread>
 
+#ifdef CHROMIA_INSIDE_UNREAL_ENGINE
+#include "../../../ChromaUnreal/Utils.h"
+#else
+#include <iostream>
+#endif
 
 namespace chromia {
 namespace postchain {
@@ -495,8 +500,7 @@ bool PostchainUtil::StringsAreEqual(std::string a, std::string b)
 	return a.compare(b) == 0;
 }
 
-template <typename T>
-bool PostchainUtil::VectorsAreEqual(std::vector<T> a, std::vector<T> b)
+bool PostchainUtil::VectorsAreEqual(std::vector<byte> a, std::vector<byte> b)
 {
 	if (a.size() != b.size()) return false;
 	for (size_t i = 0; i < a.size(); i++)
@@ -506,8 +510,7 @@ bool PostchainUtil::VectorsAreEqual(std::vector<T> a, std::vector<T> b)
 	return true;
 }
 
-template <typename T>
-bool PostchainUtil::VectorsAreEqual(std::vector<std::vector<T>> a, std::vector<std::vector<T>> b)
+bool PostchainUtil::VectorsAreEqual(std::vector<std::vector<byte>> a, std::vector<std::vector<byte>> b)
 {
 	if (a.size() != b.size()) return false;
 	for (size_t i = 0; i < a.size(); i++)
@@ -516,6 +519,15 @@ bool PostchainUtil::VectorsAreEqual(std::vector<std::vector<T>> a, std::vector<s
 	}
 	return true;
 };
+
+void PostchainUtil::Log(std::string message)
+{
+#ifdef CHROMIA_INSIDE_UNREAL_ENGINE
+	UE_LOG(LogTemp, Display, TEXT("%s"), *ChromaUtils::STDStringToFString(message));
+#else
+	std::cout << message << "\n";
+#endif
+}
 
 }  // namespace postchain
 }  // namespace chromia

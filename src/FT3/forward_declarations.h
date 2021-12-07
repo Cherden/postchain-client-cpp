@@ -8,6 +8,9 @@ using namespace chromia;
 
 namespace chromia {
 namespace postchain {
+	
+struct QueryObject;
+
 namespace ft3 {
 
 enum AuthType;

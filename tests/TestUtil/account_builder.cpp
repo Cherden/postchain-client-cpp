@@ -1,5 +1,6 @@
 #include "account_builder.h"
 #include "../../src/PostchainClient/common.h"
+#include "../../src/PostchainClient/postchain_util.h"
 #include "../../src/FT3/User/account.h"
 #include "../../src/FT3/User/user.h"
 #include "../../src/FT3/Core/key_pair.h"
@@ -8,11 +9,12 @@
 #include "../../src/FT3/User/account.h"
 #include "../../src/FT3/User/asset_balance.h"
 #include "../../src/FT3/Core/Blockchain/blockchain.h"
-
+#include "../../src/FT3/User/AuthDescriptor/multi_signature_auth_descriptor.h"
+#include "../../src/FT3/User/AuthDescriptor/single_signature_auth_descriptor.h"
 
 void AccountBuilder::DefaultErrorHandler(std::string error)
 {
-	throw std::exception(error.c_str());
+	chromia::postchain::PostchainUtil::Log(error);
 }
 
 AccountBuilder::AccountBuilder(std::shared_ptr<Blockchain> blockchain, std::shared_ptr<User> user) :
@@ -109,7 +111,7 @@ void AccountBuilder::RegisterAccount(std::function<void(std::shared_ptr<Account>
 	);
 }
 
-void AccountBuilder::AddBalanceIfNeeded(std::shared_ptr<Account> account, std::function<void()> on_success, std::function<void(string)> on_error)
+void AccountBuilder::AddBalanceIfNeeded(std::shared_ptr<Account> account, std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
 	if (this->asset_ != nullptr && this->balance_ != -1)
 	{

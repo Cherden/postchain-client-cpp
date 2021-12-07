@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../PostchainClient/GTV/abstract_value.h"
+#include "../../PostchainClient/GTV/array_value.h"
 #include <vector>
 
 using namespace chromia::postchain::gtv;

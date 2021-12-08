@@ -7,8 +7,6 @@
 #include "../postchain_util.h"
 #include "../GTV/Merkle/Proof/merkle_proof.h"
 #include "../postchain_util.h"
-#include <iostream>
-
 
 namespace chromia {
 namespace postchain {
@@ -248,9 +246,6 @@ std::vector<byte> Gtx::Encode()
 
 	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(gtx_body);
 	std::vector<byte> encoded = gtx_value->Encode();
-
-	std::string gtx_str = gtx_value->ToString();
-	std::cout << "Gtx: " << gtx_str << "\n";
 
 	return encoded;
 }

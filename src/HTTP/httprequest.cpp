@@ -9,8 +9,7 @@
 #include "httprequest.h"
 #include "../PostchainClient/postchain_util.h"
 
-#include <string>      
-#include <iostream>   
+#include <string>       
 #include <sstream> 
 
 #include <curl/curl.h>
@@ -32,9 +31,6 @@ void HttpRequest::SendPostRequest(std::string url, std::string payload,
 	CURL *curl;
 	CURLcode res;
 	std::string read_buffer;
-
-	std::cout << "post url: " << url << "\n";
-	std::cout << "post payload: " << payload << "\n";
 
 	curl = curl_easy_init();
 	if (curl) {
@@ -60,15 +56,12 @@ void HttpRequest::SendPostRequest(std::string url, std::string payload,
 		error_callback(std::string("SendPostRequest failed"));
 	}
 
-	std::cout << "post response: " << read_buffer << "\n";
-
 	success_callback(read_buffer);
 }
 
 
 void HttpRequest::SendGetRequestSync(std::string url, std::string &content, std::string &error)
 {
-	std::cout << "get url: " << url << "\n";
 
 	CURL *curl;
 	CURLcode res;
@@ -97,7 +90,6 @@ void HttpRequest::SendGetRequestSync(std::string url, std::string &content, std:
 		error = "SendGetRequestSync failed";
 	}
 
-	std::cout << "get response: " << read_buffer << "\n";
 	content = read_buffer;
 }
 

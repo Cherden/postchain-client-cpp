@@ -289,21 +289,4 @@ bool TransferTest::TransferTestRun5()
 	if (asset_balance->amount_ != 190) return false;
 
 	return true;
-
-	/*yield return SetupBlockchain();
-	Asset asset = null;
-	yield return Asset.Register(TestUtil.GenerateAssetName(), TestUtil.GenerateId(), blockchain, (Asset _asset) = > asset = _asset, DefaultErrorHandler);
-	User user = TestUser.SingleSig();
-
-	AccountBuilder accountBuilder = AccountBuilder.CreateAccountBuilder(blockchain, user);
-	accountBuilder.WithParticipants(new List<KeyPair>() { user.KeyPair });
-	accountBuilder.WithBalance(asset, 200);
-	accountBuilder.WithPoints(1);
-	Account account = null;
-	yield return accountBuilder.Build((Account _account) = > account = _account);
-
-	yield return account.BurnTokens(asset.Id, 10, EmptyCallback, DefaultErrorHandler);
-	AssetBalance assetBalance = account.GetAssetById(asset.Id);
-
-	Assert.AreEqual(190, assetBalance.Amount);*/
 }

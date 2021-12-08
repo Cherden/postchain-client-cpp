@@ -388,8 +388,6 @@ void Account::BurnTokens(std::string asset_id, long amount, std::function<void()
 void Account::XcTransfer(std::string destination_chain_id, std::string destination_account_id, std::string asset_id, long amount,
 	std::function<void()> on_success, std::function<void(std::string)> on_error)
 {
-	std::shared_ptr<ft3::Operation> xc_op = this->XcTransferOp(destination_chain_id, destination_account_id, asset_id, amount);
-
 	this->session_->Call(this->XcTransferOp(
 		destination_chain_id, destination_account_id, asset_id, amount),
 		[this, on_success, on_error] () {
@@ -409,8 +407,8 @@ std::shared_ptr<ft3::Operation> Account::XcTransferOp(std::string destination_ch
 	source->Add(AbstractValueFactory::EmptyArray());
 
 	std::shared_ptr<ArrayValue> target = AbstractValueFactory::EmptyArray();
-	source->Add(AbstractValueFactory::Build(destination_account_id));
-	source->Add(AbstractValueFactory::EmptyArray());
+	target->Add(AbstractValueFactory::Build(destination_account_id));
+	target->Add(AbstractValueFactory::EmptyArray());
 
 	std::vector<std::string> hops = {destination_chain_id};
 

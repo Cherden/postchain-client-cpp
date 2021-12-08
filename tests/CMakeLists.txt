@@ -21,6 +21,7 @@ add_executable(
     FT3/blockchain_test.cpp
     FT3/rate_limit_test.cpp
     FT3/transfer_test.cpp
+    FT3/xc_transfer_test.cpp
     FT3/ft3_tests_main.cpp
 
     SSO/sso_test.cpp

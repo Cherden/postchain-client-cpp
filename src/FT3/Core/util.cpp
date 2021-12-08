@@ -34,11 +34,11 @@ std::string FT3Util::FlagTypeToString(FlagsType type)
 
 FlagsType FT3Util::StringToFlagType(std::string type)
 {
-	if (type.compare("A") == 0)
+	if (type.compare("A") == 0 || type.compare("s_A") == 0)
 	{
 		return FlagsType::eAccount;
 	}
-	if (type.compare("T") == 0)
+	if (type.compare("T") == 0 || type.compare("s_T") == 0)
 	{
 		return FlagsType::eTransfer;
 	}

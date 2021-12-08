@@ -20,10 +20,11 @@ add_executable(
     FT3/auth_descriptor_rule_test.cpp
     FT3/blockchain_test.cpp
     FT3/rate_limit_test.cpp
+    FT3/transfer_test.cpp
     FT3/ft3_tests_main.cpp
 
     SSO/sso_test.cpp
-    
+
     TestUtil/blockchain_util.cpp
     TestUtil/account_builder.cpp
     TestUtil/directory_service_util.cpp

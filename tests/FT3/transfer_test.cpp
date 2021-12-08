@@ -1,9 +1,12 @@
-#include "rate_limit_test.h"
+#include "transfer_test.h"
 #include "../../src/FT3/User/AuthDescriptor/auth_descriptor_rule.h"
+#include "../../src/FT3/User/AuthDescriptor/multi_signature_auth_descriptor.h"
 #include "../../src/FT3/User/asset.h"
+#include "../../src/FT3/User/asset_balance.h"
 #include "../../src/FT3/User/user.h"
 #include "../../src/FT3/User/account.h"
 #include "../../src/FT3/User/account_operations.h"
+#include "../../src/FT3/User/account_dev_operations.h"
 #include "../../src/FT3/Core/transaction_builder.h"
 #include "../../src/FT3/Core/transaction.h"
 #include "../../src/FT3/Core/Blockchain/blockchain_session.h"
@@ -17,13 +20,13 @@
 #include "../TestUtil/test_util.h"
 #include "../TestUtil/account_builder.h"
 
-void RateLimitTest::DefaultErrorHandler(std::string error)
+void TransferTest::DefaultErrorHandler(std::string error)
 {
 	chromia::postchain::PostchainUtil::Log(error);
 };
 
 
-void RateLimitTest::SetupBlockchain()
+void TransferTest::SetupBlockchain()
 {
 	std::function<void(std::shared_ptr<Blockchain>)> on_success = [&](std::shared_ptr<Blockchain> blockchain) {
 		this->blockchain_ = blockchain;
@@ -33,168 +36,274 @@ void RateLimitTest::SetupBlockchain()
 }
 
 
-void RateLimitTest::MakeRequests(std::shared_ptr<Account> account, int requests, std::function<void(std::string)> on_success)
+bool TransferTest::TransferTestRun1()
 {
+	SetupBlockchain();
+	if (blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	Asset::Register(
+		TestUtil::GenerateAssetName(),
+		TestUtil::GenerateId(),
+		blockchain_,
+		[&asset](std::shared_ptr<Asset> _asset) {asset = _asset; },
+		DefaultErrorHandler
+	);
+	if (asset == nullptr) return false;
+
+	std::shared_ptr<User> user = TestUser::SingleSig();
+
+	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
+	account_builder->WithParticipants({user->key_pair_});
+	account_builder->WithBalance(asset, 200);
+	account_builder->WithPoints(1);
+
+	std::shared_ptr<Account> account1 = nullptr;
+	account_builder->Build([&account1](std::shared_ptr<Account> _account) {account1 = _account; });
+	if (account1 == nullptr) return false;
+
+	std::shared_ptr<AccountBuilder> account_builder_2 = AccountBuilder::CreateAccountBuilder(blockchain_);
+	std::shared_ptr<Account> account2 = nullptr;
+	account_builder_2->Build([&account2](std::shared_ptr<Account> _account) {account2 = _account; });
+	if (account2 == nullptr) return false;
+
+	account1->Transfer(account2->id_, asset->id_, 10, EmptyCallback, DefaultErrorHandler);
+	
+	std::shared_ptr<AssetBalance> asset_balance_1 = nullptr;
+	AssetBalance::GetByAccountAndAssetId(
+		account1->id_,
+		asset->id_,
+		blockchain_,
+		[&asset_balance_1](std::shared_ptr<AssetBalance> _balance) { asset_balance_1 = _balance; },
+		DefaultErrorHandler
+	);
+
+	std::shared_ptr<AssetBalance> asset_balance_2 = nullptr;
+	AssetBalance::GetByAccountAndAssetId(
+		account2->id_,
+		asset->id_,
+		blockchain_,
+		[&asset_balance_2](std::shared_ptr<AssetBalance> _balance) { asset_balance_2 = _balance; },
+		DefaultErrorHandler
+	);
+
+	if (asset_balance_1->amount_ != 190) return false;
+	if (asset_balance_2->amount_ != 10) return false;
+
+	return true;
+}
+
+
+bool TransferTest::TransferTestRun2()
+{
+	SetupBlockchain();
+	if (blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	Asset::Register(
+		TestUtil::GenerateAssetName(),
+		TestUtil::GenerateId(),
+		blockchain_,
+		[&asset](std::shared_ptr<Asset> _asset) {asset = _asset; },
+		DefaultErrorHandler
+	);
+	if (asset == nullptr) return false;
+
+	std::shared_ptr<User> user = TestUser::SingleSig();
+
+	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
+	account_builder->WithParticipants({ user->key_pair_ });
+	account_builder->WithBalance(asset, 5);
+
+	std::shared_ptr<Account> account1 = nullptr;
+	account_builder->Build([&account1](std::shared_ptr<Account> _account) {account1 = _account; });
+	if (account1 == nullptr) return false;
+
+	std::shared_ptr<AccountBuilder> account_builder_2 = AccountBuilder::CreateAccountBuilder(blockchain_);
+	std::shared_ptr<Account> account2 = nullptr;
+	account_builder_2->Build([&account2](std::shared_ptr<Account> _account) {account2 = _account; });
+	if (account2 == nullptr) return false;
+
+	bool successfully = false;
+	account1->Transfer(account2->id_, asset->id_, 10, [&successfully]() { successfully = true; }, DefaultErrorHandler);
+
+	if (successfully) return false;
+
+	return true;
+}
+
+
+bool TransferTest::TransferTestRun3()
+{
+	SetupBlockchain();
+	if (blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	Asset::Register(
+		TestUtil::GenerateAssetName(),
+		TestUtil::GenerateId(),
+		blockchain_,
+		[&asset](std::shared_ptr<Asset> _asset) {asset = _asset; },
+		DefaultErrorHandler
+	);
+	if (asset == nullptr) return false;
+
+	std::shared_ptr<User> user = TestUser::SingleSig();
+
+	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
+	account_builder->WithAuthFlags({ FlagsType::eAccount });
+	account_builder->WithParticipants({ user->key_pair_ });
+	account_builder->WithBalance(asset, 200);
+	account_builder->WithPoints(1);
+
+	std::shared_ptr<Account> account1 = nullptr;
+	account_builder->Build([&account1](std::shared_ptr<Account> _account) {account1 = _account; });
+	if (account1 == nullptr) return false;
+
+	std::shared_ptr<AccountBuilder> account_builder_2 = AccountBuilder::CreateAccountBuilder(blockchain_);
+	std::shared_ptr<Account> account2 = nullptr;
+	account_builder_2->Build([&account2](std::shared_ptr<Account> _account) {account2 = _account; });
+	if (account2 == nullptr) return false;
+
+	bool successfully = false;
+	account1->Transfer(account2->id_, asset->id_, 10, [&successfully]() { successfully = true; }, DefaultErrorHandler);
+
+	if (successfully) return false;
+
+	return true;
+}
+
+
+bool TransferTest::TransferTestRun4()
+{
+	SetupBlockchain();
+	if (blockchain_ == nullptr)
+	{
+		return false;
+	}
+
+	std::shared_ptr<Asset> asset = nullptr;
+	Asset::Register(
+		TestUtil::GenerateAssetName(),
+		TestUtil::GenerateId(),
+		blockchain_,
+		[&asset](std::shared_ptr<Asset> _asset) {asset = _asset; },
+		DefaultErrorHandler
+	);
+	if (asset == nullptr) return false;
+
+	std::shared_ptr<User> user1 = TestUser::SingleSig();
+	std::shared_ptr<User> user2 = TestUser::SingleSig();
+	std::shared_ptr<User> user3 = TestUser::SingleSig();
+
+	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user1);
+	account_builder->WithParticipants({ user1->key_pair_ });
+	account_builder->WithBalance(asset, 200);
+	account_builder->WithPoints(0);
+
+	std::shared_ptr<Account> account1 = nullptr;
+	account_builder->Build([&account1](std::shared_ptr<Account> _account) {account1 = _account; });
+	if (account1 == nullptr) return false;
+
+	std::shared_ptr<AuthDescriptor> multisig = std::make_shared<MultiSignatureAuthDescriptor>(
+		std::vector<std::vector<byte>> {user2->key_pair_->pub_key_, user3->key_pair_->pub_key_},
+		2,
+		std::vector<FlagsType> { FlagsType::eAccount, FlagsType::eTransfer }
+	);
+
 	auto tx_builder = blockchain_->NewTransactionBuilder();
-	std::vector<std::vector<byte>> signers;
-	std::vector<std::shared_ptr<User>> users;
+	tx_builder->Add(AccountDevOperations::Register(multisig));
+	auto tx = tx_builder->Build(multisig->Signers(), DefaultErrorHandler);
+	tx->Sign(user2->key_pair_);
+	tx->Sign(user3->key_pair_);
+	tx->PostAndWait([] (std::string content) {});
 
-	for (auto &sig : account->session_->user_->auth_descriptor_->Signers())
-	{
-		signers.push_back(sig);
-	}
+	account1->Transfer(multisig->ID(), asset->id_, 10, EmptyCallback, DefaultErrorHandler);
 
-	for (int i = 0; i < requests; i++)
-	{
-		std::shared_ptr<User> user = TestUser::SingleSig();
-		for (auto &sig : user->auth_descriptor_->Signers())
-		{
-			signers.push_back(sig);
-		}
-		users.push_back(user);
-		tx_builder->Add(AccountOperations::AddAuthDescriptor(account->id_, account->session_->user_->auth_descriptor_->ID(), user->auth_descriptor_));
-	}
+	std::shared_ptr<AssetBalance> asset_balance_1 = nullptr;
+	AssetBalance::GetByAccountAndAssetId(
+		account1->id_,
+		asset->id_,
+		blockchain_,
+		[&asset_balance_1](std::shared_ptr<AssetBalance> _balance) { asset_balance_1 = _balance; },
+		DefaultErrorHandler
+	);
 
-	std::shared_ptr<Transaction> tx = tx_builder->Build(signers, DefaultErrorHandler);
-	tx->Sign(account->session_->user_->key_pair_);
+	std::shared_ptr<AssetBalance> asset_balance_2 = nullptr;
+	AssetBalance::GetByAccountAndAssetId(
+		multisig->ID(),
+		asset->id_,
+		blockchain_,
+		[&asset_balance_2](std::shared_ptr<AssetBalance> _balance) { asset_balance_2 = _balance; },
+		DefaultErrorHandler
+	);
 
-	for (auto &user : users)
-	{
-		tx->Sign(user->key_pair_);
-	}
-
-	tx->PostAndWait(on_success);
-}
-
-
-bool RateLimitTest::RateLimitTestRun1()
-{
-	SetupBlockchain();
-	if (this->blockchain_ == nullptr)
-	{
-		return false;
-	}
-
-	std::shared_ptr<BlockchainInfo> info = nullptr;
-	BlockchainInfo::GetInfo(blockchain_->connection_, [&info](std::shared_ptr<BlockchainInfo> _info) { info = _info; }, DefaultErrorHandler);
-
-	if (info->rate_limit_info_.max_points_ != REQUEST_MAX_COUNT) return false;
-
-	if (info->rate_limit_info_.recovery_time_ != RECOVERY_TIME) return false;
+	if (asset_balance_1->amount_ != 190) return false;
+	if (asset_balance_2->amount_ != 10) return false;
 
 	return true;
 }
 
 
-bool RateLimitTest::RateLimitTestRun2()
+bool TransferTest::TransferTestRun5()
 {
 	SetupBlockchain();
-	if (this->blockchain_ == nullptr)
+	if (blockchain_ == nullptr)
 	{
 		return false;
 	}
 
-	std::shared_ptr<User> user = TestUser::SingleSig();
-
-	auto tx_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
-	tx_builder->WithParticipants({ user->key_pair_ });
-
-	std::shared_ptr<Account> account = nullptr;
-	tx_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; });
-
-	account->Sync(EmptyCallback, DefaultErrorHandler);
-	if (account->rate_limit_->points_ != 1) return false;
-
-	return true;
-}
-
-
-bool RateLimitTest::RateLimitTestRun3()
-{
-	SetupBlockchain();
-	if (this->blockchain_ == nullptr)
-	{
-		return false;
-	}
+	std::shared_ptr<Asset> asset = nullptr;
+	Asset::Register(
+		TestUtil::GenerateAssetName(),
+		TestUtil::GenerateId(),
+		blockchain_,
+		[&asset](std::shared_ptr<Asset> _asset) {asset = _asset; },
+		DefaultErrorHandler
+	);
+	if (asset == nullptr) return false;
 
 	std::shared_ptr<User> user = TestUser::SingleSig();
 
-	auto tx_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
-	tx_builder->WithParticipants({ user->key_pair_ });
+	std::shared_ptr<AccountBuilder> account_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
+	account_builder->WithParticipants({ user->key_pair_ });
+	account_builder->WithBalance(asset, 200);
+	account_builder->WithPoints(1);
 
 	std::shared_ptr<Account> account = nullptr;
-	tx_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; });
+	account_builder->Build([&account](std::shared_ptr<Account> _account) {account = _account; });
 	if (account == nullptr) return false;
 
-	PostchainUtil::SleepForMillis(20 * 1000); // wait for 20 seconds
+	account->BurnTokens(asset->id_, 10, EmptyCallback, DefaultErrorHandler);
+	std::shared_ptr<AssetBalance> asset_balance = account->GetAssetById(asset->id_);
 
-	RateLimit::ExecFreeOperation(account->GetID(), blockchain_, EmptyCallback, DefaultErrorHandler); // used to make one block
-	RateLimit::ExecFreeOperation(account->GetID(), blockchain_, EmptyCallback, DefaultErrorHandler); // used to calculate the last block's timestamp (previous block).
-
-	// check the balance
-	account->Sync(EmptyCallback, DefaultErrorHandler);
-	if (account->rate_limit_->points_ != POINTS_AT_ACCOUNT_CREATION + 4) return false;  // 20 seconds / 5s recovery time
+	if (asset_balance->amount_ != 190) return false;
 
 	return true;
-}
 
+	/*yield return SetupBlockchain();
+	Asset asset = null;
+	yield return Asset.Register(TestUtil.GenerateAssetName(), TestUtil.GenerateId(), blockchain, (Asset _asset) = > asset = _asset, DefaultErrorHandler);
+	User user = TestUser.SingleSig();
 
-bool RateLimitTest::RateLimitTestRun4()
-{
-	SetupBlockchain();
-	if (this->blockchain_ == nullptr)
-	{
-		return false;
-	}
+	AccountBuilder accountBuilder = AccountBuilder.CreateAccountBuilder(blockchain, user);
+	accountBuilder.WithParticipants(new List<KeyPair>() { user.KeyPair });
+	accountBuilder.WithBalance(asset, 200);
+	accountBuilder.WithPoints(1);
+	Account account = null;
+	yield return accountBuilder.Build((Account _account) = > account = _account);
 
-	std::shared_ptr<User> user = TestUser::SingleSig();
+	yield return account.BurnTokens(asset.Id, 10, EmptyCallback, DefaultErrorHandler);
+	AssetBalance assetBalance = account.GetAssetById(asset.Id);
 
-	auto builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
-	builder->WithParticipants({ user->key_pair_ });
-	builder->WithPoints(4);
-
-	std::shared_ptr<Account> account = nullptr;
-	builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; });
-	if (account == nullptr) return false;
-
-	bool successful = false;
-	MakeRequests(account, 4 + POINTS_AT_ACCOUNT_CREATION, [&successful](std::string content) {successful = true; });
-	if (!successful) return false;
-
-	account->Sync(EmptyCallback, DefaultErrorHandler);
-	if (account->rate_limit_->points_ != 0) return false;
-
-	return true;
-}
-
-
-bool RateLimitTest::RateLimitTestRun5()
-{
-	SetupBlockchain();
-	if (this->blockchain_ == nullptr)
-	{
-		return false;
-	}
-
-	std::shared_ptr<User> user = TestUser::SingleSig();
-
-	auto tx_builder = AccountBuilder::CreateAccountBuilder(blockchain_, user);
-	tx_builder->WithParticipants({ user->key_pair_ });
-	tx_builder->WithPoints(4);
-
-	std::shared_ptr<Account> account = nullptr;
-	tx_builder->Build([&account](std::shared_ptr<Account> _account) { account = _account; });
-	if (account == nullptr) return false;
-
-	bool successful = false;
-	MakeRequests(account, 4 + POINTS_AT_ACCOUNT_CREATION, [&successful](std::string content) {successful = true; });
-	if (!successful) return false;
-
-	account->Sync(EmptyCallback, DefaultErrorHandler);
-
-	successful = false;
-	MakeRequests(account, 8, [&successful](std::string content) { successful = true; });
-	if (successful) return false;
-
-	return true;
+	Assert.AreEqual(190, assetBalance.Amount);*/
 }

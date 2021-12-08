@@ -207,6 +207,9 @@ bool AccountTest::AccountTest6()
 	}, DefaultErrorHandler);
 	if (account == nullptr) return false;
 
+	std::string acc_id = account->id_;
+	std::string auth_id = account->auth_descriptors_[0]->ID();
+
 	auto auth_descriptor = std::make_shared<SingleSignatureAuthDescriptor>(
 		user1->key_pair_->pub_key_,
 		std::vector<FlagsType>{ FlagsType::eTransfer });

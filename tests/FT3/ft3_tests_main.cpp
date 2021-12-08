@@ -8,6 +8,7 @@
 #include "../../tests/FT3/auth_descriptor_rule_test.h"
 #include "../../tests/FT3/blockchain_test.h"
 #include "../../tests/FT3/rate_limit_test.h"
+#include "../../tests/FT3/transfer_test.h"
 
 #include "../../tests/SSO/sso_test.h"
 #include "../../src/SSO/sso.h"
@@ -39,6 +40,7 @@ public:
 	static AssetTest asset_test;
 	static AssetBalanceTest asset_balance_test;
 	static AccountTest account_test;
+	static TransferTest transfer_test;
 
 };
 
@@ -49,6 +51,7 @@ AuthDescriptorRuleTest FT3TestsMainWrapper::auth_descriptor_rule_test;
 AssetTest FT3TestsMainWrapper::asset_test;
 AssetBalanceTest FT3TestsMainWrapper::asset_balance_test;
 AccountTest FT3TestsMainWrapper::account_test;
+TransferTest FT3TestsMainWrapper::transfer_test;
 
 // -----------------------------------------------------------------------------------------------
 //
@@ -276,10 +279,10 @@ AccountTest FT3TestsMainWrapper::account_test;
 //	ASSERT_TRUE(FT3TestsMainWrapper::account_test.AccountTest5());
 //}
 
-TEST(Account, AccountTest6)
-{
-	ASSERT_TRUE(FT3TestsMainWrapper::account_test.AccountTest6());
-}
+//TEST(Account, AccountTest6)
+//{
+//	ASSERT_TRUE(FT3TestsMainWrapper::account_test.AccountTest6());
+//}
 //
 //TEST(Account, AccountTest7)
 //{
@@ -347,3 +350,29 @@ TEST(Account, AccountTest6)
 //{
 //	ASSERT_TRUE(FT3TestsMainWrapper::rate_limit_test.RateLimitTestRun5());
 //}
+// -----------------------------------------------------------------------------------------------
+
+TEST(TransferTest, TransferTestRun1)
+{
+	ASSERT_TRUE(FT3TestsMainWrapper::transfer_test.TransferTestRun1());
+}
+
+TEST(TransferTest, TransferTestRun2)
+{
+	ASSERT_TRUE(FT3TestsMainWrapper::transfer_test.TransferTestRun2());
+}
+
+TEST(TransferTest, TransferTestRun3)
+{
+	ASSERT_TRUE(FT3TestsMainWrapper::transfer_test.TransferTestRun3());
+}
+
+TEST(TransferTest, TransferTestRun4)
+{
+	ASSERT_TRUE(FT3TestsMainWrapper::transfer_test.TransferTestRun4());
+}
+
+TEST(TransferTest, TransferTestRun5)
+{
+	ASSERT_TRUE(FT3TestsMainWrapper::transfer_test.TransferTestRun5());
+}

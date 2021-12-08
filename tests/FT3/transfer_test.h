@@ -9,12 +9,9 @@ using namespace chromia;
 using namespace chromia::postchain;
 using namespace chromia::postchain::ft3;
 
-class RateLimitTest
+class TransferTest
 {
 private:
-	const int REQUEST_MAX_COUNT = 10;
-	const int RECOVERY_TIME = 5000;
-	const int POINTS_AT_ACCOUNT_CREATION = 1;
 	std::shared_ptr<Blockchain> blockchain_ = nullptr;
 
 	void SetupBlockchain();
@@ -25,21 +22,18 @@ private:
 
 public:
 
-	void MakeRequests(std::shared_ptr<Account> account, int requests, std::function<void(std::string)> on_success);
+	// should succeed when balance is higher than amount to transfer
+	bool TransferTestRun1();
 
-	// Should have a limit of 10 requests per minute
-	bool RateLimitTestRun1();
+	// should fail when balance is lower than amount to transfer
+	bool TransferTestRun2();
 
-	// should show 10 at request count
-	bool RateLimitTestRun2();
+	// should fail if auth descriptor doesn't have transfer rights
+	bool TransferTestRun3();
 
-	// waits 20 seconds and gets 4 points
-	bool RateLimitTestRun3();
+	// should succeed if transferring tokens to a multisig account
+	bool TransferTestRun4();
 
-	// can make 4 operations
-	bool RateLimitTestRun4();
-
-	// can't make another operation because she has 0 points
-	bool RateLimitTestRun5();
-
+	// should succeed burning tokens
+	bool TransferTestRun5();
 };

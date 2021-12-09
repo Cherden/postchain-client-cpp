@@ -13,6 +13,9 @@ add_executable(
     ASN1/writer_test.cpp
     ASN1/reader_test.cpp
     GTV/value_test.cpp
+    
+    GTX/operation_test.cpp
+    GTX/signers_test.cpp
 
     FT3/account_test.cpp
     FT3/asset_balance_test.cpp

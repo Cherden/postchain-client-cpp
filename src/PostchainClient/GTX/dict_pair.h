@@ -2,6 +2,7 @@
 #define POSTCHAIN_CLIENT_GTX_DICT_PAIR_H_
 
 #include <string>
+#include <memory>
 #include "../ASN1/reader.h"
 
 using namespace chromia::postchain::asn1;

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "../ASN1/reader.h"
 #include "../ASN1/tag.h"
 

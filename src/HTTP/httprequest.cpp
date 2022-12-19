@@ -12,7 +12,11 @@
 #include <string>       
 #include <sstream> 
 
+#ifdef CHROMIA_INSIDE_UNREAL_ENGINE
+#include <Curl/curl.h>
+#else
 #include <curl/curl.h>
+#endif // CHROMIA_INSIDE_UNREAL_ENGINE
 
 namespace chromia {
 namespace postchain {

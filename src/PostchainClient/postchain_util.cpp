@@ -1,7 +1,6 @@
 #include "postchain_util.h"
 #include "query.h"
 #include "GTX/gtx.h"
-#include <openssl/evp.h>
 #include <algorithm>
 #include <iomanip>
 #include <ios>
@@ -12,9 +11,28 @@
 
 #ifdef CHROMIA_INSIDE_UNREAL_ENGINE
 #include "../../../ChromaUnreal/Utils.h"
+
+#if PLATFORM_WINDOWS
+#include "Windows/AllowWindowsPlatformTypes.h"
+#endif
+
+#define UI UI_ST
+THIRD_PARTY_INCLUDES_START
+#if PLATFORM_WINDOWS
+#include <OpenSSL/evp.h>
+#elif PLATFORM_MAC
+#elif PLATFORM_LINUX
+#endif
+THIRD_PARTY_INCLUDES_END
+#undef UI
+
+#if PLATFORM_WINDOWS
+#include "Windows/HideWindowsPlatformTypes.h"
+#endif
+
 #else
 #include <iostream>
-#endif
+#endif // CHROMIA_INSIDE_UNREAL_ENGINE
 
 namespace chromia {
 namespace postchain {
@@ -209,6 +227,16 @@ std::string PostchainUtil::Sha256(std::vector<unsigned char> buffer) {
     EVP_MD_CTX_free(context);
 
     return hashed_buffer;
+
+	//uint8_t* uint8_buffer[64];
+	//size_t   bu
+	//SHA256 sha;
+	//sha.update(&buffer[0], buffer.size());
+	//uint8_t* digest = sha.digest();
+
+	//std::cout <<  << std::endl;
+
+	//return SHA256::toString(digest);
 }
 
 

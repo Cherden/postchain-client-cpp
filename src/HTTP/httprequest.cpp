@@ -60,7 +60,14 @@ void HttpRequest::SendPostRequest(std::string url, std::string payload,
 		error_callback(std::string("SendPostRequest failed"));
 	}
 
-	success_callback(read_buffer);
+	if (read_buffer.size() == 0)
+	{
+		error_callback(std::string("SendPostRequest failed"));
+	}
+	else 
+	{
+		success_callback(read_buffer);
+	}
 }
 
 

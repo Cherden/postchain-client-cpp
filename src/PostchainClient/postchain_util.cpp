@@ -10,7 +10,7 @@
 #include <thread>
 
 #ifdef CHROMIA_INSIDE_UNREAL_ENGINE
-#include "../../../ChromaUnreal/Utils.h"
+#include "../../../ChromaUnreal/ChromaUtils.h"
 
 #if PLATFORM_WINDOWS
 #include "Windows/AllowWindowsPlatformTypes.h"

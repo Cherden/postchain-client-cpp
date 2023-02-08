@@ -14,6 +14,8 @@ class OctetStringValue : public AbstractValue {
     explicit OctetStringValue(std::vector<unsigned char> value)
         : value_(value){};
 
+    virtual ~OctetStringValue() {};
+
 	std::vector<unsigned char> GetValue() { return value_; }
 
   protected:

@@ -13,6 +13,8 @@ class UTF8StringValue : public AbstractValue {
   public:
     explicit UTF8StringValue(std::string value) : value_(value) {}
 
+    virtual ~UTF8StringValue() {};
+
 	std::string GetValue() { return value_; };
 
   protected:

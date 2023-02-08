@@ -23,9 +23,9 @@ class PostchainUtil {
     static long long ByteVectorToLong(std::vector<unsigned char> bytes,
                                       bool mind_sign = false);
 
-	static std::vector<byte> GetByteList(long long integer);
+	static std::vector<BYTE> GetByteList(long long integer);
 
-	static std::vector<byte> IntegerToBytes(long long integer, bool as_length = false);
+	static std::vector<BYTE> IntegerToBytes(long long integer, bool as_length = false);
 
 
 	/**
@@ -41,7 +41,7 @@ class PostchainUtil {
 
     static std::string Sha256(std::vector<unsigned char> buffer);
 
-	static std::vector<byte> IntegerToBinary(int x);
+	static std::vector<BYTE> IntegerToBinary(int x);
 
     static bool IsLittleEndian();
 
@@ -133,13 +133,13 @@ class PostchainUtil {
 
 	static void SleepForMillis(long long millis);
 
-	static std::shared_ptr<client::Gtx> DeserializeGTX(std::vector<byte> encoded_message);
+	static std::shared_ptr<client::Gtx> DeserializeGTX(std::vector<BYTE> encoded_message);
 
 	static bool StringsAreEqual(std::string a, std::string b);
 
-	static bool VectorsAreEqual(std::vector<byte> a, std::vector<byte> b);
+	static bool VectorsAreEqual(std::vector<BYTE> a, std::vector<BYTE> b);
 
-	static bool VectorsAreEqual(std::vector<std::vector<byte>> a, std::vector<std::vector<byte>> b);
+	static bool VectorsAreEqual(std::vector<std::vector<BYTE>> a, std::vector<std::vector<BYTE>> b);
 
 	static void Log(std::string message);
 

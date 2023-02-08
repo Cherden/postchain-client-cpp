@@ -80,7 +80,7 @@ void AssetBalance::GiveBalance(std::string account_id, std::string asset_id, int
 	tx_builder->Add(ft3::Operation::Op("ft3.dev_give_balance", op_args));
 	tx_builder->Add(AccountOperations::Nop());
 
-	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
+	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<BYTE>>(), on_error);
 
 	std::function<void(std::string)> on_success_wrapper = [on_success](std::string) {
 		on_success();

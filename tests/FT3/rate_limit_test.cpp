@@ -36,7 +36,7 @@ void RateLimitTest::SetupBlockchain()
 void RateLimitTest::MakeRequests(std::shared_ptr<Account> account, int requests, std::function<void(std::string)> on_success)
 {
 	auto tx_builder = blockchain_->NewTransactionBuilder();
-	std::vector<std::vector<byte>> signers;
+	std::vector<std::vector<BYTE>> signers;
 	std::vector<std::shared_ptr<User>> users;
 
 	for (auto &sig : account->session_->user_->auth_descriptor_->Signers())

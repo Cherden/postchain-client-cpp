@@ -23,8 +23,8 @@ using namespace chromia::postchain::client;
 
 TEST(GTX, EmptyOperationTest) 
 {
-	std::vector<byte> pub_key;
-	std::vector<byte> priv_key;
+	std::vector<BYTE> pub_key;
+	std::vector<BYTE> priv_key;
 	PostchainUtil::GenerateKeyPair(priv_key, pub_key);
 
 	auto gtx = std::make_shared<Gtx>("abcdef1234567890abcdef1234567890");
@@ -44,8 +44,8 @@ TEST(GTX, EmptyOperationTest)
 
 TEST(GTX, SimpleOperationTest)
 {
-	std::vector<byte> pub_key;
-	std::vector<byte> priv_key;
+	std::vector<BYTE> pub_key;
+	std::vector<BYTE> priv_key;
 	PostchainUtil::GenerateKeyPair(priv_key, pub_key);
 
 	auto gtx = std::make_shared<Gtx>("abcdef1234567890abcdef1234567890");
@@ -67,12 +67,12 @@ TEST(GTX, SimpleOperationTest)
 
 TEST(GTX, MultiSigOperationTest)
 {
-	std::vector<byte> pub_key_1;
-	std::vector<byte> priv_key_1;
+	std::vector<BYTE> pub_key_1;
+	std::vector<BYTE> priv_key_1;
 	PostchainUtil::GenerateKeyPair(priv_key_1, pub_key_1);
 
-	std::vector<byte> pub_key_2;
-	std::vector<byte> priv_key_2;
+	std::vector<BYTE> pub_key_2;
+	std::vector<BYTE> priv_key_2;
 	PostchainUtil::GenerateKeyPair(priv_key_2, pub_key_2);
 
 	auto gtx = std::make_shared<Gtx>("abcdef1234567890abcdef1234567890");
@@ -96,8 +96,8 @@ TEST(GTX, MultiSigOperationTest)
 
 TEST(GTX, FullOperationTest)
 {
-	std::vector<byte> priv_key;
-	std::vector<byte> pub_key;
+	std::vector<BYTE> priv_key;
+	std::vector<BYTE> pub_key;
 	PostchainUtil::GenerateKeyPair(priv_key, pub_key);
 
 	auto gtx = std::make_shared<Gtx>("abcdef1234567890abcdef1234567890");
@@ -105,7 +105,7 @@ TEST(GTX, FullOperationTest)
 	auto args = AbstractValueFactory::EmptyArray();
 	args->Add(AbstractValueFactory::Build("teststring"));
 	args->Add(AbstractValueFactory::Build(123));
-	args->Add(AbstractValueFactory::Build(std::vector<byte> {0xaf, 0xfe}));
+	args->Add(AbstractValueFactory::Build(std::vector<BYTE> {0xaf, 0xfe}));
 	gtx->AddOperationToGtx("test", args);
 	gtx->AddSignerToGtx(pub_key);
 	gtx->Sign(priv_key, pub_key);
@@ -121,8 +121,8 @@ TEST(GTX, FullOperationTest)
 
 TEST(GTX, LengthEdgeCaseOperationTest)
 {
-	std::vector<byte> priv_key;
-	std::vector<byte> pub_key;
+	std::vector<BYTE> priv_key;
+	std::vector<BYTE> pub_key;
 	PostchainUtil::GenerateKeyPair(priv_key, pub_key);
 
 	auto gtx = std::make_shared<Gtx>("abcdef1234567890abcdef1234567890");
@@ -130,7 +130,7 @@ TEST(GTX, LengthEdgeCaseOperationTest)
 	auto args = AbstractValueFactory::EmptyArray();
 	args->Add(AbstractValueFactory::Build("teststring"));
 	args->Add(AbstractValueFactory::Build(123));
-	args->Add(AbstractValueFactory::Build(std::vector<byte> {0xaf, 0xfe}));
+	args->Add(AbstractValueFactory::Build(std::vector<BYTE> {0xaf, 0xfe}));
 	args->Add(AbstractValueFactory::Build(std::vector<std::string> {"hello", "world"}));
 	gtx->AddOperationToGtx("test", args);
 	gtx->AddSignerToGtx(pub_key);

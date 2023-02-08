@@ -107,7 +107,7 @@ std::shared_ptr<AbstractValue> Gtx::GtxValueToAbstract(std::shared_ptr<GTXValue>
 }
 
 
-void Gtx::AddSignerToGtx(std::vector<byte> signer)
+void Gtx::AddSignerToGtx(std::vector<BYTE> signer)
 {
 	if (this->signatures_.size() != 0)
 	{
@@ -130,21 +130,21 @@ Gtx* Gtx::AddOperationToGtx(std::string op_name, std::shared_ptr<ArrayValue> arg
 }
 
 
-void Gtx::Sign(std::vector<byte> private_key, std::vector<byte> public_key)
+void Gtx::Sign(std::vector<BYTE> private_key, std::vector<BYTE> public_key)
 {
 	std::string private_key_str = PostchainUtil::ByteVectorToHexString(private_key);
 	std::string public_key_str = PostchainUtil::ByteVectorToHexString(public_key);
-	std::vector<byte> buffer_to_sign = this->GetBufferToSign();
-	std::vector<byte> signature = PostchainUtil::Sign(buffer_to_sign, private_key);
+	std::vector<BYTE> buffer_to_sign = this->GetBufferToSign();
+	std::vector<BYTE> signature = PostchainUtil::Sign(buffer_to_sign, private_key);
 	this->AddSignature(public_key, signature);
 }
 
 
-std::vector<byte> Gtx::GetBufferToSign()
+std::vector<BYTE> Gtx::GetBufferToSign()
 {
-	std::vector<std::vector<byte>> old_signatures = this->signatures_;
+	std::vector<std::vector<BYTE>> old_signatures = this->signatures_;
 	std::shared_ptr<AbstractValue> body = GetGtvTxBody();
-	std::vector<byte> encoded_buffer = AbstractValue::Hash(body);
+	std::vector<BYTE> encoded_buffer = AbstractValue::Hash(body);
 	this->signatures_ = old_signatures;
 	return encoded_buffer;
 }
@@ -155,7 +155,7 @@ std::shared_ptr<AbstractValue> Gtx::GetGtvTxBody()
 	std::shared_ptr<ArrayValue> body = AbstractValueFactory::EmptyArray();
 
 	// Add blockchain RID
-	std::vector<byte> rid_as_byte = PostchainUtil::HexStringToByteVector(this->blockchain_rid_);
+	std::vector<BYTE> rid_as_byte = PostchainUtil::HexStringToByteVector(this->blockchain_rid_);
 	body->Add(AbstractValueFactory::Build(rid_as_byte)); // First Branch
 
 	// Add opearations with arguments
@@ -178,7 +178,7 @@ std::shared_ptr<AbstractValue> Gtx::GetGtvTxBody()
 }
 
 
-int Gtx::GetSignerIndex(std::vector<byte> &public_key)
+int Gtx::GetSignerIndex(std::vector<BYTE> &public_key)
 {
 	int index = -1;
 
@@ -203,13 +203,13 @@ int Gtx::GetSignerIndex(std::vector<byte> &public_key)
 	return -1;
 }
 
-void Gtx::AddSignature(std::vector<byte> public_key, std::vector<byte> signature)
+void Gtx::AddSignature(std::vector<BYTE> public_key, std::vector<BYTE> signature)
 {
 	if (this->signatures_.size() == 0)
 	{
 		for(auto &signer : this->signers_)
 		{
-			this->signatures_.push_back(std::vector<byte>());
+			this->signatures_.push_back(std::vector<BYTE>());
 		}
 	}
 
@@ -225,12 +225,12 @@ void Gtx::AddSignature(std::vector<byte> public_key, std::vector<byte> signature
 
 std::string Gtx::Serialize()
 {
-	std::vector<byte> byte_encoded = Encode();
+	std::vector<BYTE> byte_encoded = Encode();
 	std::string str_encoded = PostchainUtil::ByteVectorToHexString(byte_encoded);
 	return str_encoded;
 }
 
-std::vector<byte> Gtx::Encode()
+std::vector<BYTE> Gtx::Encode()
 {
 	auto abs_signatures = AbstractValueFactory::EmptyArray();
 	for (auto & sig : this->signatures_)
@@ -245,13 +245,13 @@ std::vector<byte> Gtx::Encode()
 	gtx_body->Add(abs_signatures);
 
 	std::shared_ptr<GTXValue> gtx_value = Gtx::ArgToGTXValue(gtx_body);
-	std::vector<byte> encoded = gtx_value->Encode();
+	std::vector<BYTE> encoded = gtx_value->Encode();
 
 	return encoded;
 }
 
 
-std::shared_ptr<Gtx> Gtx::Decode(std::vector<byte> encoded_message)
+std::shared_ptr<Gtx> Gtx::Decode(std::vector<BYTE> encoded_message)
 {
 	auto gtx = std::make_shared<Gtx>();
 

@@ -30,7 +30,7 @@ void AuthDescriptorRuleTest::SetupBlockchain()
 
 void AuthDescriptorRuleTest::AddAuthDescriptorTo(std::shared_ptr<Account> account, std::shared_ptr<User> admin_user, std::shared_ptr<User> user, std::function<void()> on_success)
 {
-	vector<vector<byte>> signers;
+	vector<vector<BYTE>> signers;
 	for (auto &signer : admin_user->auth_descriptor_->Signers())
 	{
 		signers.push_back(signer);

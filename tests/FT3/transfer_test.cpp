@@ -215,7 +215,7 @@ bool TransferTest::TransferTestRun4()
 	if (account1 == nullptr) return false;
 
 	std::shared_ptr<AuthDescriptor> multisig = std::make_shared<MultiSignatureAuthDescriptor>(
-		std::vector<std::vector<byte>> {user2->key_pair_->pub_key_, user3->key_pair_->pub_key_},
+		std::vector<std::vector<BYTE>> {user2->key_pair_->pub_key_, user3->key_pair_->pub_key_},
 		2,
 		std::vector<FlagsType> { FlagsType::eAccount, FlagsType::eTransfer }
 	);

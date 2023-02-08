@@ -22,7 +22,7 @@ std::shared_ptr<User> TestUser::SingleSig(std::shared_ptr<IAuthdescriptorRule> r
 std::shared_ptr<User> TestUser::MultiSig(int required_signatures, int number_of_participants, std::shared_ptr<IAuthdescriptorRule> rule)
 {
 	std::vector<std::shared_ptr<KeyPair>> key_pairs;
-	std::vector<std::vector<byte>> pub_keys;
+	std::vector<std::vector<BYTE>> pub_keys;
 	for (int i = 0; i < number_of_participants; i++)
 	{
 		auto key_pair = std::make_shared<KeyPair>();

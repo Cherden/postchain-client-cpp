@@ -29,7 +29,7 @@ void RateLimit::ExecFreeOperation(std::string account_id, std::shared_ptr<Blockc
 	tx_builder->Add(AccountDevOperations::FreeOp(account_id));
 	tx_builder->Add(AccountOperations::Nop());
 
-	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
+	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<BYTE>>(), on_error);
 
 	std::function<void(std::string)> on_success_wrapper = [on_success](std::string content) {
 		on_success();
@@ -61,7 +61,7 @@ void RateLimit::GivePoints(std::string account_id, int points, std::shared_ptr<B
 	tx_builder->Add(AccountDevOperations::GivePoints(account_id, points));
 	tx_builder->Add(AccountOperations::Nop());
 
-	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
+	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<BYTE>>(), on_error);
 
 	std::function<void(std::string)> on_success_wrapper = [on_success](std::string content) {
 		on_success();

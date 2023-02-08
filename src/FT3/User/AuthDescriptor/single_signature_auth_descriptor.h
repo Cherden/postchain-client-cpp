@@ -18,9 +18,9 @@ public:
 	std::shared_ptr<Flags> flags_;
 	std::shared_ptr<IAuthdescriptorRule> auth_rule_;
 	
-	std::vector<std::vector<byte>> Signers() override
+	std::vector<std::vector<BYTE>> Signers() override
 	{
-		return std::vector<std::vector<byte>> {this->pubkey_};
+		return std::vector<std::vector<BYTE>> {this->pubkey_};
 	}
 
 	std::string ID() override
@@ -33,14 +33,14 @@ public:
 		return this->auth_rule_;
 	}
 
-	SingleSignatureAuthDescriptor(std::vector<byte> pubkey, std::vector<FlagsType> flags, std::shared_ptr<IAuthdescriptorRule> rule = nullptr);
+	SingleSignatureAuthDescriptor(std::vector<BYTE> pubkey, std::vector<FlagsType> flags, std::shared_ptr<IAuthdescriptorRule> rule = nullptr);
 	
 	std::shared_ptr<gtv::ArrayValue> ToGTV();
 	
-	std::vector<byte> Hash();
+	std::vector<BYTE> Hash();
 
 private:
-	std::vector<byte> pubkey_;
+	std::vector<BYTE> pubkey_;
 };
 } // namespace ft3
 } // namespace postchain

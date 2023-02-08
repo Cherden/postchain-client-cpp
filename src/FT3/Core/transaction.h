@@ -27,7 +27,7 @@ public:
 
 	void PostAndWait(std::function<void(std::string)> on_success);
 
-	std::vector<byte> Raw();
+	std::vector<BYTE> Raw();
 };
 } // namespace ft3
 } // namespace postchain

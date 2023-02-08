@@ -11,10 +11,10 @@ namespace ft3 {
 class KeyPair
 {
 public:
-	std::vector<byte> pub_key_;
-	std::vector<byte> priv_key_;
+	std::vector<BYTE> pub_key_;
+	std::vector<BYTE> priv_key_;
 
-	KeyPair(std::vector<byte> private_key, std::vector<byte> pub_key);
+	KeyPair(std::vector<BYTE> private_key, std::vector<BYTE> pub_key);
 
 	KeyPair(std::string private_key = "");
 

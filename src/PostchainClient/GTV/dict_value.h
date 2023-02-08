@@ -17,6 +17,8 @@ class DictValue : public AbstractValue {
         std::map<std::string, std::shared_ptr<AbstractValue>> value)
         : value_(value) {}
 
+    virtual ~DictValue() {};
+
     size_t Size() const { return value_.size(); }
     std::shared_ptr<AbstractValue> operator[](const std::string& key) const {
         return value_.at(key);

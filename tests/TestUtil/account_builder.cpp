@@ -137,7 +137,7 @@ std::shared_ptr<AuthDescriptor> AccountBuilder::GetAuthDescriptor()
 		throw std::exception("Number of required signatures has to be less than number of participants");
 	}
 
-	std::vector<std::vector<byte>> participants;
+	std::vector<std::vector<BYTE>> participants;
 
 	if (this->participants_.size() > 1)
 	{

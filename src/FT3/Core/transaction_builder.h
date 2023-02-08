@@ -22,7 +22,7 @@ public:
 
 	std::shared_ptr<TransactionBuilder> Add(std::shared_ptr<ft3::Operation> operation);
 
-	std::shared_ptr<Transaction> Build(std::vector<std::vector<byte>> signers, std::function<void(std::string)> on_error);
+	std::shared_ptr<Transaction> Build(std::vector<std::vector<BYTE>> signers, std::function<void(std::string)> on_error);
 
 	std::shared_ptr<Transaction> BuildAndSign(std::shared_ptr<User> user, std::function<void(std::string)> on_error);
 

@@ -35,7 +35,7 @@ public:
 class SSOStore
 {
 	std::shared_ptr<KeyPair> tmp_key_pair_;
-	std::vector<byte> tmp_priv_key_;
+	std::vector<BYTE> tmp_priv_key_;
 	std::string tmp_tx;
 
 public:
@@ -44,8 +44,8 @@ public:
 
 	virtual std::shared_ptr<KeyPair> GetTmpKeyPair() = 0;
     
-	virtual std::vector<byte> GetTmpPrivKey() = 0;
-	virtual void SetTmpPrivKey(std::vector<byte> key) = 0;
+	virtual std::vector<BYTE> GetTmpPrivKey() = 0;
+	virtual void SetTmpPrivKey(std::vector<BYTE> key) = 0;
 
 	virtual std::string GetTmpTx() = 0;
 	virtual void SetTmpTx(std::string str) = 0;

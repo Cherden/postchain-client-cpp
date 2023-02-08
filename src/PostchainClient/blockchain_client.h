@@ -25,7 +25,7 @@ public:
 
 	void Setup(std::string blockchain_rid, std::string base_url);
 
-	std::shared_ptr<PostchainTransaction> NewTransaction(std::vector<std::vector<byte>> signers, std::function<void(std::string)> on_error);
+	std::shared_ptr<PostchainTransaction> NewTransaction(std::vector<std::vector<BYTE>> signers, std::function<void(std::string)> on_error);
 
 	void Query(std::string query_name, std::vector<QueryObject> query_objects,
 		std::function<void(std::string)> on_success, std::function<void(std::string)> on_error);

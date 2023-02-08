@@ -34,7 +34,7 @@ void Asset::Register(std::string name, std::string chain_id, std::shared_ptr<Blo
 	op_args->Add(AbstractValueFactory::Build(chain_id));
 	tx_builder->Add(ft3::Operation::Op("ft3.dev_register_asset", op_args));
 
-	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<byte>>(), on_error);
+	std::shared_ptr<ft3::Transaction> tx = tx_builder->Build(std::vector<std::vector<BYTE>>(), on_error);
 
 	std::function<void(std::string)> on_success_wrapper = [on_success, name, chain_id](std::string content) {
 		on_success(std::make_shared<Asset>(name, chain_id));
@@ -108,7 +108,7 @@ std::string Asset::HashId()
 	body->Add(AbstractValueFactory::Build(this->name_));
 	body->Add(AbstractValueFactory::Build(PostchainUtil::HexStringToByteVector(this->issuing_chain_rid_)));
 
-	std::vector<byte> hash = AbstractValue::Hash(body);
+	std::vector<BYTE> hash = AbstractValue::Hash(body);
 	std::string hash_hex = PostchainUtil::ByteVectorToHexString(hash);
 	return hash_hex;
 }

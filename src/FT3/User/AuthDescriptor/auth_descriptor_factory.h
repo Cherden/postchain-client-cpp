@@ -27,12 +27,12 @@ public:
 		}
 	};
 
-	std::shared_ptr<AuthDescriptor> Create(AuthType type, std::vector<byte> args);
+	std::shared_ptr<AuthDescriptor> Create(AuthType type, std::vector<BYTE> args);
 
 private:
-	std::shared_ptr<SingleSignatureAuthDescriptor> CreateSingleSig(std::vector<byte> args);
+	std::shared_ptr<SingleSignatureAuthDescriptor> CreateSingleSig(std::vector<BYTE> args);
 
-	std::shared_ptr<MultiSignatureAuthDescriptor> CreateMultiSig(std::vector<byte> args);
+	std::shared_ptr<MultiSignatureAuthDescriptor> CreateMultiSig(std::vector<BYTE> args);
   
 };
 } // namespace http

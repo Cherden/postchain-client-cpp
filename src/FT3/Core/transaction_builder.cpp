@@ -20,7 +20,7 @@ std::shared_ptr<TransactionBuilder> TransactionBuilder::Add(std::shared_ptr<ft3:
 	return shared_from_this();
 }
 
-std::shared_ptr<Transaction> TransactionBuilder::Build(std::vector<std::vector<byte>> signers, std::function<void(std::string)> on_error)
+std::shared_ptr<Transaction> TransactionBuilder::Build(std::vector<std::vector<BYTE>> signers, std::function<void(std::string)> on_error)
 {
 	std::shared_ptr<PostchainTransaction> tx = this->blockchain_->connection_->NewTransaction(signers, on_error);
 	for (auto &op : operations_)

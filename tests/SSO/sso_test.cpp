@@ -13,8 +13,8 @@ using namespace chromia;
 
 bool SSOTest::SSORegisterOperationTest()
 {
-	std::vector<byte> priv_key;
-	std::vector<byte> pub_key;
+	std::vector<BYTE> priv_key;
+	std::vector<BYTE> pub_key;
 	PostchainUtil::GenerateKeyPair(priv_key, pub_key);
 
 	auto gtx = std::make_shared<Gtx>("abcdef1234567890abcdef1234567890");
@@ -46,8 +46,8 @@ bool SSOTest::SSORegisterOperationTest()
 
 bool SSOTest::SSOAddAuthOperationTest()
 {
-	std::vector<byte> priv_key;
-	std::vector<byte> pub_key;
+	std::vector<BYTE> priv_key;
+	std::vector<BYTE> pub_key;
 	PostchainUtil::GenerateKeyPair(priv_key, pub_key);
 	auto gtx = std::make_shared<Gtx>("abcdef1234567890abcdef1234567890");
 

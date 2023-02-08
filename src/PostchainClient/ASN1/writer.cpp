@@ -28,7 +28,7 @@ void Writer::WriteUTF8String(const std::string& character_string) {
 }
 
 void Writer::WriteInteger(long long number) {
-	std::vector<byte> bytes = PostchainUtil::IntegerToBytes(number);
+	std::vector<BYTE> bytes = PostchainUtil::IntegerToBytes(number);
 	Write(tag::kInteger, bytes.begin(), bytes.end());
 }
 

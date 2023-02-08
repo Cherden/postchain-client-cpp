@@ -27,9 +27,9 @@ public:
 
 	void SetTmpTx(std::string value) override;
 
-	std::vector<byte> GetTmpPrivKey() override;
+	std::vector<BYTE> GetTmpPrivKey() override;
 
-	void SetTmpPrivKey(std::vector<byte> value) override;
+	void SetTmpPrivKey(std::vector<BYTE> value) override;
 
 	void ClearTmp() override;
 

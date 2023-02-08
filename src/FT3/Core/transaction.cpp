@@ -27,7 +27,7 @@ void Transaction::PostAndWait(std::function<void(std::string)> on_success)
 	this->_tx->PostAndWait(on_success);
 }
 
-std::vector<byte> Transaction::Raw()
+std::vector<BYTE> Transaction::Raw()
 {
 	return this->_tx->Encode();
 }

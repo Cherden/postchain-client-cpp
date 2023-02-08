@@ -15,6 +15,8 @@ class ArrayValue : public AbstractValue {
     explicit ArrayValue(){};
     explicit ArrayValue(std::vector<std::shared_ptr<AbstractValue>> value)
         : value_(value) {}
+    
+    virtual ~ArrayValue() {};
 
     void Add(std::shared_ptr<AbstractValue> value) { value_.push_back(value); }
     size_t Size() const { return value_.size(); }

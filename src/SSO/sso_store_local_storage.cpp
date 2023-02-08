@@ -64,7 +64,7 @@ void SSOStoreLocalStorage::SetTmpTx(std::string value)
 }
 
 
-std::vector<byte> SSOStoreLocalStorage::GetTmpPrivKey()
+std::vector<BYTE> SSOStoreLocalStorage::GetTmpPrivKey()
 {
 	std::string priv_key_string = sso_data_->sso_tmp_priv_key_;
 	if (priv_key_string.size() == 0) return {};
@@ -72,7 +72,7 @@ std::vector<byte> SSOStoreLocalStorage::GetTmpPrivKey()
 }
 
 
-void SSOStoreLocalStorage::SetTmpPrivKey(std::vector<byte> value)
+void SSOStoreLocalStorage::SetTmpPrivKey(std::vector<BYTE> value)
 {
 	sso_data_->sso_tmp_priv_key_ = PostchainUtil::ByteVectorToHexString(value);
 }

@@ -66,9 +66,9 @@ public:
 	static void Register(std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<BlockchainSession> session,
 		std::function<void(std::shared_ptr<Account>)> on_success, std::function<void(std::string)> on_error);
 
-	static std::vector<byte> RawTransactionRegister(std::shared_ptr<User> user, std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain);
+	static std::vector<BYTE> RawTransactionRegister(std::shared_ptr<User> user, std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain);
 
-	static std::vector<byte> RawTransactionAddAuthDescriptor(std::string account_id, std::shared_ptr<User> user,
+	static std::vector<BYTE> RawTransactionAddAuthDescriptor(std::string account_id, std::shared_ptr<User> user,
 		std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain);
 
 	static void GetByIds(std::vector<std::string> ids, std::shared_ptr<BlockchainSession> session,

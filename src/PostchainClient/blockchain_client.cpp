@@ -15,11 +15,11 @@ void BlockchainClient::Setup(std::string blockchain_rid, std::string base_url)
 	this->base_url_ = base_url;
 }
 
-std::shared_ptr<PostchainTransaction> BlockchainClient::NewTransaction(std::vector<std::vector<byte>> signers, std::function<void(std::string)> on_error)
+std::shared_ptr<PostchainTransaction> BlockchainClient::NewTransaction(std::vector<std::vector<BYTE>> signers, std::function<void(std::string)> on_error)
 {
 	std::shared_ptr<Gtx> new_gtx = std::make_shared<Gtx>(this->blockchain_rid_);
 
-	for (std::vector<byte> signer : signers)
+	for (std::vector<BYTE> signer : signers)
 	{
 		new_gtx->AddSignerToGtx(signer);
 	}

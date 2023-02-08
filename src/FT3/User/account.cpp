@@ -84,11 +84,14 @@ void Account::GetByAuthDescriptorId(std::string id, std::shared_ptr<BlockchainSe
 	std::function<void(std::vector<std::shared_ptr<Account>>)> on_success, std::function<void(string)> on_error)
 {
 	std::function<void(std::string)> on_success_wrapper = [session, on_success, on_error](std::string content) {
-		nlohmann::json json_obj = nlohmann::json::parse(content);
 		std::vector<std::string> account_ids;
-		for (std::string id : json_obj)
+		if (content.size() > 0)
 		{
-			account_ids.push_back(id);
+			nlohmann::json json_obj = nlohmann::json::parse(content);
+			for (std::string id : json_obj)
+			{
+				account_ids.push_back(id);
+			}
 		}
 		Account::GetByIds(account_ids, session, on_success, on_error);
 	};
@@ -119,9 +122,9 @@ void Account::Register(std::shared_ptr<AuthDescriptor> auth_descriptor, std::sha
 }
 
 
-std::vector<byte> Account::RawTransactionRegister(std::shared_ptr<User> user, std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain)
+std::vector<BYTE> Account::RawTransactionRegister(std::shared_ptr<User> user, std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain)
 {
-	std::vector<std::vector<byte>> signers;
+	std::vector<std::vector<BYTE>> signers;
 
 	for (auto &signer : user->auth_descriptor_->Signers())
 	{
@@ -143,10 +146,10 @@ std::vector<byte> Account::RawTransactionRegister(std::shared_ptr<User> user, st
 }
 
 
-std::vector<byte> Account::RawTransactionAddAuthDescriptor(std::string account_id, std::shared_ptr<User> user,
+std::vector<BYTE> Account::RawTransactionAddAuthDescriptor(std::string account_id, std::shared_ptr<User> user,
 	std::shared_ptr<AuthDescriptor> auth_descriptor, std::shared_ptr<Blockchain> blockchain)
 {
-	std::vector<std::vector<byte>> signers;
+	std::vector<std::vector<BYTE>> signers;
 
 	for (auto &signer : user->auth_descriptor_->Signers())
 	{

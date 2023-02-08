@@ -4,7 +4,7 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-KeyPair::KeyPair(std::vector<byte> private_key, std::vector<byte> pub_key)
+KeyPair::KeyPair(std::vector<BYTE> private_key, std::vector<BYTE> pub_key)
 {
 	pub_key_ = pub_key;
 	priv_key_ = private_key;

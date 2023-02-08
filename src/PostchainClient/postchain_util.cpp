@@ -101,12 +101,12 @@ long long PostchainUtil::ByteVectorToLong(std::vector<unsigned char> bytes,
 }
 
 
-std::vector<byte> PostchainUtil::GetByteList(long long integer)
+std::vector<BYTE> PostchainUtil::GetByteList(long long integer)
 {
 	byte* byte_list = static_cast<byte*>(static_cast<void*>(&integer));
 	int length = sizeof(long long);
 
-	std::vector<byte> trimmed_bytes;
+	std::vector<BYTE> trimmed_bytes;
 	if (integer >= 0)
 	{
 		for (int i = length - 1; i >= 0; i--)
@@ -151,9 +151,9 @@ std::vector<byte> PostchainUtil::GetByteList(long long integer)
 }
 
 
-std::vector<byte> PostchainUtil::IntegerToBytes(long long integer, bool as_length)
+std::vector<BYTE> PostchainUtil::IntegerToBytes(long long integer, bool as_length)
 {
-	std::vector<byte> size_in_bytes = GetByteList(integer);
+	std::vector<BYTE> size_in_bytes = GetByteList(integer);
 
 	if (IsLittleEndian())
 	{
@@ -230,10 +230,10 @@ std::string PostchainUtil::Sha256(std::vector<unsigned char> buffer) {
 }
 
 
-std::vector<byte> PostchainUtil::IntegerToBinary(int x)
+std::vector<BYTE> PostchainUtil::IntegerToBinary(int x)
 {
 	// Transfrom int to byte array
-	std::vector<byte> as_byte;
+	std::vector<BYTE> as_byte;
 	byte* raw_cast = static_cast<byte*>(static_cast<void*>(&x));
 	for (int i = 0; i < 4; i++)
 	{
@@ -508,7 +508,7 @@ void PostchainUtil::SleepForMillis(long long millis)
 	std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 }
 
-std::shared_ptr<client::Gtx> PostchainUtil::DeserializeGTX(std::vector<byte> encoded_message)
+std::shared_ptr<client::Gtx> PostchainUtil::DeserializeGTX(std::vector<BYTE> encoded_message)
 {
 	return client::Gtx::Decode(encoded_message);
 }
@@ -518,7 +518,7 @@ bool PostchainUtil::StringsAreEqual(std::string a, std::string b)
 	return a.compare(b) == 0;
 }
 
-bool PostchainUtil::VectorsAreEqual(std::vector<byte> a, std::vector<byte> b)
+bool PostchainUtil::VectorsAreEqual(std::vector<BYTE> a, std::vector<BYTE> b)
 {
 	if (a.size() != b.size()) return false;
 	for (size_t i = 0; i < a.size(); i++)
@@ -528,7 +528,7 @@ bool PostchainUtil::VectorsAreEqual(std::vector<byte> a, std::vector<byte> b)
 	return true;
 }
 
-bool PostchainUtil::VectorsAreEqual(std::vector<std::vector<byte>> a, std::vector<std::vector<byte>> b)
+bool PostchainUtil::VectorsAreEqual(std::vector<std::vector<BYTE>> a, std::vector<std::vector<BYTE>> b)
 {
 	if (a.size() != b.size()) return false;
 	for (size_t i = 0; i < a.size(); i++)

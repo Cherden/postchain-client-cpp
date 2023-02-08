@@ -9,7 +9,7 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-SingleSignatureAuthDescriptor::SingleSignatureAuthDescriptor(std::vector<byte> pubkey, std::vector<FlagsType> flags, std::shared_ptr<IAuthdescriptorRule> rule)
+SingleSignatureAuthDescriptor::SingleSignatureAuthDescriptor(std::vector<BYTE> pubkey, std::vector<FlagsType> flags, std::shared_ptr<IAuthdescriptorRule> rule)
 {
 	this->pubkey_ = pubkey;
 	this->flags_ = std::make_shared<Flags>(flags);
@@ -45,7 +45,7 @@ std::shared_ptr<gtv::ArrayValue> SingleSignatureAuthDescriptor::ToGTV()
 	return gtv;
 }
 
-std::vector<byte> SingleSignatureAuthDescriptor::Hash()
+std::vector<BYTE> SingleSignatureAuthDescriptor::Hash()
 {
 	std::shared_ptr<gtv::ArrayValue> gtv = AbstractValueFactory::EmptyArray();
 
@@ -69,7 +69,7 @@ std::vector<byte> SingleSignatureAuthDescriptor::Hash()
 		gtv->Add(AbstractValueFactory::Build(nullptr));
 	}
 
-	std::vector<byte> hashed = AbstractValue::Hash(gtv);
+	std::vector<BYTE> hashed = AbstractValue::Hash(gtv);
 	return hashed;
 }
 

@@ -23,7 +23,7 @@ std::string TestUtil::GenerateAssetName(std::string prefix)
 std::string TestUtil::GenerateId()
 {
 	int random_number = GenerateNumber();
-	std::vector<byte> as_byte = PostchainUtil::IntegerToBinary(random_number);
+	std::vector<BYTE> as_byte = PostchainUtil::IntegerToBinary(random_number);
 	std::string sha = PostchainUtil::Sha256(as_byte);
 	return sha;
 }
@@ -33,6 +33,6 @@ std::string TestUtil::BlockchainAccountId(std::string chainId)
 	std::shared_ptr<ArrayValue> gtv = AbstractValueFactory::EmptyArray();
 	gtv->Add(AbstractValueFactory::Build("B"));
 	gtv->Add(AbstractValueFactory::Build(PostchainUtil::HexStringToByteVector(chainId)));
-	std::vector<byte> hash = AbstractValue::Hash(gtv);
+	std::vector<BYTE> hash = AbstractValue::Hash(gtv);
 	return PostchainUtil::ByteVectorToHexString(hash);
 }

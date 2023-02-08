@@ -66,9 +66,9 @@ public:
 	virtual ~AuthDescriptor() = default;
 
 	virtual std::string ID() = 0;
-	virtual std::vector<std::vector<byte>> Signers() = 0;
+	virtual std::vector<std::vector<BYTE>> Signers() = 0;
 	virtual std::shared_ptr<IAuthdescriptorRule> Rule() = 0;
-	virtual std::vector<byte> Hash() = 0;
+	virtual std::vector<BYTE> Hash() = 0;
 };
 
 

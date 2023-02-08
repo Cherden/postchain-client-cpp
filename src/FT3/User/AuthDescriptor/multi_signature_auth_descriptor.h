@@ -14,12 +14,12 @@ namespace ft3 {
 class MultiSignatureAuthDescriptor : public AuthDescriptor
 {
 public:
-	std::vector<std::vector<byte>> pubkeys_;
+	std::vector<std::vector<BYTE>> pubkeys_;
 	std::shared_ptr<Flags> flags_;
 	int signature_required_;
 	std::shared_ptr<IAuthdescriptorRule> auth_rule_;
 
-	std::vector<std::vector<byte>> Signers() override
+	std::vector<std::vector<BYTE>> Signers() override
 	{
 		return this->pubkeys_;
 	}
@@ -34,11 +34,11 @@ public:
 		return this->auth_rule_;
 	}
 
-	MultiSignatureAuthDescriptor(std::vector<std::vector<byte>> pubkeys, int signature_required, std::vector<FlagsType> flags, std::shared_ptr<IAuthdescriptorRule> rule = nullptr);
+	MultiSignatureAuthDescriptor(std::vector<std::vector<BYTE>> pubkeys, int signature_required, std::vector<FlagsType> flags, std::shared_ptr<IAuthdescriptorRule> rule = nullptr);
 
 	std::shared_ptr<gtv::ArrayValue> ToGTV();
 
-	std::vector<byte> Hash();
+	std::vector<BYTE> Hash();
 };
 } // namespace ft3
 } // namespace postchain

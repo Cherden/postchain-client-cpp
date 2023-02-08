@@ -34,7 +34,7 @@ public:
 	
 	void AddOperation(std::string name, std::shared_ptr<gtv::ArrayValue> args);
 
-	void Sign(std::vector<byte> private_key, std::vector<byte> public_key);
+	void Sign(std::vector<BYTE> private_key, std::vector<BYTE> public_key);
 
 	std::string Serialize();
 
@@ -44,7 +44,7 @@ public:
 
 	void PostAndWait(std::function<void(std::string)> on_success);
 
-	std::vector<byte> Encode();
+	std::vector<BYTE> Encode();
 
 	bool IsSent();
 private:

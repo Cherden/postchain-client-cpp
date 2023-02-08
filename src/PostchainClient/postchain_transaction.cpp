@@ -22,7 +22,7 @@ void PostchainTransaction::AddOperation(std::string name, std::shared_ptr<gtv::A
 }
 
 
-void PostchainTransaction::Sign(std::vector<byte> private_key, std::vector<byte> public_key)
+void PostchainTransaction::Sign(std::vector<BYTE> private_key, std::vector<BYTE> public_key)
 {
 	this->gtx_object_->Sign(private_key, public_key);
 }
@@ -36,7 +36,7 @@ bool PostchainTransaction::IsSent()
 
 std::string PostchainTransaction::GetTxRID()
 {
-	std::vector<byte> buffer_to_sign = this->gtx_object_->GetBufferToSign();
+	std::vector<BYTE> buffer_to_sign = this->gtx_object_->GetBufferToSign();
 	return PostchainUtil::ByteVectorToHexString(buffer_to_sign);
 }
 
@@ -68,7 +68,7 @@ std::string PostchainTransaction::Serialize()
 	return this->gtx_object_->Serialize();
 }
 
-std::vector<byte> PostchainTransaction::Encode()
+std::vector<BYTE> PostchainTransaction::Encode()
 {
 	return this->gtx_object_->Encode();
 }

@@ -24,9 +24,9 @@ class PostchainOperation {
 
 	std::shared_ptr<AbstractValue> Raw();
 
-	std::vector<byte> Encode();
+	std::vector<BYTE> Encode();
 
-	std::vector<byte> Decode();
+	std::vector<BYTE> Decode();
 
 	template <class T>
 	PostchainOperation& operator<<(const T& obj);

@@ -13,7 +13,7 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-std::shared_ptr<AuthDescriptor> AuthDescriptorFactory::Create(AuthType type, std::vector<byte> args)
+std::shared_ptr<AuthDescriptor> AuthDescriptorFactory::Create(AuthType type, std::vector<BYTE> args)
 {
 	switch (type)
 	{
@@ -25,7 +25,7 @@ std::shared_ptr<AuthDescriptor> AuthDescriptorFactory::Create(AuthType type, std
 	return nullptr;
 }
 
-std::shared_ptr<SingleSignatureAuthDescriptor> AuthDescriptorFactory::CreateSingleSig(std::vector<byte> args)
+std::shared_ptr<SingleSignatureAuthDescriptor> AuthDescriptorFactory::CreateSingleSig(std::vector<BYTE> args)
 {
 	Reader gtx_transaction(args);
 	std::shared_ptr<client::GTXValue> gtx_value = GTXValue::Decode(&gtx_transaction);
@@ -48,12 +48,12 @@ std::shared_ptr<SingleSignatureAuthDescriptor> AuthDescriptorFactory::CreateSing
 	return ret;
 }
 
-std::shared_ptr<MultiSignatureAuthDescriptor> AuthDescriptorFactory::CreateMultiSig(std::vector<byte> args)
+std::shared_ptr<MultiSignatureAuthDescriptor> AuthDescriptorFactory::CreateMultiSig(std::vector<BYTE> args)
 {
 	Reader gtx_transaction(args);
 	std::shared_ptr<client::GTXValue> gtx_value = GTXValue::Decode(&gtx_transaction);
 	std::vector<FlagsType> flags;
-	std::vector<std::vector<byte>> pubkeys;
+	std::vector<std::vector<BYTE>> pubkeys;
 
 	int signature_required = (int) gtx_value->array_[1]->integer_;
 

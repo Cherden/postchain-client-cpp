@@ -13,12 +13,12 @@ using namespace chromia::postchain;
 using namespace chromia::postchain::client;
 
 TEST(GTX, GtxTest) {
-	std::vector<byte> key_priv_1;
-	std::vector<byte> key_pub_1;
+	std::vector<BYTE> key_priv_1;
+	std::vector<BYTE> key_pub_1;
 	PostchainUtil::GenerateKeyPair(key_priv_1, key_pub_1);
 
-	std::vector<byte> key_priv_2;
-	std::vector<byte> key_pub_2;
+	std::vector<BYTE> key_priv_2;
+	std::vector<BYTE> key_pub_2;
 	PostchainUtil::GenerateKeyPair(key_priv_2, key_pub_2);
 
 	auto gtx = std::make_shared<Gtx>("abcdef1234567890abcdef1234567890");

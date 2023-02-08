@@ -22,7 +22,7 @@ void AccountTest::SetupBlockchain()
 
 void AccountTest::AddAuthDescriptorTo(std::shared_ptr<Account> account, std::shared_ptr<User> admin_user, std::shared_ptr<User> user, std::function<void()> on_success)
 {
-	vector<vector<byte>> signers;
+	vector<vector<BYTE>> signers;
 	for (auto &signer : admin_user->auth_descriptor_->Signers())
 	{
 		signers.push_back(signer);
@@ -159,7 +159,7 @@ bool AccountTest::AccountTest5()
 	auto user2 = TestUser::SingleSig();
 
 	auto multi_sig = std::make_shared<MultiSignatureAuthDescriptor>(
-		std::vector<std::vector<byte>> {user1->key_pair_->pub_key_, user2->key_pair_->pub_key_},
+		std::vector<std::vector<BYTE>> {user1->key_pair_->pub_key_, user2->key_pair_->pub_key_},
 		2,
 		std::vector<FlagsType> { FlagsType::eAccount, FlagsType::eTransfer });
 
@@ -188,7 +188,7 @@ bool AccountTest::AccountTest6()
 	auto user2 = TestUser::SingleSig();
 
 	auto multi_sig = std::make_shared<MultiSignatureAuthDescriptor>(
-		std::vector<std::vector<byte>> {user1->key_pair_->pub_key_, user2->key_pair_->pub_key_},
+		std::vector<std::vector<BYTE>> {user1->key_pair_->pub_key_, user2->key_pair_->pub_key_},
 		2,
 		std::vector<FlagsType> { FlagsType::eAccount, FlagsType::eTransfer });
 
@@ -242,7 +242,7 @@ bool AccountTest::AccountTest7()
 	auto user2 = TestUser::SingleSig();
 
 	auto multi_sig = std::make_shared<MultiSignatureAuthDescriptor>(
-		std::vector<std::vector<byte>> {user1->key_pair_->pub_key_, user2->key_pair_->pub_key_},
+		std::vector<std::vector<BYTE>> {user1->key_pair_->pub_key_, user2->key_pair_->pub_key_},
 		2,
 		std::vector<FlagsType> { FlagsType::eAccount, FlagsType::eTransfer });
 

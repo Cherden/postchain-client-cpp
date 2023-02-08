@@ -12,7 +12,7 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-MultiSignatureAuthDescriptor::MultiSignatureAuthDescriptor(std::vector<std::vector<byte>> pubkeys, int signature_required, std::vector<FlagsType> flags, std::shared_ptr<IAuthdescriptorRule> rule)
+MultiSignatureAuthDescriptor::MultiSignatureAuthDescriptor(std::vector<std::vector<BYTE>> pubkeys, int signature_required, std::vector<FlagsType> flags, std::shared_ptr<IAuthdescriptorRule> rule)
 {
 	if (signature_required > pubkeys.size())
     {
@@ -28,7 +28,7 @@ MultiSignatureAuthDescriptor::MultiSignatureAuthDescriptor(std::vector<std::vect
 std::shared_ptr<gtv::ArrayValue> MultiSignatureAuthDescriptor::ToGTV()
 {
 	std::vector<std::string> hexpubs;
-	for (std::vector<byte> &pubkey : this->pubkeys_)
+	for (std::vector<BYTE> &pubkey : this->pubkeys_)
 	{
 		hexpubs.push_back(PostchainUtil::ByteVectorToHexString(pubkey));
 	}
@@ -59,10 +59,10 @@ std::shared_ptr<gtv::ArrayValue> MultiSignatureAuthDescriptor::ToGTV()
 	return gtv;
 }
 
-std::vector<byte> MultiSignatureAuthDescriptor::Hash()
+std::vector<BYTE> MultiSignatureAuthDescriptor::Hash()
 {
 	std::vector<std::string> hexpubs;
-	for (std::vector<byte> &pubkey : this->pubkeys_)
+	for (std::vector<BYTE> &pubkey : this->pubkeys_)
 	{
 		hexpubs.push_back(PostchainUtil::ByteVectorToHexString(pubkey));
 	}
@@ -87,7 +87,7 @@ std::vector<byte> MultiSignatureAuthDescriptor::Hash()
 		gtv->Add(AbstractValueFactory::Build(nullptr));
 	}
 
-	std::vector<byte> hashed = AbstractValue::Hash(gtv);
+	std::vector<BYTE> hashed = AbstractValue::Hash(gtv);
 	return hashed;
 }
 

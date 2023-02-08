@@ -6,7 +6,7 @@ namespace chromia {
 namespace postchain {
 namespace ft3 {
 
-class FileManager
+class ChromaFileManager
 {
 public:
 
@@ -17,6 +17,9 @@ public:
 	static bool WriteToFile(std::string a_file_name, std::string a_file_contents);
 
 	static bool LoadFromFile(std::string a_file_name, std::string &result);
+
+	// Load file from absolute path
+	static bool LoadFromAbsFile(std::string a_file_name, std::string& result);
 };
 
 } // namespace ft3

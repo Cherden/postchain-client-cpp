@@ -15,7 +15,7 @@ std::string SSOStoreLocalStorage::GetTempFileName()
 
 SSOStoreLocalStorage::SSOStoreLocalStorage()
 {
-	FileManager::InitPersistentRoot();
+	ChromaFileManager::InitPersistentRoot();
 	sso_data_ = std::make_shared<SavedSSOData>();
 }
 
@@ -23,7 +23,7 @@ SSOStoreLocalStorage::SSOStoreLocalStorage()
 void SSOStoreLocalStorage::Load()
 {
 	std::string result = "";
-	FileManager::LoadFromFile(FILENAME, result);
+	ChromaFileManager::LoadFromFile(FILENAME, result);
 	if (result.size() > 0)
 	{
 		sso_data_ = SavedSSOData::Derialize(result);
@@ -38,7 +38,7 @@ void SSOStoreLocalStorage::Load()
 void SSOStoreLocalStorage::Save()
 {
 	std::string data = SavedSSOData::Serialize(sso_data_);
-	FileManager::WriteToFile(FILENAME, data);
+	ChromaFileManager::WriteToFile(FILENAME, data);
 }
 
 

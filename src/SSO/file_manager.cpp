@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
+#include <streambuf>
 
 namespace chromia {
 namespace postchain {
@@ -53,18 +54,15 @@ bool ChromaFileManager::WriteToFile(std::string a_file_name, std::string a_file_
 bool ChromaFileManager::LoadFromFile(std::string a_file_name, std::string &result)
 {
 	std::string full_path = GetPersistentRoot() + "/" + a_file_name;
-
-	std::ifstream file(full_path);
-	file >> result;
-	file.close();
-
+	return LoadFromAbsFile(full_path, result);
 	return true;
 }
 
 bool ChromaFileManager::LoadFromAbsFile(std::string a_file_name, std::string& result)
 {
 	std::ifstream file(a_file_name);
-	file >> result;
+	result = std::string((std::istreambuf_iterator<char>(file)),
+	std::istreambuf_iterator<char>());
 	file.close();
 	return true;
 }

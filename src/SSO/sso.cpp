@@ -110,23 +110,6 @@ void SSO::InitiateLogin(string success_url, string cancel_url)
 	url += "&version=0.1";
 
 	ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
-
-	/*std::string op = "start " + url;
-	system(op.c_str());*/
-
-	/*FString url = "";
-	url += ChromaUtils::STDStringToFString(SSO::vault_url_);
-	url += "/?route=/authorize&dappId=";
-	url += ChromaUtils::STDStringToFString(this->blockchain_->id_);
-	url += "&pubkey=";
-	url += ChromaUtils::STDStringToFString(PostchainUtil::ByteVectorToHexString(key_pair->pub_key_));
-	url += "&successAction=";
-	url += ChromaUtils::STDStringToFString(success_url);
-	url += "&cancelAction=";
-	url += ChromaUtils::STDStringToFString(cancel_url);
-	url += "&version=0.1";
-
-	UKismetSystemLibrary::LaunchURL(url);*/
 }
 
 
